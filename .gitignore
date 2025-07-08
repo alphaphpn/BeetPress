@@ -1,0 +1,10 @@
+*.bak
+env.php
+cnn.php
+onoofline.php
+assets/media/
+public/
+.htaccess
+401.html
+403.html
+404.html
