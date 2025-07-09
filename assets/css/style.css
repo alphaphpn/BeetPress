@@ -1,0 +1,87 @@
+body {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.vh-100 { height: 100vh!important; }
+.vh-99 { height: 99vh!important; }
+.vh-98 { height: 98vh!important; }
+.vh-97 { height: 97vh!important; }
+.vh-96 { height: 96vh!important; }
+.vh-95 { height: 95vh!important; }
+.vh-94 { height: 94vh!important; }
+.vh-93 { height: 93vh!important; }
+.vh-92 { height: 92vh!important; }
+.vh-91 { height: 91vh!important; }
+.vh-90 { height: 90vh!important; }
+.vh-70 { height: 70vh!important; }
+.vh-65 { height: 65vh!important; }
+
+.font-size-6 {font-size: 6px;}
+.font-size-8 {font-size: 8px;}
+.font-size-10 {font-size: 10px;}
+.font-size-11 {font-size: 11px;}
+.font-size-12 {font-size: 12px;}
+.font-size-14 {font-size: 14px;}
+.font-size-22 {font-size: 22px;}
+
+.text-indent-32 {text-indent: 32px;}
+
+.d-mobile {
+	display: none;
+}
+
+.section-middle-center {
+	height: 72vh;
+	display: flex;
+}
+
+#account-menu .dropdown-menu {
+	left: unset!important;
+	right: 0!important;
+}
+
+/** Data Table **/
+.table tr:hover {
+	cursor: pointer;
+}
+
+#listRecView tfoot tr td.remove-dropdown select, 
+#listRecView tfoot tr td.remove-dropdown input, 
+#listRecView thead tr th.remove-dropdown select, 
+#listRecView thead tr th.remove-dropdown input {
+	display: none;
+}
+
+.paginate_button {z-index: 1;}
+/** Data Table **/
+
+@media only screen and (max-width: 767px) {
+	.d-desktop-view {
+		display: none;
+	}
+
+	.d-mobile {
+		display: block;
+	}
+
+	.d-mobile-none {
+		display: none;
+	}
+
+	.mobile-ps-5 {
+		padding-left: 8px!important;
+	}
+
+	.font-size-mobile-12px {font-size: 12px;}
+
+	div.dataTables_wrapper div.dataTables_length, 
+	div.dataTables_wrapper div.dataTables_filter {
+		text-align: start;
+	}
+
+	.copyright {font-size: x-small;}
+
+	.status-bar-font {font-size: x-small;}
+}
