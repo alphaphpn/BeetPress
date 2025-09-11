@@ -1,0 +1,169 @@
+<?php 
+
+	if ( empty($_SESSION["empidcode"]) || empty($_SESSION["biono"]) || empty($_SESSION["empname"]) || empty($_SESSION["employeeactivated"]) ) {
+		echo '<script>window.open("attendance-auth","_self");</script>';
+		exit;
+	} else {
+		
+		try {
+			require_once "lib/env.php";
+
+			$cnn = null;
+
+			$cnn = new PDO("mysql:host={$host};dbname={$db}", $uname, $pw);
+			$cnn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+			$empidcodeCurrent = trim($_SESSION["empidcode"]);
+
+			// Get Employee Information
+			$qryEmployeeInfo = "SELECT * FROM employee_tbl WHERE emp_idcode=:empidcodeCurrent";
+			$stmntEmployeeInfo = $cnn->prepare($qryEmployeeInfo);
+			
+			$stmntEmployeeInfo->bindParam(':empidcodeCurrent', $empidcodeCurrent);
+			$stmntEmployeeInfo->execute();
+			$countEmployeeInfo = $stmntEmployeeInfo->rowCount();
+
+			if ($countEmployeeInfo > 0) {
+				foreach ($stmntEmployeeInfo as $rowEmployeeInfo) {
+					$agencycode = $rowEmployeeInfo['agency_code'];
+					$agencyname = $rowEmployeeInfo['agency_name'];
+					$profileidz = $rowEmployeeInfo['profileid'];
+					$biolocationz = $rowEmployeeInfo['bio_location'];
+					$bionoz = $rowEmployeeInfo['bio_no'];
+					$empnamez = $rowEmployeeInfo['emp_name'];
+					$officeidz = $rowEmployeeInfo['officeid'];
+					$officecodez = $rowEmployeeInfo['officecode'];
+					$officenamez = $rowEmployeeInfo['officename'];
+					$officetitlez = $rowEmployeeInfo['officetitle'];
+					$officeabrvz = $rowEmployeeInfo['officeabrv'];
+					$officegpslocationz = $rowEmployeeInfo['office_gps_location'];
+					$typeemployeeabrvz = $rowEmployeeInfo['type_employee_abrv'];
+					$headofficerz = $rowEmployeeInfo['headofficer'];
+					$headtitlez = $rowEmployeeInfo['headtitle'];
+					$authheadz = $rowEmployeeInfo['auth_head'];
+					$authtitlez = $rowEmployeeInfo['auth_title'];
+					$authdescriptionz = $rowEmployeeInfo['auth_description'];
+
+					$shiftstatusz = $rowEmployeeInfo['shift_status'];
+					$timeeditablez = $rowEmployeeInfo['time_editable'];
+					$prioritydtrz = $rowEmployeeInfo['priority_dtr'];
+					$timeeditablevaluez = $rowEmployeeInfo['time_editable_value'];
+
+					$allowedotz = $rowEmployeeInfo['allowed_ot'];
+				}
+			}
+
+			// Check if DTR Exist
+			$empidcode = trim($_SESSION["empidcode"]);
+			$yrdtr = trim(date("Y"));
+			$monthdtr = trim(date("m"));
+			$monthName = trim(date("F"));
+			$stringMonthNo = substr(str_repeat(0, 2).$monthdtr, - 2);
+			$dtrCodex = trim($yrdtr).trim($stringMonthNo).trim($empidcode);
+
+			$qryDTREmployee = "SELECT * FROM employee_dtr_tbl WHERE emp_idcode=:empidcode AND yearno=:yrdtr AND monthno=:monthdtr";
+			$stmntDTREmployee = $cnn->prepare($qryDTREmployee);
+			
+			$stmntDTREmployee->bindParam(':empidcode', $empidcode);
+			$stmntDTREmployee->bindParam(':yrdtr', $yrdtr);
+			$stmntDTREmployee->bindParam(':monthdtr', $monthdtr);
+			$stmntDTREmployee->execute();
+			$countDTREmployee = $stmntDTREmployee->rowCount();
+
+			if ($countDTREmployee == 0) {
+				// insert or add new DTR for Seleceted Employee
+				$insertNewDTREmployee = "INSERT INTO employee_dtr_tbl (emp_idcode,yearno,monthno,dtrcode,monthname,profileid,bio_location,bio_no,emp_name,officeid,officecode,officename,officetitle,officeabrv,office_gps_location,type_employee_abrv,headofficer,headtitle,auth_head,auth_title,auth_description,shift_status,time_editable,priority_dtr,time_editable_value,allowed_ot) VALUES (:empidcode,:yrdtr,:monthdtr,:dtrcodex,:monthname,:profileidz,:biolocationz,:bionoz,:empnamez,:officeidz,:officecodez,:officenamez,:officetitlez,:officeabrvz,:officegpslocationz,:typeemployeeabrvz,:headofficerz,:headtitlez,:authheadz,:authtitlez,:authdescriptionz,:shiftstatusz,:timeeditablez,:prioritydtrz,:timeeditablevaluez,:allowedotzz)
+				";
+				$stmntNewDTREmployee = $cnn->prepare($insertNewDTREmployee);
+				$stmntNewDTREmployee->bindParam(':empidcode', $empidcode);
+				$stmntNewDTREmployee->bindParam(':yrdtr', $yrdtr);
+				$stmntNewDTREmployee->bindParam(':monthdtr', $monthdtr);
+				$stmntNewDTREmployee->bindParam(':monthname', $monthName);
+				$stmntNewDTREmployee->bindParam(':dtrcodex', $dtrCodex);
+
+				$stmntNewDTREmployee->bindParam(':profileidz', $profileidz);
+				$stmntNewDTREmployee->bindParam(':biolocationz', $biolocationz);
+				$stmntNewDTREmployee->bindParam(':bionoz', $bionoz);
+				$stmntNewDTREmployee->bindParam(':empnamez', $empnamez);
+				$stmntNewDTREmployee->bindParam(':officeidz', $officeidz);
+				$stmntNewDTREmployee->bindParam(':officecodez', $officecodez);
+				$stmntNewDTREmployee->bindParam(':officenamez', $officenamez);
+				$stmntNewDTREmployee->bindParam(':officetitlez', $officetitlez);
+				$stmntNewDTREmployee->bindParam(':officeabrvz', $officeabrvz);
+				$stmntNewDTREmployee->bindParam(':officegpslocationz', $officegpslocationz);
+				$stmntNewDTREmployee->bindParam(':typeemployeeabrvz', $typeemployeeabrvz);
+				$stmntNewDTREmployee->bindParam(':headofficerz', $headofficerz);
+				$stmntNewDTREmployee->bindParam(':headtitlez', $headtitlez);
+				$stmntNewDTREmployee->bindParam(':authheadz', $authheadz);
+				$stmntNewDTREmployee->bindParam(':authtitlez', $authtitlez);
+				$stmntNewDTREmployee->bindParam(':authdescriptionz', $authdescriptionz);
+
+				$stmntNewDTREmployee->bindParam(':shiftstatusz', $shiftstatusz);
+				$stmntNewDTREmployee->bindParam(':timeeditablez', $timeeditablez);
+				$stmntNewDTREmployee->bindParam(':prioritydtrz', $prioritydtrz);
+				$stmntNewDTREmployee->bindParam(':timeeditablevaluez', $timeeditablevaluez);
+
+				$stmntNewDTREmployee->bindParam(':allowedotzz', $allowedotz);
+				$stmntNewDTREmployee->execute();
+
+				// Generate SubDTR
+				$dayondtr = 1;
+
+				while ($dayondtr <= 31) {
+					$getdateloop = trim($yrdtr)."-".trim(substr(str_repeat(0, 2).$monthdtr, - 2))."-".trim(substr(str_repeat(0, 2).$dayondtr, - 2));
+					$daynameloop = date('D', strtotime($getdateloop));
+					$countstrday = strlen($daynameloop);
+
+					$isDateValid = isValidDate($getdateloop);
+
+					if ($isDateValid) {
+						$daynamehjh = Trim($daynameloop);
+					} else {
+						$daynamehjh = Trim("n/a");
+					}
+
+					$qry_insert_subdtr = "INSERT INTO employee_dtr_sub_tbl SET 
+						agency_code=:agencycode, 
+						agency_name=:agencyname, 
+						emp_idcode=:empidcode, 
+						dtrcode=:dtrodex, 
+						nameday=:daynamehjh, 
+						dayno=:dayondtr, 
+						monthno=:monthdtr, 
+						monthname=:monthname, 
+						yearno=:yrdtr, 
+						emp_name=:empnamez, 
+						bio_location=:biolocationz, 
+						bio_no=:bionoz
+					";
+					
+					$stmt_insert_subdtr = $cnn->prepare($qry_insert_subdtr);
+					$stmt_insert_subdtr->bindParam(':agencycode', $agencycode);
+					$stmt_insert_subdtr->bindParam(':agencyname', $agencyname);
+					$stmt_insert_subdtr->bindParam(':empidcode', $empidcode);
+					$stmt_insert_subdtr->bindParam(':dtrodex', $dtrCodex);
+					$stmt_insert_subdtr->bindParam(':dayondtr', $dayondtr);
+					$stmt_insert_subdtr->bindParam(':daynamehjh', $daynamehjh);
+					$stmt_insert_subdtr->bindParam(':monthdtr', $monthdtr);
+					$stmt_insert_subdtr->bindParam(':monthname', $monthName);
+					$stmt_insert_subdtr->bindParam(':yrdtr', $yrdtr);
+					$stmt_insert_subdtr->bindParam(':empnamez', $empnamez);
+					$stmt_insert_subdtr->bindParam(':biolocationz', $biolocationz);
+					$stmt_insert_subdtr->bindParam(':bionoz', $bionoz);
+					$stmt_insert_subdtr->execute();
+
+					$dayondtr++;
+				}
+
+				include_once "timeinout.php";
+			} else {
+				// Add Attendance Log and Sub-DTR
+				include_once "timeinout.php";
+			}
+
+		} catch (PDOException $error) {
+			$err_msg = $error->getMessage();
+			echo "<p>Error: {$err_msg}</p>";
+			die;
+		}
+	}

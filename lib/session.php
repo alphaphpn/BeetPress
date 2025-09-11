@@ -1,15 +1,8 @@
-<?php
+<?php 
 
-	if (empty($_SESSION["username"]) || empty($_SESSION["ulevel"]) || empty($_SESSION["uposition"]) || empty($_SESSION["xtown"]) || empty($_SESSION["distno"]) || empty($_SESSION["gcodezip"])) {
-		header("location:../auth");
-	} else {
-		$curr_username			= $_SESSION['username'];
-		$curr_ulevel		= $_SESSION["ulevel"];
-		$curr_uposition		= $_SESSION["uposition"];
-
-		$curr_town			= $_SESSION['xtown'];
-		$curr_distno		= $_SESSION["distno"];
-		$curr_gcodezip		= $_SESSION["gcodezip"];
+	if ( empty($_SESSION["uid"]) || empty($_SESSION["uname"]) || empty($_SESSION["verified"]) || empty($_SESSION["ustat"]) || empty($_SESSION["ulevel"]) || empty($_SESSION["uposition"]) ) {
+		echo '<script>alert("Access denied! Only Authorized account is allowed.");window.open("'.$domainhome.'/home","_self");</script>';
+		exit;
 	}
-
+	
 ?>

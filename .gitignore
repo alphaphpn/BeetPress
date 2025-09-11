@@ -4,7 +4,10 @@ cnn.php
 onoofline.php
 assets/media/
 public/
+install/
+dbase/
 .htaccess
 401.html
 403.html
 404.html
+503.html

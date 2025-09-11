@@ -12,7 +12,7 @@
 			$this->getConnection();
 
 			if ($xusername !== null || $xpword !== null || $xzipcode !== null) {
-				$pasCode = htmlspecialchars(md5(trim($xpword)));
+				$pasCode = md5(trim(htmlspecialchars($xpword)));
 				$sqlAuth = "SELECT * FROM user_tbl WHERE uname=:xusername AND pword=:authpw AND ulevel=99 OR uname=:xusername AND pword=:authpw AND ulevel=14";
 				$stmtAuth = $this->cnn->prepare($sqlAuth);
 				$stmtAuth->bindParam(':xusername', $xusername);

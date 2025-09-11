@@ -1,9 +1,9 @@
 <?php
 
-	// session_start();
+	require_once "env.php";
+	
+	session_start();
 	session_destroy();
-	// echo "Redirect to login..";
-	// header('location:../../');
-	echo "<script>window.location.href='../../';</script>";
 
-?>
+	session_start();
+	echo "<script>window.location.href='".$domainhome."';</script>";
