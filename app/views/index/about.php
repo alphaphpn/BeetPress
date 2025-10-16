@@ -8,8 +8,8 @@
 						<h5 style="line-height: 1.5;" class="text-justify mb-3">Zamboanga Sibugay is the 79th province of the Republic of the Philippines. This was created through Republic Act 8973 was signed into law by then President Joseph E. Estrada on November 7, 2000, and was later on ratified through a plebiscite on February 22, 2001.</h5>
 						<p class="mb-3">Wherein the 3rd District Representative Dr. George T. Hofer, “The Founding Father” was appointed and later on elected as its <b>first Governor in 2001.</b></p>
 
-						<a class="btn primary-bg-color m-auto">Meet our Governor</a>
-						<a class="btn secondary-bg-color m-auto">Appointment Request</a>
+						<a class="btn third-bg-color text-white m-auto">Meet our Governor</a>
+						<a class="btn third-bg-color text-white m-auto">Appointment Request</a>
 					</div>
 				</div>
 				<div id="feat-present-slick-slider" class="col-lg-6 m-auto">

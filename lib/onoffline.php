@@ -1,0 +1,5 @@
+<?php 
+
+	$onlineornot = 0;
+	
+?>

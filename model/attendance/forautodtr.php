@@ -133,44 +133,11 @@
 								$daynamehjh = Trim("n/a");
 							}
 
-							$qry_insert_subdtr = "INSERT INTO employee_dtr_sub_tbl SET 
-								agency_code=:agencycode, 
-								agency_name=:agencyname, 
-								emp_idcode=:empidcode, 
-								dtrcode=:dtrodex, 
-								nameday=:daynamehjh, 
-								dayno=:dayondtr, 
-								monthno=:monthdtr, 
-								monthname=:monthname, 
-								yearno=:yrdtr, 
-								emp_name=:empnamez, 
-								bio_location=:biolocationz, 
-								bio_no=:bionoz, 
-								amtimein=:amtimeinz, 
-								amtimeout=:amtimeoutz, 
-								pmtimein=:pmtimeinz, 
-								pmtimeout=:pmtimeoutz
-							";
-							
-							$stmt_insert_subdtr = $cnn->prepare($qry_insert_subdtr);
-							$stmt_insert_subdtr->bindParam(':agencycode', $agencycode);
-							$stmt_insert_subdtr->bindParam(':agencyname', $agencyname);
-							$stmt_insert_subdtr->bindParam(':empidcode', $empidcodett);
-							$stmt_insert_subdtr->bindParam(':dtrodex', $dtrCodex);
-							$stmt_insert_subdtr->bindParam(':dayondtr', $dayondtr);
-							$stmt_insert_subdtr->bindParam(':daynamehjh', $daynamehjh);
-							$stmt_insert_subdtr->bindParam(':monthdtr', $monthdtr);
-							$stmt_insert_subdtr->bindParam(':monthname', $monthName);
-							$stmt_insert_subdtr->bindParam(':yrdtr', $yrdtr);
-							$stmt_insert_subdtr->bindParam(':empnamez', $empnamez);
-							$stmt_insert_subdtr->bindParam(':biolocationz', $biolocationz);
-							$stmt_insert_subdtr->bindParam(':bionoz', $bionoz);
-
-							$stmt_insert_subdtr->bindParam(':amtimeinz', $amtimeinz);
-							$stmt_insert_subdtr->bindParam(':amtimeoutz', $amtimeoutz);
-							$stmt_insert_subdtr->bindParam(':pmtimeinz', $pmtimeinz);
-							$stmt_insert_subdtr->bindParam(':pmtimeoutz', $pmtimeoutz);
-							$stmt_insert_subdtr->execute();
+							require_once "model/employee/setcurrentemployee.php";
+							require_once "model/employee_dtr_sub/index.php";
+							$autoDTRatEmp = new employeeDTRSub();
+							$gpsinlocationqw = trim($_SESSION["gpsinlocation"]);
+							$autoDTRatEmp->autodtr_employeeDTRSub($agencycodecc,$agencynamecc,$empidcodecc,$dtrCodex,$daynameloop,$dayondtr,$monthdtr,$monthName,$yrdtr,$empnamecc,$biolocationcc,$bionocc,$amtimeinz,$amtimeoutz,$pmtimeinz,$pmtimeoutz,$gpsinlocationqw,$gpsinlocationqw,$gpsinlocationqw,$gpsinlocationqw,$allowedotcc);
 
 							$dayondtr++;
 						}

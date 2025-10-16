@@ -51,7 +51,7 @@
 								</li>
 
 								<li class="nav-item">
-									<a class="nav-link" href="<?php echo trim($domainhome); ?>#">Services</a>
+									<a class="nav-link" href="<?php echo trim($domainhome); ?>#services">Services</a>
 								</li>
 
 								<li class="nav-item dropdown">
@@ -124,15 +124,15 @@
 								</li>
 
 								<li class="nav-item">
-									<a class="nav-link" href="<?php echo trim($domainhome); ?>">Testimonials</a>
+									<a class="nav-link" href="<?php echo trim($domainhome); ?>#testimonials">Testimonials</a>
 								</li>
 
 								<li class="nav-item">
-									<a class="nav-link" href="<?php echo trim($domainhome); ?>">About</a>
+									<a class="nav-link" href="<?php echo trim($domainhome); ?>#about">About</a>
 								</li>
 
 								<li class="nav-item">
-									<a class="nav-link" href="<?php echo trim($domainhome); ?>">Contact</a>
+									<a class="nav-link" href="<?php echo trim($domainhome); ?>#contact">Contact</a>
 								</li>
 						<?php
 							}
@@ -154,7 +154,7 @@
 									</li>
 
 									<li class="nav-item">
-										<a class="nav-link" href="<?php echo trim($domainhome); ?>/register" title="Register"><i class='fas fa-user-plus'></i></a>
+										<a class="nav-link" href="<?php echo trim($domainhome); ?>/signup" title="Register"><i class='fas fa-user-plus'></i></a>
 									</li>
 								</ul>
 						<?php 
@@ -173,7 +173,7 @@
 											<li><a class="dropdown-item" href="<?php echo trim($domainhome); ?>/#" title="Daily Accomplishment Report">Accomplishment</a></li>
 											<li><hr class="dropdown-divider"></li>
 											<li><a class="dropdown-item" href="<?php echo trim($domainhome); ?>/#">Personal Info. (PDS)</a></li>
-											<li><a class="dropdown-item" href="<?php echo trim($domainhome); ?>/#">Employee ID</a></li>
+											<li><a class="dropdown-item" href="<?php echo trim($domainhome); ?>/employee-id">Employee ID</a></li>
 											<li><a class="dropdown-item" href="<?php echo trim($domainhome); ?>/#">Work History</a></li>
 										</ul>
 									</li>
@@ -186,7 +186,8 @@
 							}
 						?>
 						<a class="btn py-0 my-auto d-mobile-none" href=""><i class='fas fa-sync text-light'></i></a>
-						<div id="google_translate_element" class="text-end"></div>
+
+						<?php if ($onlineornot==1) { echo '<div id="google_translate_element" class="text-end"></div>'; } ?>
 					</div>
 				</div>
 			</div>

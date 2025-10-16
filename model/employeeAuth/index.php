@@ -19,7 +19,7 @@
 						// Login the user
 						include_once "model/employee/index.php";
 
-						$gpsinlocation = trim($_POST["gpsInput"]);
+						$gpsinlocationgg = trim($_POST["gpsInput"]);
 
 						$empAuthnt = new employeeAcct();
 
@@ -37,7 +37,7 @@
 										echo 'Your Account is Disabled!';
 									echo '</div>';
 								} elseif ( $empAuthnt->list_verifiedee[$i] == 0 ) {
-									$_SESSION["gpsinlocation"] = $gpsinlocation;
+									$_SESSION["gpsinlocation"] = $gpsinlocationgg;
 
 									$_SESSION["agencycode"] = $empAuthnt->list_agencycodeee[$i];
 									$_SESSION["agencyname"] = $empAuthnt->list_agencynameee[$i];
@@ -163,7 +163,7 @@
 									echo 'Your Account is Disabled!';
 								echo '</div>';
 							} elseif ( $empAuthnt->list_verifiedee[$i] == 0 ) {
-								$_SESSION["gpsinlocation"] = $gpsinlocation;
+								$_SESSION["gpsinlocation"] = $empAuthnt->list_officegpslocationee[$i];
 
 								$_SESSION["agencycode"] = $empAuthnt->list_agencycodeee[$i];
 								$_SESSION["agencyname"] = $empAuthnt->list_agencynameee[$i];

@@ -5,6 +5,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="">
 	<meta name="author" content="">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Expires" content="<?php echo trim(isset($the_expires) ? $the_expires : null); ?>">
 	<meta http-equiv="refresh" content="<?php echo trim(isset($the_refresh) ? $the_refresh : null); ?>">
 	<title><?php echo trim(isset($the_htitle) ? $the_htitle : 'eSibugayPH'); ?></title>
 	<link rel="icon" type="image/png" href="<?php echo trim($domainhome).'/assets/media/favicon.png'; ?>">
@@ -19,14 +21,12 @@
 	<link rel="stylesheet" href="<?php echo trim($domainhome); ?>/assets/css/style.css">
 	<style>
 		.primary-bg-color { background-color: #ffeae6; }
-		.primary-bg-color-light { background-color: rgb(255 234 230 / 78%); }
+		.primary-bg-color-light { background-color: rgb(255 255 255 / 70%); }
 		.secondary-bg-color { background-color: #ff8266; }
 		.third-bg-color { background-color: #ffa28d; }
 		.second-last-bg-color { background-color: #3c302a; }
 		.last-bg-color { background-color: #2d241f; }
-
 		.txt-color-primary { color: #ff8266; }
-
 		.btn.third-bg-color:hover { background-color: #ff8266; }
 	</style>
 	<script src="<?php echo trim($domainhome); ?>/assets/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
@@ -36,6 +36,7 @@
 	<script src="<?php echo trim($domainhome); ?>/assets/datatables/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 	<script src="<?php echo trim($domainhome); ?>/assets/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
 	<script src="<?php echo trim($domainhome); ?>/assets/ajax/libs/particle-animate/1.0.0/js/particle-animate.js"></script>
+	<script src="<?php echo trim($domainhome); ?>/assets/js/functions.js"></script>
 </head>
 
 <body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="50">

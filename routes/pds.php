@@ -4,6 +4,8 @@
 	include_once "lib/env.php";
 	include_once "lib/function.php";
 	$the_htitle = "Personal Data Sheet";
+	$the_refresh = null;
+	$the_expires = null;
 	include_once "app/theme/{$theme}/template-part/header.php";
 	include_once "app/theme/{$theme}/template-part/navbar.php";
 	include_once "app/views/pds/index.php";

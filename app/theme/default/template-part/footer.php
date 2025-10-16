@@ -1,5 +1,5 @@
 
-	<footer class="sticky-bottom w-100 last-bg-color" style="z-index: 1">
+	<footer class="position-fixed bottom-0 mb-0 w-100 last-bg-color" style="z-index: 1">
 		<?php
 			if (empty($_SESSION["username"]) || empty($_SESSION["ulevel"]) || empty($_SESSION["uposition"]) || empty($_SESSION["xtown"]) || empty($_SESSION["distno"]) || empty($_SESSION["gcodezip"])) {
 		?>

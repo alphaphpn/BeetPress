@@ -147,7 +147,7 @@ function PwHideShow2() {
 
 function fnUpDateTime() {
 	let currentTime = new Date();
-	let currentTimeMillis = currentTime.getTime(); // milliseconds
+	// let currentTime = currentTimeX.toLocaleString('en-US', { timeZone: 'Asia/Manila' });
 	let currentUTCTime = currentTime.toUTCString();
 
 	const xmonthz = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];

@@ -1,62 +1,16 @@
 <?php 
 
 	require_once "lib/session-attendance.php";
+	$empidcodeNow = isset($_SESSION["empidcode"]) ? $_SESSION["empidcode"] : null;
 
-	if ($_SESSION["shiftstatus"]==1) {
+	require_once "model/employee/setcurrentemployee.php";
+
+	if ( $shiftstatuscc == 1 ) {
 		require_once "model/attendance/forautodtr.php";
 	}
 
-	$allowedotjk = isset($_SESSION["allowedot"]) ? $_SESSION["allowedot"] : null;
+	$allowedotjk = isset($allowedotcc) ? $allowedotcc : null;
 
-	try {
-		require_once "lib/env.php";
-
-		$cnn = null;
-
-		$cnn = new PDO("mysql:host={$host};dbname={$db}", $uname, $pw);
-		$cnn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-		$empidcodeNow = trim($_SESSION["empidcode"]);
-		$yrdtrNow = trim(date("Y"));
-		$monthdtrNow = trim(date("m"));
-		$daynumberdtrNow = trim(number_format(date("d")));
-
-		$qryNowSubDTREmployee = "SELECT * FROM employee_dtr_sub_tbl WHERE 
-			emp_idcode=:empidcodenow AND 
-			yearno=:yrdtrnow AND 
-			monthno=:monthdtrnow AND 
-			dayno=:daynumberdtrnow 
-			LIMIT 1
-		";
-
-		$stmtNowSubDTREmployee = $cnn->prepare($qryNowSubDTREmployee);
-		$stmtNowSubDTREmployee->bindValue(':empidcodenow', $empidcodeNow);
-		$stmtNowSubDTREmployee->bindValue(':yrdtrnow', $yrdtrNow);
-		$stmtNowSubDTREmployee->bindValue(':monthdtrnow', $monthdtrNow);
-		$stmtNowSubDTREmployee->bindValue(':daynumberdtrnow', $daynumberdtrNow);
-
-		$stmtNowSubDTREmployee->execute();
-
-		$countNowSubDTREmployee = $stmtNowSubDTREmployee->rowCount();
-
-		if ($countNowSubDTREmployee > 0) {
-			foreach ($stmtNowSubDTREmployee as $rowNowSubDTREmployee) {
-				$amtimeinNow = $rowNowSubDTREmployee['amtimein'];
-				$amtimeoutNow = $rowNowSubDTREmployee['amtimeout'];
-				$pmtimeinNow = $rowNowSubDTREmployee['pmtimein'];
-				$pmtimeoutNow = $rowNowSubDTREmployee['pmtimeout'];
-			}
-		}
-
-		if ( isset($_POST['delpmoutwon']) ) {
-			
-		}
-
-	} catch (PDOException $error) {
-		$err_msg = $error->getMessage();
-		echo "<p>Error: {$err_msg}</p>";
-		die;
-	}
 ?>
 
 	<section class="position-relative bg-light w-100 vh-86 pt-3 pb-5 clearfix">
@@ -65,6 +19,7 @@
 				<div class="text-center mb-3" style="width: fit-content;">
 					<h4 class="text-center mobile-font-size-12">Your Work Attendance</h4>
 					<hr class="y-axis-margin-0-nobile">
+					<?php require_once "model/employee_dtr_sub/getonedaytimedtr.php"; ?>
 				</div>
 			</div>
 
@@ -79,12 +34,26 @@
 								<div class="row">
 									<div class="col-sm-6">
 										<?php 
-											if ( empty($amtimeinNow) && empty($amtimeoutNow) ) { 
-										?>
-											<button type="submit" id="emp-time-am-in" name="emp-time-am-in" class="btn btn-lg third-bg-color text-white w-100 my-1">Time IN</button>
-										<?php 
-											} elseif ( empty($amtimeinNow) && $amtimeoutNow ) {
+											if ( $shiftstatuscc == 5 ) {
 
+											} elseif ( $onlineornot == 1 && $shiftstatuscc == null ) {
+
+											} elseif ( $onlineornot == 1 && $shiftstatuscc == 0 ) {
+
+											} elseif ( $onlineornot == 1 && $shiftstatuscc == 3 ) {
+
+											} elseif ( $onlineornot == 1 && $shiftstatuscc == 4 ) {
+
+											} elseif ( $onlineornot == 1 && $shiftstatuscc == 5 ) {
+
+											} else {
+												if ( empty($amtimeinNow) && empty($amtimeoutNow) ) { 
+										?>
+													<button type="submit" id="emp-time-am-in" name="emp-time-am-in" class="btn btn-lg third-bg-color text-white w-100 my-1">Time IN</button>
+										<?php 
+												} elseif ( empty($amtimeinNow) && $amtimeoutNow ) {
+
+												}
 											}
 										?>
 									</div>
@@ -96,9 +65,6 @@
 											<button type="submit" id="emp-time-am-out" name="emp-time-am-out" class="btn btn-lg third-bg-color text-white w-100 my-1">Time OUT</button>
 										<?php 
 											}
-										?>
-
-										<?php 
 
 											if ( empty($allowedotjk) ) {
 
@@ -123,7 +89,7 @@
 								</div>
 
 								<div class="row">
-									<div class="col"><?php include_once "model/attendance/index.php"; ?></div>
+									<div class="col text-center"><?php include_once "model/attendance/index.php"; ?></div>
 								</div>
 							</fieldset>
 						</form>
@@ -134,29 +100,53 @@
 								<div class="row">
 									<div class="col-sm-6">
 										<?php 
-											if ( empty($pmtimeinNow) && empty($pmtimeoutNow) ) { 
-										?>
-											<button type="submit" id="emp-time-pm-in" name="emp-time-pm-in" class="btn btn-lg third-bg-color text-white w-100 my-1">Time IN</button>
-										<?php 
-											} elseif ( empty($pmtimeinNow) && $pmtimeoutNow ) {
+											if ( $onlineornot == 1 && $shiftstatuscc == null ) {
 
+											} elseif ( $onlineornot == 1 && $shiftstatuscc == 0 ) {
+
+											} elseif ( $onlineornot == 1 && $shiftstatuscc == 3 ) {
+
+											} elseif ( $onlineornot == 1 && $shiftstatuscc == 4 ) {
+
+											} elseif ( $onlineornot == 1 && $shiftstatuscc == 5 ) {
+
+											} else {
+												if ( empty($pmtimeinNow) && empty($pmtimeoutNow) ) {
+										?>
+													<button type="submit" id="emp-time-pm-in" name="emp-time-pm-in" class="btn btn-lg third-bg-color text-white w-100 my-1">Time IN</button>
+										<?php 
+												} elseif ( empty($pmtimeinNow) && $pmtimeoutNow ) {
+
+												}
 											}
 										?>
 									</div>
 
 									<div class="col-sm-6">
 										<?php 
-											if ( empty($pmtimeoutNow) ) { 
+											if ( $onlineornot == 1 && $shiftstatuscc == null ) {
+
+											} elseif ( $onlineornot == 1 && $shiftstatuscc == 0 ) {
+
+											} elseif ( $onlineornot == 1 && $shiftstatuscc == 3 ) {
+
+											} elseif ( $onlineornot == 1 && $shiftstatuscc == 4 ) {
+
+											} elseif ( $onlineornot == 1 && $shiftstatuscc == 5 ) {
+
+											} else {
+												if ( empty($pmtimeoutNow) ) { 
 										?>
-											<button type="submit" id="emp-time-pm-out" name="emp-time-pm-out" class="btn btn-lg third-bg-color text-white w-100 my-1">Time OUT</button>
+													<button type="submit" id="emp-time-pm-out" name="emp-time-pm-out" class="btn btn-lg third-bg-color text-white w-100 my-1">Time OUT</button>
 										<?php 
+												}
 											}
 										?>
 									</div>
 								</div>
 
 								<div class="row">
-									<div class="col"><?php include_once "model/attendance/index.php"; ?></div>
+									<div class="col text-center"><?php include_once "model/attendance/index.php"; ?></div>
 								</div>
 							</fieldset>
 						</form>
@@ -187,7 +177,7 @@
 
 							<tbody>
 								<?php 
-									if ($countNowSubDTREmployee > 0) {
+									if ( $empDTRSub->Search_employeeDTRSub($empidcodeNow,$yrdtrNow,$monthdtrNow,$daynumberdtrNow) ) {
 								?>
 									<form method="post">
 										<tr align="center">
@@ -243,18 +233,27 @@
 										</tr>
 									</form>
 								<?php 
-									} else {
-								?>
-									<tr align="center">
-										<td colspan="4">No time registered</td>
-									</tr>
-								<?php 
 									}
 								?>
 							</tbody>
 
 							<tfoot>
-								<tr align="center"><td colspan="4"><a href="//google.com/maps/dir/7.7881218435487245,122.57361312438182/<?php echo trim($_SESSION["gpsinlocation"]); ?>/@7.7881218435487245,122.57361312438182,19z/data=!4m4!4m3!1m0!1m1!4e1" target="_blank" class="text-decoration-none">Your Location</a></td></tr>
+								<tr align="center">
+									<td colspan="4">
+										<?php 
+											if ( $onlineornot == 1 ) {
+										?>
+												<script src="assets/js/getyourgps.js"></script>
+												<div id="GpsErrMassage" class="text-primary cursor-pointer">Your Location</div>
+										<?php 	
+											} else {
+										?>
+												<div class="text-info">Your on a Local Network System</div>
+										<?php 
+											}
+										?>
+									</td>
+								</tr>
 							</tfoot>
 						</table>
 					</div>
@@ -306,10 +305,9 @@
 		}
 
 		function fnTimeDateEmp() {
-			let currentTimeX = new Date();
-			let currentTime = currentTimeX.toLocaleString('en-US', { timeZone: 'Asia/Manila' });
+			let currentTime = new Date();
+			// let currentTime = currentTimeX.toLocaleString('en-US', { timeZone: 'Asia/Manila' });
 			let currentTimeMillis = currentTime.getTime(); // milliseconds
-			let currentUTCTime = currentTime.toUTCString();
 
 			const xmonthz = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 			const xdayzname = ["Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -345,8 +343,8 @@
 		let currMin2 = currentTime2.getMinutes();
 		let currHour2 = currentTime2.getHours(); // 24hour
 
-		combiHrz = currHour2 + "" + currMin2;
-		// console.log(currHour2+" | "+currMin2.toString().padStart(2, '0'));
+		combiHrz = currHour2 + "" + currMin2.toString().padStart(2, '0');
+		console.log(combiHrz);
 		
 		if (combiHrz > 1230) {
 			$('#pm-time-atttlog').removeClass( "d-none" );

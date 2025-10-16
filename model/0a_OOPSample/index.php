@@ -42,6 +42,18 @@
 				return $data;
 			}
 
+			// Return Count Record base on Database Table Fieldnames
+			public function count_myCRUD() {
+				$this->clearlist_myCRUD();
+				$this->getConnection();
+				$selectQuery = "SELECT * FROM xxxx_tbl";
+				$stmt = $this->cnn->prepare($selectQuery);
+				$stmt->execute();
+				$cntRcrd = $stmt->rowCount();
+
+				return $cntRcrd;
+			}
+
 			// Create or insert new data on the Database Table
 			public function insert_myCRUD($xxxx,$xxxx2) {
 				$this->clearlist_myCRUD();

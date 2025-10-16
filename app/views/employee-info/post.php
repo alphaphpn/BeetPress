@@ -1,5 +1,5 @@
 
-	<div class="card box-shadow mb-3 ">
+	<div class="card box-shadow mb-3 d-none">
 		<div class="card-header">
 			<div class="p-4">
 				<table class="memo-post-header">

@@ -137,6 +137,19 @@
 	}
 	// Password Encryptor - End
 
+	function suggestedPassWord() {
+		$encryp_symbol = substr(str_shuffle('~!@^*#</>'), 0, 1);
+		$encryp_capital = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 1);
+		$encryp_small = substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, 5);
+		$encryp_symbol2 = substr(str_shuffle('~!@^*#</>'), 0, 1);
+		$encryp_numbr = substr(str_shuffle('0123456789'), 0, 4);
+		$encryp_symbol3 = substr(str_shuffle('~!@^*#</>'), 0, 1);
+
+		$encryptforpw = $encryp_symbol.$encryp_capital.$encryp_small.$encryp_symbol2.$encryp_numbr.$encryp_symbol3;
+		
+		return $encryptforpw;
+	}
+
 	function randomCodeyuv() {
 		$permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 		return substr(str_shuffle($permitted_chars), 0, 11);
@@ -145,6 +158,32 @@
 	function randomCodexz() {
 		$permitted_chars2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 		return substr(str_shuffle($permitted_chars2), 0, 11);
+	}
+
+	function randomNumbr6() {
+		$permitted_chars1 = '123456789';
+		$permitted_chars2 = '0123456789';
+		$combine = trim(substr(str_shuffle($permitted_chars1), 0, 1)).trim(substr(str_shuffle($permitted_chars2), 0, 6));
+		return $combine;
+	}
+
+	function randomNumbr8() {
+		$permitted_chars1 = '123456789';
+		$permitted_chars2 = '0123456789';
+		$combine = trim(substr(str_shuffle($permitted_chars1), 0, 1)).trim(substr(str_shuffle($permitted_chars2), 0, 7));
+		return $combine;
+	}
+
+	function randomNumbr11() {
+		$permitted_chars1 = '123456789';
+		$permitted_chars2 = '0123456789';
+		$combine = trim(substr(str_shuffle($permitted_chars1), 0, 1)).trim(substr(str_shuffle($permitted_chars2), 0, 10));
+		return $combine;
+	}
+
+	function fn_WifiPW() {
+		$permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		return substr(str_shuffle($permitted_chars), 0, 8);
 	}
 
 ?>

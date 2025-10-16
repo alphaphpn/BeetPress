@@ -1,5 +1,5 @@
 
-	<section id="services" class="position-relative w-100 h-100 pt-5 pb-5 clearfix">
+	<section id="services" class="position-relative primary-bg-color-light w-100 h-100 pt-5 pb-5 clearfix">
 		<div class="container">
 			<div class="w-100 text-center d-flex justify-content-center">
 				<div class="text-center mb-3" style="width: fit-content;">

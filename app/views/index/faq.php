@@ -1,5 +1,5 @@
 
-	<section id="faq" class="position-relative bg-light w-100 h-100 pt-5 pb-5 clearfix">
+	<section id="faq" class="position-relative w-100 h-100 pt-5 pb-5 clearfix">
 		<div class="container">
 			<div class="w-100 text-center d-flex justify-content-center">
 				<div class="text-center mb-3" style="width: fit-content;">
@@ -12,7 +12,7 @@
 				<div class="slideanim col m-auto">
 					<div class="position-relative clearfix">
 						<div id="accordion">
-							<div class="card border-0">
+							<div class="card border-0 bg-color-transp">
 								<div class="card-header">
 									<a class="btn w-100 text-start" data-bs-toggle="collapse" href="#collapseOne">
 										How do I contact the Provincial Governor?
@@ -25,7 +25,7 @@
 								</div>
 							</div>
 
-							<div class="card border-0">
+							<div class="card border-0 bg-color-transp">
 								<div class="card-header">
 									<a class="collapsed btn w-100 text-start" data-bs-toggle="collapse" href="#collapseTwo">
 										Where can I find information about provincial government programs and services?
@@ -38,7 +38,7 @@
 								</div>
 							</div>
 							
-							<div class="card border-0">
+							<div class="card border-0 bg-color-transp">
 								<div class="card-header">
 									<a class="collapsed btn w-100 text-start" data-bs-toggle="collapse" href="#collapseThree">
 										How do I apply for a job with the provincial government?
@@ -51,7 +51,7 @@
 								</div>
 							</div>
 
-							<div class="card border-0">
+							<div class="card border-0 bg-color-transp">
 								<div class="card-header">
 									<a class="collapsed btn w-100 text-start" data-bs-toggle="collapse" href="#collapseFour">
 										How can I participate in local government planning and decision-making?

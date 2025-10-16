@@ -96,11 +96,23 @@
 	$encryp_numbr = substr(str_shuffle('0123456789'), 0, 4);
 	$encryp_symbol3 = substr(str_shuffle('~!@^*#</>'), 0, 1);
 
-	echo "<br><br>";
+	echo "<br>";
 
 	$encryptforpw = $encryp_symbol.$encryp_capital.$encryp_small.$encryp_symbol2.$encryp_numbr.$encryp_symbol3;
 	$md5_pw = md5($encryptforpw);
 
 	echo "Temporary Password: ".$encryptforpw."<br>";
 	echo "MD5: ".$md5_pw;
+	echo "<br>";
+
+	echo "--------------------------------";
 	echo "<br><br>";
+
+	include_once "../../../lib/function.php";
+	echo randomNumbr8();
+
+	echo "<br><br>";
+	echo fn_WifiPW();
+
+	echo "<br><br>";
+	echo md5(fn_WifiPW());

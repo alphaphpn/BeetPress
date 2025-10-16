@@ -7,6 +7,9 @@
 		}
 	} elseif ( isset($_SESSION["empidcode"]) && isset($_SESSION["biono"]) && isset($_SESSION["empname"]) && isset($_SESSION["employeeactivated"]) ) {
 		echo '<script>window.open("home","_self");</script>';
+	} elseif ( isset($_GET['employeeID']) || isset($_GET['pinInput']) ) {
+		$ehemploid = trim($_GET['employeeID']);
+		$ehempincoder = trim($_GET['pinInput']);
 	}
 
 	include_once "lib/env.php";
@@ -31,14 +34,14 @@
 								<form id="empLogin" method="post" class="needs-validation" novalidate>
 									<div class="mb-3">
 										<label for="emailInput" class="form-label">Employee ID</label>
-										<input type="number" min="10000000" max="99999999" class="form-control w-100" id="employeeID" name="employeeID" aria-describedby="employeeHelp" required>
+										<input type="number" value="<?php echo trim($ehemploid); ?>" min="10000000" max="99999999" class="form-control w-100" id="employeeID" name="employeeID" aria-describedby="employeeHelp" required>
 										<div class="valid-feedback">Valid.</div>
 										<div class="invalid-feedback">Invalid Employee ID.</div>
 									</div>
 
 									<div class="mb-3">
 										<label for="passwordInput" class="form-label">PIN</label>
-										<input type="number" min="100000" max="999999" class="form-control w-100" id="pinInput" name="pinInput" required>
+										<input type="number" value="<?php echo trim($ehempincoder); ?>" min="100000" max="999999" class="form-control w-100" id="pinInput" name="pinInput" required>
 										<div class="valid-feedback">Valid.</div>
 										<div class="invalid-feedback">Invalid PIN Code.</div>
 									</div>
@@ -59,9 +62,13 @@
 										<script src="assets/js/getyourgps.js"></script>
 										<div id="GpsErrMassage" class="text-primary cursor-pointer">Your Location</div>
 										<input type="text" class="form-control w-100 d-none" id="gpsInput" name="gpsInput" required>
-										<div class="invalid-feedback">Please turn ON your GPS.</div>
+										<div class="invalid-feedback">Please turn ON your GPS and make sure to have an internet connection.</div>
 									</div>
 								<?php 	
+									} else {
+								?>
+										<div class="text-info">Your on a Local Network System</div>
+								<?php 
 									}
 								?>
 								</form>
