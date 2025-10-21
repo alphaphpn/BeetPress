@@ -23,6 +23,7 @@
 				$empidcodeee,
 				$pinwordee,
 				$hrempidee,
+				$bioloclabelee,
 				$biolocationee,
 				$bionoee,
 				$empnameee,
@@ -110,6 +111,7 @@
 				$list_pinwordee,
 				$list_hrempidee,
 				$list_biolocationee,
+				$list_bioloclabelee,
 				$list_bionoee,
 				$list_empnameee,
 				$list_genderee,
@@ -197,6 +199,7 @@
 				$this->list_pinwordee = array();
 				$this->list_hrempidee = array();
 				$this->list_biolocationee = array();
+				$this->list_bioloclabelee = array();
 				$this->list_bionoee = array();
 				$this->list_empnameee = array();
 				$this->list_genderee = array();
@@ -285,6 +288,7 @@
 				$this->list_pinwordee = array();
 				$this->list_hrempidee = array();
 				$this->list_biolocationee = array();
+				$this->list_bioloclabelee = array();
 				$this->list_bionoee = array();
 				$this->list_empnameee = array();
 				$this->list_genderee = array();
@@ -359,60 +363,196 @@
 			}
 
 			// Create or insert new data on the Database Table
-			public function insert_Employee($agencycode,$agencyname,$nickname,$empnameforid,$officenameforid,$designationforid,$profileid,$uid,$empidcode,$pinword,$hrempid,$biolocation,$biono,$empname,$gender,$birthday,$officeid,$officecode,$officename,$officetitle,$officeabrv,$oldofficeabrv,$officegpslocation,$headofficer,$headtitle,$authhead,$authtitle,$authdescription,$yearemployed,$typeemployeeno,$typeemployeeabrv,$typeemployee,$verified,$activated,$worklocation,$shiftstatus,$timeeditable,$prioritydtr,$timeeditablevalue,$allowedot,$position,$designation,$mphone,$empemail,$designationat,$createdby,$modifiedby,$) {
+			public function insert_Employee($agencycode,$agencyname,$nickname,$empnameforid,$officenameforid,$designationforid,$profileid,$uid,$empidcode,$pinword,$hrempid,$biolocation,$biono,$empname,$gender,$birthday,$officeid,$officecode,$officename,$officetitle,$officeabrv,$oldofficeabrv,$officegpslocation,$headofficer,$headtitle,$authhead,$authtitle,$authdescription,$yearemployed,$typeemployeeno,$typeemployeeabrv,$typeemployee,$verified,$activated,$worklocation,$shiftstatus,$timeeditable,$prioritydtr,$timeeditablevalue,$allowedot,$position,$designation,$mphone,$empemail,$designationat,$createdby,$modifiedby,$bioloclabel,$imgdataempl) {
 				$this->clearlist_employeeAcct();
 				$this->getConnection();
 
-				$agencycode = htmlspecialchars(trim($agencycode));
-				$agencyname = htmlspecialchars(trim($agencyname));
-				$nickname = htmlspecialchars(trim($nickname));
-				$empnameforid = htmlspecialchars(trim($empnameforid));
-				$officenameforid = htmlspecialchars(trim($officenameforid));
-				$designationforid = htmlspecialchars(trim($designationforid));
-				$profileid = htmlspecialchars(trim($profileid));
-				$uid = htmlspecialchars(trim($uid));
-				$empidcode = htmlspecialchars(trim($empidcode));
-				$pinword = md5(trim($pinword));
-				$hrempid = htmlspecialchars(trim($hrempid));
-				$biolocation = htmlspecialchars(trim($biolocation));
-				$biono = htmlspecialchars(trim($biono));
-				$empname = htmlspecialchars(trim($empname));
-				$gender = htmlspecialchars(trim($gender));
+				$agencycode = trim(htmlspecialchars(trim($agencycode)));
+				$agencyname = trim(htmlspecialchars(trim($agencyname)));
+				$nickname = trim(htmlspecialchars(trim($nickname)));
+				$empnameforid = trim(htmlspecialchars(trim($empnameforid)));
+				$officenameforid = trim(htmlspecialchars(trim($officenameforid)));
+				$designationforid = trim(htmlspecialchars(trim($designationforid)));
+				$profileid = trim(htmlspecialchars(trim($profileid)));
+				$uid = trim(htmlspecialchars(trim($uid)));
+				$empidcode = trim(htmlspecialchars(trim($empidcode)));
+				$pinword = trim(md5(trim($pinword)));
+				$hrempid = trim(htmlspecialchars(trim($hrempid)));
+				$bioloclabel = trim(htmlspecialchars(trim($bioloclabel)));
+				$biolocation = trim(htmlspecialchars(trim($biolocation)));
+				$biono = trim(htmlspecialchars(trim($biono)));
+				$empname = trim(htmlspecialchars(trim($empname)));
+				$gender = trim(htmlspecialchars(trim($gender)));
 				$birthday = date('Y-m-d', $birthday);
-				$empage = date("Y") - date('Y', $birthday);
-				$officeid = htmlspecialchars(trim($officeid));
-				$officecode = htmlspecialchars(trim($officecode));
-				$officename = htmlspecialchars(trim($officename));
-				$officetitle = htmlspecialchars(trim($officetitle));
-				$officeabrv = htmlspecialchars(trim($officeabrv));
-				$oldofficeabrv = htmlspecialchars(trim($oldofficeabrv));
-				$officegpslocation = htmlspecialchars(trim($officegpslocation));
-				$headofficer = htmlspecialchars(trim($headofficer));
-				$headtitle = htmlspecialchars(trim($headtitle));
-				$authhead = htmlspecialchars(trim($authhead));
-				$authtitle = htmlspecialchars(trim($authtitle));
-				$authdescription = htmlspecialchars(trim($authdescription));
+				$officeid = trim(htmlspecialchars(trim($officeid)));
+				$officecode = trim(htmlspecialchars(trim($officecode)));
+				$officename = trim(htmlspecialchars(trim($officename)));
+				$officetitle = trim(htmlspecialchars(trim($officetitle)));
+				$officeabrv = trim(htmlspecialchars(trim($officeabrv)));
+				$oldofficeabrv = trim(htmlspecialchars(trim($oldofficeabrv)));
+				$officegpslocation = trim(htmlspecialchars(trim($officegpslocation)));
+				$headofficer = trim(htmlspecialchars(trim($headofficer)));
+				$headtitle = trim(htmlspecialchars(trim($headtitle)));
+				$authhead = trim(htmlspecialchars(trim($authhead)));
+				$authtitle = trim(htmlspecialchars(trim($authtitle)));
+				$authdescription = trim(htmlspecialchars(trim($authdescription)));
+				$yearemployed = trim(htmlspecialchars(trim($yearemployed)));
 				$yearcalc = date("Y") - $yearemployed;
-				$typeemployeeno = htmlspecialchars(trim($typeemployeeno));
-				$typeemployeeabrv = htmlspecialchars(trim($typeemployeeabrv));
-				$typeemployee = htmlspecialchars(trim($typeemployee));
-				$worklocation = htmlspecialchars(trim($worklocation));
-				$position = htmlspecialchars(trim($position));
-				$designation = htmlspecialchars(trim($designation));
-				$mphone = htmlspecialchars(trim($mphone));
-				$empemail = htmlspecialchars(trim($empemail));
-				$designationat = htmlspecialchars(trim($designationat));
-				$createdby = htmlspecialchars(trim($createdby));
-				$modifiedby = htmlspecialchars(trim($modifiedby));
+				$typeemployeeno = trim(htmlspecialchars(trim($typeemployeeno)));
+				$typeemployeeabrv = trim(htmlspecialchars(trim($typeemployeeabrv)));
+				$typeemployee = trim(htmlspecialchars(trim($typeemployee)));
+				$verified = trim(htmlspecialchars(trim($verified)));
+				$activated = trim(htmlspecialchars(trim($activated)));
+				$worklocation = trim(htmlspecialchars(trim($worklocation)));
+				$shiftstatus = trim(htmlspecialchars(trim($shiftstatus)));
+				$timeeditable = trim(htmlspecialchars(trim($timeeditable)));
+				$prioritydtr = trim(htmlspecialchars(trim($prioritydtr)));
+				$timeeditablevalue = trim(htmlspecialchars(trim($timeeditablevalue)));
+				$allowedot = trim(htmlspecialchars(trim($allowedot)));
+				$position = trim(htmlspecialchars(trim($position)));
+				$designation = trim(htmlspecialchars(trim($designation)));
+				$mphone = trim(htmlspecialchars(trim($mphone)));
+				$empemail = trim(htmlspecialchars(trim($empemail)));
+				$designationat = trim(htmlspecialchars(trim($designationat)));
+				$createdby = trim(htmlspecialchars(trim($createdby)));
+				$modifiedby = trim(htmlspecialchars(trim($modifiedby)));
+
+				$imgdataemplx = trim(htmlspecialchars(trim($imgdataempl)));
 
 				$insertQuery = "INSERT INTO employee_tbl SET 
-					xxxx=:xxxx, 
-					xxxx2=:xxxx2
+					agency_code=:xagencycode, 
+					agency_name=:xagencyname, 
+					nickname=:xnickname, 
+					emp_name_forid=:xempnameforid, 
+					officename_forid=:xofficenameforid, 
+					designationforid=:xdesignationforid, 
+					profileid=:xprofileid, 
+					uid=:xuid, 
+					emp_idcode=:xempidcode, 
+					pinword=:xpinword, 
+					hr_emp_id=:xhrempid, 
+					bio_loc_label=:xbioloclabel, 
+					bio_location=:xbiolocation, 
+					bio_no=:xbiono, 
+					emp_name=:xempname, 
+					gender=:xgender, 
+					birthday=:xbirthday, 
+					officeid=:xofficeid, 
+					officecode=:xofficecode, 
+					officename=:xofficename, 
+					officetitle=:xofficetitle, 
+					officeabrv=:xofficeabrv, 
+					oldofficeabrv=:xoldofficeabrv, 
+					office_gps_location=:xofficegpslocation, 
+					headofficer=:xheadofficer, 
+					headtitle=:xheadtitle, 
+					auth_head=:xauthhead, 
+					auth_title=:xauthtitle, 
+					auth_description=:xauthdescription, 
+					year_employed=:xyearemployed, 
+					year_calc=:xyearcalc, 
+					type_employee_no=:xtypeemployeeno, 
+					type_employee_abrv=:xtypeemployeeabrv, 
+					type_employee=:xtypeemployee, 
+					verified=:xverified, 
+					activated=:xactivated, 
+					work_location=:xworklocation, 
+					shift_status=:xshiftstatus, 
+					time_editable=:xtimeeditable, 
+					priority_dtr=:xprioritydtr, 
+					time_editable_value=:xtimeeditablevalue, 
+					allowed_ot=:xallowedot, 
+					position=:xposition, 
+					designation=:xdesignation, 
+					mphone=:xmphone, 
+					empemail=:xempemail, 
+					designation_at=:xdesignationat, 
+					xdel=0, 
+					createdby=:xcreatedby, 
+					modifiedby=:xmodifiedby
 					";
 				$stmt = $this->cnn->prepare($insertQuery);
-				$stmt->bindParam(':xxxx', $xxxx);
-				$stmt->bindParam(':xxxx2', $xxxx2);
+				$stmt->bindParam(':xagencycode', $agencycode);
+				$stmt->bindParam(':xagencyname', $agencyname);
+				$stmt->bindParam(':xnickname', $nickname);
+				$stmt->bindParam(':xempnameforid', $empnameforid);
+				$stmt->bindParam(':xofficenameforid', $officenameforid);
+				$stmt->bindParam(':xdesignationforid', $designationforid);
+				$stmt->bindParam(':xprofileid', $profileid);
+				$stmt->bindParam(':xuid', $uid);
+				$stmt->bindParam(':xempidcode', $empidcode);
+				$stmt->bindParam(':xpinword', $pinword);
+				$stmt->bindParam(':xhrempid', $hrempid);
+				$stmt->bindParam(':xbioloclabel', $bioloclabel);
+				$stmt->bindParam(':xbiolocation', $biolocation);
+				$stmt->bindParam(':xbiono', $biono);
+				$stmt->bindParam(':xempname', $empname);
+				$stmt->bindParam(':xgender', $gender);
+				$stmt->bindParam(':xbirthday', $birthday);
+				$stmt->bindParam(':xofficeid', $officeid);
+				$stmt->bindParam(':xofficecode', $officecode);
+				$stmt->bindParam(':xofficename', $officename);
+				$stmt->bindParam(':xofficetitle', $officetitle);
+				$stmt->bindParam(':xofficeabrv', $officeabrv);
+				$stmt->bindParam(':xoldofficeabrv', $oldofficeabrv);
+				$stmt->bindParam(':xofficegpslocation', $officegpslocation);
+				$stmt->bindParam(':xheadofficer', $headofficer);
+				$stmt->bindParam(':xheadtitle', $headtitle);
+				$stmt->bindParam(':xauthhead', $authhead);
+				$stmt->bindParam(':xauthtitle', $authtitle);
+				$stmt->bindParam(':xauthdescription', $authdescription);
+				$stmt->bindParam(':xyearemployed', $yearemployed);
+				$stmt->bindParam(':xyearcalc', $yearcalc);
+				$stmt->bindParam(':xtypeemployeeno', $typeemployeeno);
+				$stmt->bindParam(':xtypeemployeeabrv', $typeemployeeabrv);
+				$stmt->bindParam(':xtypeemployee', $typeemployee);
+				$stmt->bindParam(':xverified', $verified);
+				$stmt->bindParam(':xactivated', $designation);
+				$stmt->bindParam(':xworklocation', $worklocation);
+				$stmt->bindParam(':xshiftstatus', $shiftstatus);
+				$stmt->bindParam(':xtimeeditable', $timeeditable);
+				$stmt->bindParam(':xprioritydtr', $mphone);
+				$stmt->bindParam(':xtimeeditablevalue', $empemail);
+				$stmt->bindParam(':xallowedot', $designationat);
+				$stmt->bindParam(':xposition', $createdby);
+				$stmt->bindParam(':xdesignation', $modifiedby);
+				$stmt->bindParam(':xmphone', $mphone);
+				$stmt->bindParam(':xempemail', $empemail);
+				$stmt->bindParam(':xdesignationat', $designationat);
+				$stmt->bindParam(':xcreatedby', $createdby);
+				$stmt->bindParam(':xmodifiedby', $modifiedby);
 				$stmt->execute();
+
+				echo '<div class="alert alert-info alert-dismissible fade show m-1">';
+					echo '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+					echo 'Employee Successfully Registered. You may try <a href="login">Login</a> Now!';
+				echo '</div>';
+
+				$employeeidfinale = trim($empidcode);
+				$imgdata = trim(htmlspecialchars(trim($imgdataemplx)));
+				if (file_exists("lib/employee-img-saved.php")) {
+					require_once "lib/employee-img-saved.php";
+				} elseif (file_exists("../../lib/employee-img-saved.php")) {
+					require_once "../../lib/employee-img-saved.php";
+				}
+			}
+
+			// List of Designation
+			public function fn_ListDesignation() {
+				$this->clearlist_employeeAcct();
+				$this->getConnection();
+
+				$selectQuery = "SELECT * FROM employee_tbl GROUP BY designationforid ORDER BY designationforid ASC";
+				$stmt = $this->cnn->prepare($selectQuery);
+				$stmt->execute();
+
+				$cntRcrd = $stmt->rowCount();
+
+				if ($cntRcrd > 0) {
+					foreach ($stmt as $rwRcrd) {
+						$this->list_designationforidee[] = $rwRcrd['designationforid'];
+					}
+				}
 			}
 
 			// Search Employee using Employee ID
@@ -690,6 +830,28 @@
 					return true;
 				} else {
 					return false;
+				}
+			}
+
+			// Searching for Duplicate Biometric Number True/False
+			public function Search_employeeAcct_BioNmr($bioempidnmbr) {
+				$this->clearlist_employeeAcct();
+				$this->getConnection();
+				$bioempidnmbr = trim(htmlspecialchars($bioempidnmbr));
+
+				$selectQuery = "SELECT * FROM employee_tbl WHERE bio_no=:bioempidnmbr";
+				$stmt = $this->cnn->prepare($selectQuery);
+				$stmt->bindParam(':bioempidnmbr', $bioempidnmbr);
+				$stmt->execute();
+
+				$cntRcrd = $stmt->rowCount();
+
+				if ($cntRcrd > 0) {
+					return true;
+					// Record Found
+				} else {
+					return false;
+					// Record Not Found
 				}
 			}
 

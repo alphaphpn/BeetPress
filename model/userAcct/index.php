@@ -23,6 +23,7 @@
 				$zipcodegg,
 				$phonegg,
 				$emailgg,
+				$birthdategg,
 				$verifiedgg,
 				$ustatgg,
 				$ulevelgg,
@@ -52,6 +53,7 @@
 				$list_zipcodegg,
 				$list_phonegg,
 				$list_emailgg,
+				$list_birthdategg,
 				$list_verifiedgg,
 				$list_ustatgg,
 				$list_ulevelgg,
@@ -82,6 +84,7 @@
 				$this->list_zipcodegg = array();
 				$this->list_phonegg = array();
 				$this->list_emailgg = array();
+				$this->list_birthdategg = array();
 				$this->list_verifiedgg = array();
 				$this->list_ustatgg = array();
 				$this->list_ulevelgg = array();
@@ -113,6 +116,7 @@
 				$this->list_zipcodegg = array();
 				$this->list_phonegg = array();
 				$this->list_emailgg = array();
+				$this->list_birthdategg = array();
 				$this->list_verifiedgg = array();
 				$this->list_ustatgg = array();
 				$this->list_ulevelgg = array();
@@ -347,7 +351,7 @@
 			}
 
 			// Create or insert new data on the Database Table
-			public function insert_userAcct($agencycodegg,$agencynamegg,$uidgg,$profileidgg,$unamegg,$nicknamegg,$pwordgg,$countrygg,$countrycodegg,$zipcodegg,$phonegg,$emailgg,$verifiedgg,$ustatgg,$ulevelgg,$upositiongg,$imgdata,$createdby,$modifiedby,$msg) {
+			public function insert_userAcct($agencycodegg,$agencynamegg,$uidgg,$profileidgg,$unamegg,$nicknamegg,$pwordgg,$countrygg,$countrycodegg,$zipcodegg,$phonegg,$emailgg,$verifiedgg,$ustatgg,$ulevelgg,$upositiongg,$imgdata,$createdby,$modifiedby,$msg,$birthdategg) {
 				$this->clearlist_userAcct();
 				$this->getConnection();
 
@@ -363,6 +367,7 @@
 				$zipcodegg = htmlspecialchars(trim($zipcodegg));
 				$phonegg = htmlspecialchars(trim($phonegg));
 				$emailgg = htmlspecialchars(trim($emailgg));
+				$birthdategg = date('Y-m-d', $birthdategg);
 				$verifiedgg = htmlspecialchars(trim($verifiedgg));
 				$ustatgg = htmlspecialchars(trim($ustatgg));
 				$ulevelgg = htmlspecialchars(trim($ulevelgg));
@@ -444,6 +449,7 @@
 											zipcode=:zipcode, 
 											phone=:phone, 
 											email=:email, 
+											birthdate=:birthdate, 
 											verified=:verified, 
 											ustat=:ustat, 
 											ulevel=:ulevel, 
@@ -464,6 +470,7 @@
 										$stmt->bindParam(':zipcode', $zipcodegg);
 										$stmt->bindParam(':phone', $phonegg);
 										$stmt->bindParam(':email', $emailgg);
+										$stmt->bindParam(':birthdate', $birthdategg);
 										$stmt->bindParam(':verified', $verifiedgg);
 										$stmt->bindParam(':ustat', $ustatgg);
 										$stmt->bindParam(':ulevel', $ulevelgg);
@@ -474,7 +481,7 @@
 
 										echo '<div class="alert alert-info alert-dismissible fade show m-1">';
 											echo '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
-											echo 'User Successfully Registered. '.$msg.' You may <a href="login">Login</a> Now!';
+											echo 'User Successfully Registered. ['.$msg.'] You may <a href="login">Login</a> Now!';
 										echo '</div>';
 
 										$useridfinale = trim($uidgg);
@@ -515,6 +522,7 @@
 											zipcode=:zipcode, 
 											phone=:phone, 
 											email=:email, 
+											birthdate=:birthdate, 
 											verified=:verified, 
 											ustat=:ustat, 
 											ulevel=:ulevel, 
@@ -535,6 +543,7 @@
 										$stmt->bindParam(':zipcode', $zipcodegg);
 										$stmt->bindParam(':phone', $phonegg);
 										$stmt->bindParam(':email', $emailgg);
+										$stmt->bindParam(':birthdate', $birthdategg);
 										$stmt->bindParam(':verified', $verifiedgg);
 										$stmt->bindParam(':ustat', $ustatgg);
 										$stmt->bindParam(':ulevel', $ulevelgg);
@@ -545,7 +554,7 @@
 
 										echo '<div class="alert alert-info alert-dismissible fade show m-1">';
 											echo '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
-											echo 'User Successfully Registered. '.$msg.' You may <a href="login">Login</a> Now!';
+											echo 'User Successfully Registered. ['.$msg.'] You may <a href="login">Login</a> Now!';
 										echo '</div>';
 
 										$useridfinale = trim($uidgg);
@@ -578,6 +587,7 @@
 									zipcode=:zipcode, 
 									phone=:phone, 
 									email=:email, 
+									birthdate=:birthdate, 
 									verified=:verified, 
 									ustat=:ustat, 
 									ulevel=:ulevel, 
@@ -598,6 +608,7 @@
 								$stmt->bindParam(':zipcode', $zipcodegg);
 								$stmt->bindParam(':phone', $phonegg);
 								$stmt->bindParam(':email', $emailgg);
+								$stmt->bindParam(':birthdate', $birthdategg);
 								$stmt->bindParam(':verified', $verifiedgg);
 								$stmt->bindParam(':ustat', $ustatgg);
 								$stmt->bindParam(':ulevel', $ulevelgg);
@@ -608,7 +619,7 @@
 
 								echo '<div class="alert alert-info alert-dismissible fade show m-1">';
 									echo '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
-									echo 'User Successfully Registered. '.$msg.' You may <a href="login">Login</a> Now!';
+									echo 'User Successfully Registered. ['.$msg.'] You may <a href="login">Login</a> Now!';
 								echo '</div>';
 
 								$useridfinale = trim($uidgg);

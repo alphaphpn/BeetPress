@@ -186,4 +186,21 @@
 		return substr(str_shuffle($permitted_chars), 0, 8);
 	}
 
+	function remLeaveNmbrOnly($dvalue) {
+		$characters_to_remove = array("-", ":", " ");
+		$new_string = str_replace($characters_to_remove, "", trim($dvalue));
+		return $new_string;
+	}
+
+	function genEmpQrCodeZ($employeeidg,$nickname,$fullname,$birthday,$position,$office,$validfrom) {
+		$xdata = array("employee_id"=>$employeeidg, 
+			"nickname"=>$nickname, 
+			"fullname"=>$fullname, 
+			"birthday"=>$birthday, 
+			"position"=>$position, 
+			"office"=>$office, 
+			"valid_from"=>$validfrom);
+		return json_encode($xdata);
+	}
+
 ?>

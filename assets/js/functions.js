@@ -66,3 +66,28 @@ function suggestPincodexx() {
 
 	return combine;
 }
+
+function randNmbrfive() {
+	const getRandomChar = (characters) => {
+		return characters.charAt(Math.floor(Math.random() * characters.length));
+	};
+
+	const getRandomSubstring = (characters, length) => {
+		let result = '';
+		for (let i = 0; i < length; i++) {
+			result += getRandomChar(characters);
+		}
+		return result;
+	};
+
+	const permitted_chars1 = '0123456789';
+	const permitted_chars2 = '0123456789';
+
+	const part1 = getRandomSubstring(permitted_chars1, 1);
+
+	const part2 = getRandomSubstring(permitted_chars2, 4);
+
+	const combine = part1 + part2;
+
+	return combine;
+}

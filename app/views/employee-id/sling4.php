@@ -9,7 +9,7 @@
 
 			<tr style="height: 28px;">
 				<td colspan="3" style="vertical-align: bottom;">
-					<p style="font-size: xx-small; font-weight: 400; margin-top: auto; margin-bottom: 0; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: 12px; margin-left: auto; line-height: 1; text-align: right; color: #ffffff;"><?php echo trim($createdatcc2); ?></p>
+					<p style="font-size: xx-small; font-weight: 400; margin-top: auto; margin-bottom: 0; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: 12px; margin-left: auto; line-height: 1; text-align: right; color: #ffffff;"><?php echo trim(remLeaveNmbrOnly($createdatcc2)); ?></p>
 				</td>
 			</tr>
 
@@ -19,7 +19,7 @@
 
 			<tr>
 				<td colspan="3">
-					<div style="width: 100%; width: -webkit-fill-available; max-width: 110px; height: 140px; background-image: url('<?php echo trim($domainhome); ?>/assets/media/avatar2.png'); background-repeat: no-repeat; background-position: center; background-size: cover; margin-top: auto; margin-left: auto; margin-right: auto; margin-bottom: -6px; box-shadow: rgba(0, 0, 0, 0.16) 0px 2px 5px 0px, rgba(0, 0, 0, 0.12) 0px 2px 10px 0px; border: 2px solid #ffffff; border-radius: 5px;"></div>
+					<div style="width: 100%; width: -webkit-fill-available; max-width: 110px; height: 140px; background-image: url('<?php echo trim($domainhome)."/public/employeeID/".trim($empidcodecc2).".jpeg"; ?>'); background-repeat: no-repeat; background-position: center; background-size: cover; margin-top: auto; margin-left: auto; margin-right: auto; margin-bottom: -6px; box-shadow: rgba(0, 0, 0, 0.16) 0px 2px 5px 0px, rgba(0, 0, 0, 0.12) 0px 2px 10px 0px; border: 2px solid #ffffff; border-radius: 5px;"></div>
 				</td>
 			</tr>
 

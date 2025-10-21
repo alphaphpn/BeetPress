@@ -19,5 +19,7 @@
 		'signout' => 'lib/logout.php', 
 		'sign-out' => 'lib/logout.php', 
 		'pds' => 'routes/pds.php', 
-		'portfolio' => 'routes/portfolio.php'
+		'portfolio' => 'routes/portfolio.php',
+
+		'bp-mngr' => 'routes/bp-mngr.php'
 	];

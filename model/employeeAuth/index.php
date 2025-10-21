@@ -153,8 +153,6 @@
 					$pinword = trim($_POST['pinInput']);
 
 					if ( $empAuthnt->fn_employeeAuth($empidcode,$pinword) ) {
-						session_start();
-
 						$empAuthnt->fn_employeeAuth($empidcode,$pinword);
 						for($i = 0; $i < count($empAuthnt->list_empautoidee); $i++) {
 							if ( $empAuthnt->list_activatedee[$i] == 0 ) {

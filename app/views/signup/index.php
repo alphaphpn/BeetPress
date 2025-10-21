@@ -42,6 +42,21 @@
 
 	$reg_bioloclabel = null;
 
+	$reg_officeid = null;
+	$reg_officecode = null;
+	$reg_officename = null;
+	$reg_officetitle = null;
+	$reg_officeabrv = null;
+	$reg_oldofficeabrv = null;
+	$reg_headofficer = null;
+	$reg_headtitle = null;
+	$reg_authhead = null;
+	$reg_authtitle = null;
+	$reg_authdescription = null;
+	$reg_officegpslocation = null;
+
+	$reg_officenmbering = null;
+
 ?>
 
 	<style>
@@ -169,6 +184,13 @@
 								<div class="row justify-content-center">
 									<div id="disp-vid" class="col-md-4 mb-2 text-center mx-auto w-100 h-auto position-relative">
 										<video id="video" title="Picture" class="w-auto h-auto" autoplay></video>
+
+										<div id="zoom-container"class="d-none">
+											<label for="zoom-slider">Zoom:</label>
+											<input type="range" id="zoom-slider" min="1" max="5" value="1" step="0.1">
+											<span id="zoom-value">1.0x</span>
+										</div>
+
 										<div class="vidframez"></div>
 									</div>
 
@@ -183,6 +205,12 @@
 								<div class="row m-0">
 									<div class="col m-0">
 										<p class="text-center m-0">Put only the Face inside the Frame.</p>
+									</div>
+								</div>
+
+								<div class="my-2 text-center">
+									<div id="select-container" class="d-none"> <label for="camera-select">Select Camera:</label>
+										<select id="camera-select"></select>
 									</div>
 								</div>
 
@@ -227,7 +255,7 @@
 											<div class="invalid-feedback">Invalid Town</div>
 										</div>
 
-										<input id="town" type="text" value="<?php echo trim(htmlspecialchars($reg_town)); ?>" name="town" readonly disabled>
+										<input id="town" type="text" value="<?php echo trim(htmlspecialchars($reg_town)); ?>" name="town" class="d-none" readonly>
 									</div>
 									<div class="col-md-4 mb-2"></div>
 								</div>
@@ -448,7 +476,7 @@
 									<div class="invalid-feedback">Invalid Username</div>
 									<div class="d-flex flex-row gap-2 m-1">
 										<div id="user-result"><div class="text-danger"><i class='fas fa-ban'></i> Username NOT Available</div></div>
-										<button type="button" class="btn btn-sm btn-success" onclick="suggestUsername();">Username from Firstname and Lastname</button>
+										<button type="button" class="btn btn-sm btn-success" onclick="suggestUsername();">Generate Username</button>
 									</div>
 								</div>
 
@@ -539,19 +567,20 @@
 									<div class="invalid-feedback">Please fill out this field.</div>
 								</div>
 
-								<div class="my-2">
-									<input id="type-employee-abrv" value="<?php echo trim(htmlspecialchars($reg_typeemployeeabrv)); ?>" type="text" name="type-employee-abrv" readonly disabled>
-									<input id="type-employee-label" value="<?php echo trim(htmlspecialchars($reg_typeemployeelabel)); ?>" type="text" name="type-employee-label" readonly disabled>
+								<div class="my-2 d-none">
+									<input id="type-employee-abrv" value="<?php echo trim(htmlspecialchars($reg_typeemployeeabrv)); ?>" type="text" name="type-employee-abrv" readonly>
+									<input id="type-employee-label" value="<?php echo trim(htmlspecialchars($reg_typeemployeelabel)); ?>" type="text" name="type-employee-label" readonly>
 								</div>
 
 								<div class="form-floating my-2">
 									<select id="office" class="form-select form-control" name="office" placeholder="Designated Office">
-										<option value disabled <?php if ( empty(trim($reg_office)) ) { echo "selected"; } ?>> -- select an option -- </option>
+										<option value disabled <?php if ( empty(trim($reg_officenmbering)) ) { echo "selected"; } ?>> -- select an option -- </option>
 									<?php 
 										require_once "model/office-signatory/index.php";
 										$officeSignatoryLst = new officeSignatory();
 										$officeSignatoryLst->vwofficeSignatoryZero();
 										for ($i = 0; $i < count($officeSignatoryLst->list_officenamejj); $i++) {
+											$nokey = $i + 1;
 											$officesignatoryautoidjj = $officeSignatoryLst->list_officesignatoryautoidjj[$i];
 											$agencycodejj = $officeSignatoryLst->list_agencycodejj[$i];
 											$agencynamejj = $officeSignatoryLst->list_agencynamejj[$i];
@@ -577,11 +606,11 @@
 											$modifiedatjj = $officeSignatoryLst->list_modifiedatjj[$i];
 											$createdatjj = $officeSignatoryLst->list_createdatjj[$i];
 
-											if ( trim($reg_office) == trim($officeidjj) ) {
+											if ( trim($reg_officenmbering) == trim($officesignatoryautoidjj) ) {
 												$chelected_office = "selected";
 											}
 
-											echo "<option id='".$officecodejj."' value='".$officeidjj."' label='".$officenamejj."' data-value='".$officesignatoryautoidjj."' data-title='".$officetitlejj."' data-abvr='".$officeabrvjj."' data-head='".$headofficerjj."' data-htitle='".$headtitlejj."' data-authead='".$authheadjj."' data-autheadtitle='".$authtitlejj."' data-authdesc='".$authdescriptionjj."' ".$chelected_office.">".$officenamejj."</option>";
+											echo "<option id='officexid-".$officesignatoryautoidjj."' value='".$officesignatoryautoidjj."' label='".$officenamejj."' data-value='".$officesignatoryautoidjj."' data-code='".$officecodejj."' data-title='".$officetitlejj."' data-abvr='".$officeabrvjj."' data-head='".$headofficerjj."' data-htitle='".$headtitlejj."' data-authead='".$authheadjj."' data-autheadtitle='".$authtitlejj."' data-authdesc='".$authdescriptionjj."' data-oldabvr='".$oldofficeabrvjj."' data-offgpsloc='".$officegpslocationjj."' data-seqnmbr='".$nokey."' ".$chelected_office.">".$officenamejj."</option>";
 										}
 									?>
 									</select>
@@ -590,19 +619,21 @@
 									<div class="invalid-feedback">Please fill out this field.</div>
 								</div>
 
-								<div class="my-2">
-									<input id="officeid" type="text" name="officeid" value="<?php echo trim(htmlspecialchars($reg_officeid)); ?>" readonly disabled>
-									<input id="officecode" type="text" name="officecode" value="<?php echo trim(htmlspecialchars($reg_officecode)); ?>" readonly disabled>
-									<input id="officename" type="text" name="officename" value="<?php echo trim(htmlspecialchars($reg_officename)); ?>" readonly disabled>
-									<input id="officetitle" type="text" name="officetitle" value="<?php echo trim(htmlspecialchars($reg_officetitle)); ?>" readonly disabled>
-									<input id="officeabrv" type="text" name="officeabrv" value="<?php echo trim(htmlspecialchars($reg_officeabrv)); ?>" readonly disabled>
-									<input id="oldofficeabrv" type="text" name="oldofficeabrv" value="<?php echo trim(htmlspecialchars($reg_oldofficeabrv)); ?>" readonly disabled>
-									<input id="headofficer" type="text" name="headofficer" value="<?php echo trim(htmlspecialchars($reg_headofficer)); ?>" readonly disabled>
-									<input id="headtitle" type="text" name="headtitle" value="<?php echo trim(htmlspecialchars($reg_headtitle)); ?>" readonly disabled>
-									<input id="authhead" type="text" name="authhead" value="<?php echo trim(htmlspecialchars($reg_authhead)); ?>" readonly disabled>
-									<input id="authtitle" type="text" name="authtitle" value="<?php echo trim(htmlspecialchars($reg_authtitle)); ?>" readonly disabled>
-									<input id="authdescription" type="text" name="authdescription" value="<?php echo trim(htmlspecialchars($reg_authdescription)); ?>" readonly disabled>
-									<input id="officegpslocation" type="text" name="officegpslocation" value="<?php echo trim(htmlspecialchars($reg_officegpslocation)); ?>" readonly disabled>
+								<div class="my-2 d-none">
+									<input id="officeid" type="text" name="officeid" value="<?php echo trim(htmlspecialchars($reg_officeid)); ?>" readonly>
+									<input id="officecode" type="text" name="officecode" value="<?php echo trim(htmlspecialchars($reg_officecode)); ?>" readonly>
+									<input id="officename" type="text" name="officename" value="<?php echo trim(htmlspecialchars($reg_officename)); ?>" readonly>
+									<input id="officetitle" type="text" name="officetitle" value="<?php echo trim(htmlspecialchars($reg_officetitle)); ?>" readonly>
+									<input id="officeabrv" type="text" name="officeabrv" value="<?php echo trim(htmlspecialchars($reg_officeabrv)); ?>" readonly>
+									<input id="oldofficeabrv" type="text" name="oldofficeabrv" value="<?php echo trim(htmlspecialchars($reg_oldofficeabrv)); ?>" readonly>
+									<input id="headofficer" type="text" name="headofficer" value="<?php echo trim(htmlspecialchars($reg_headofficer)); ?>" readonly>
+									<input id="headtitle" type="text" name="headtitle" value="<?php echo trim(htmlspecialchars($reg_headtitle)); ?>" readonly>
+									<input id="authhead" type="text" name="authhead" value="<?php echo trim(htmlspecialchars($reg_authhead)); ?>" readonly>
+									<input id="authtitle" type="text" name="authtitle" value="<?php echo trim(htmlspecialchars($reg_authtitle)); ?>" readonly>
+									<input id="authdescription" type="text" name="authdescription" value="<?php echo trim(htmlspecialchars($reg_authdescription)); ?>" readonly>
+									<input id="officegpslocation" type="text" name="officegpslocation" value="<?php echo trim(htmlspecialchars($reg_officegpslocation)); ?>" readonly>
+
+									<input id="officenmbering" type="text" name="officenmbering" value="<?php echo trim(htmlspecialchars($reg_officenmbering)); ?>" readonly>
 								</div>
 
 								<div class="form-floating my-2">
@@ -630,13 +661,18 @@
 									<div class="invalid-feedback">Invalid Biometric Location.</div>
 								</div>
 
-								<div class="my-2"><input id="bioloclabel" type="text" value="<?php echo trim(htmlspecialchars($reg_bioloclabel)); ?>" name="bioloclabel" readonly disabled></div>
+								<div class="my-2 d-none"><input id="bioloclabel" type="text" value="<?php echo trim(htmlspecialchars($reg_bioloclabel)); ?>" name="bioloclabel" readonly></div>
 
 								<div class="form-floating my-2">
 									<input id="bionumber" type="number" value="<?php echo trim(htmlspecialchars($reg_bionumber)); ?>" onfocus="this.select();" min="100000" max="99999999" class="form-control" placeholder="Enter Biometric Number" name="bionumber">
 									<label for="bionumber">Enter Biometric Number</label>
 									<div class="valid-feedback">Valid.</div>
 									<div class="invalid-feedback">Invalid Biometric Number</div>
+
+									<div class="d-flex flex-row gap-2 m-1">
+										<div id="bionmbr-result"><div class="text-danger"><i class='fas fa-ban'></i> Biometric Number NOT Available</div></div>
+										<button type="button" class="btn btn-sm btn-success" onclick="suggestBioNmbrz();">Generate ID#</button>
+									</div>
 								</div>
 
 								<div class="form-floating my-2">
@@ -644,6 +680,10 @@
 									<label for="employeeid">Enter Employee ID</label>
 									<div class="valid-feedback">Valid.</div>
 									<div class="invalid-feedback">Invalid Employee ID</div>
+
+									<div class="d-flex flex-row gap-2 m-1">
+										<div id="emplidnmbr-result"><div class="text-danger"><i class='fas fa-ban'></i> Employee ID Number NOT Available</div></div>
+									</div>
 								</div>
 
 								<div class="form-floating my-2">
@@ -665,10 +705,24 @@
 								</div>
 
 								<div class="form-floating my-2">
-									<input id="designation" type="text" value="<?php echo trim(htmlspecialchars($reg_designation)); ?>" onfocus="this.select();" class="form-control" placeholder="Enter your Designation" name="designation">
-									<label for="pincode2">Enter your Designation</label>
+									<input id="designation" type="text" value="<?php echo trim(htmlspecialchars($reg_designation)); ?>" onfocus="this.select();" class="form-control" placeholder="Enter your Designation" name="designation" list="list_designation">
+									<label for="designation">Enter your Designation</label>
 									<div class="valid-feedback">Valid.</div>
 									<div class="invalid-feedback">Your Designation is Required!</div>
+
+									<datalist id="list_designation">
+										<?php 
+											require_once "model/employee/index.php";
+											$designationLst = new employeeAcct();
+											$designationLst->fn_ListDesignation();
+
+											for ($i = 0; $i < count($designationLst->list_designationforidee); $i++) {
+												$thedesignationhaha = $designationLst->list_designationforidee[$i];
+
+												echo '<option value="'.$thedesignationhaha.'">'.$thedesignationhaha.'</option>';
+											}
+										?>
+									</datalist>
 								</div>
 
 								<p class="w-100 text-center my-2 text-danger">Make sure all required fields are filled-up.</p>
@@ -857,6 +911,39 @@
 			bioloclabel.value = document.querySelector('option[id="bioloc-' + biolocationval + '"]').label;
 		});
 
+		const office = document.getElementById("office");
+		const officeid = document.getElementById("officeid");
+		const officecode = document.getElementById("officecode");
+		const officename = document.getElementById("officename");
+		const officetitle = document.getElementById("officetitle");
+		const officeabrv = document.getElementById("officeabrv");
+		const oldofficeabrv = document.getElementById("oldofficeabrv");
+		const headofficer = document.getElementById("headofficer");
+		const headtitle = document.getElementById("headtitle");
+		const authhead = document.getElementById("authhead");
+		const authtitle = document.getElementById("authtitle");
+		const authdescription = document.getElementById("authdescription");
+		const officegpslocation = document.getElementById("officegpslocation");
+		const officenmbering = document.getElementById("officenmbering");
+		office.addEventListener('change', async function() {
+			var officeval = office.value;
+			officeid.value = document.querySelector('option[id="officexid-' + officeval + '"]').value;
+			officecode.value = document.querySelector('option[id="officexid-' + officeval + '"]').dataset.code;
+			officename.value = document.querySelector('option[id="officexid-' + officeval + '"]').label;
+
+			officetitle.value = document.querySelector('option[id="officexid-' + officeval + '"]').dataset.title;
+			officeabrv.value = document.querySelector('option[id="officexid-' + officeval + '"]').dataset.abvr;
+			oldofficeabrv.value = document.querySelector('option[id="officexid-' + officeval + '"]').dataset.oldabvr;
+			headofficer.value = document.querySelector('option[id="officexid-' + officeval + '"]').dataset.head;
+			headtitle.value = document.querySelector('option[id="officexid-' + officeval + '"]').dataset.htitle;
+			authhead.value = document.querySelector('option[id="officexid-' + officeval + '"]').dataset.authead;
+			authtitle.value = document.querySelector('option[id="officexid-' + officeval + '"]').dataset.autheadtitle;
+			authdescription.value = document.querySelector('option[id="officexid-' + officeval + '"]').dataset.authdesc;
+			officegpslocation.value = document.querySelector('option[id="officexid-' + officeval + '"]').dataset.offgpsloc;
+
+			officenmbering.value = document.querySelector('option[id="officexid-' + officeval + '"]').dataset.seqnmbr;
+		});
+
 		function showUserExist(maoniuser) {
 			if (maoniuser.length == 0) {
 				userresult.innerHTML = "<div class='text-danger'><i class='fas fa-ban'></i> Username NOT Available</div>";
@@ -880,18 +967,91 @@
 		knameuser.addEventListener('focus', function(event) {
 			showUserExist(knameuser.value);
 		});
+		knameuser.addEventListener('input', function(event) {
+			showUserExist(knameuser.value);
+		});
+		knameuser.addEventListener('blur', function(event) {
+			showUserExist(knameuser.value);
+		});
 
 		function genetPassW() {
 			kpassword.value = suggestPWord();
 			kpassword2.value = kpassword.value;
-			kpassword.focus().select();
+			kpassword.focus();
 		}
 
 		function genetPincodex() {
 			kpincode.value = suggestPincodexx();
 			kpincode2.value = kpincode.value;
-			kpincode.focus().select();
+			kpincode.focus();
 		}
+
+		const bionmbrresult = document.getElementById("bionmbr-result");
+		const emplidnmbrresult = document.getElementById("emplidnmbr-result");
+		const bionumberget = document.getElementById("bionumber");
+		const employeeidget = document.getElementById("employeeid");
+		function suggestBioNmbrz() {
+			if ( typeemployee.value === "" ) {
+				alert("Please Select Employee Status!");
+				typeemployee.focus();
+			} else if ( office.value === "" ) {
+				alert("Please Select Designated Office!");
+				office.focus();
+			} else {
+				let theofficenmbering = String(officenmbering.value).padStart(2, '0');
+				bionumberget.value = typeemployee.value + theofficenmbering + randNmbrfive();
+				employeeidget.value = bionumberget.value;
+				bionumberget.focus();
+			}
+		}
+
+		function showBioIDNumbrzExist(bioempidnmbr) {
+			if (bioempidnmbr.length == 0) {
+				bionmbrresult.innerHTML = "<div class='text-danger'><i class='fas fa-ban'></i> Biometric Number NOT Available</div>";
+				return;
+			} else {
+				const xmlhttptt = new XMLHttpRequest();
+				xmlhttptt.onload = function() {
+					bionmbrresult.innerHTML = this.responseText;
+				}
+				xmlhttptt.open("GET", "model/employee/ifbionmbrexist.php?bioempidnmbr=" + bioempidnmbr);
+				xmlhttptt.send();
+			}
+		}
+
+		bionumberget.addEventListener('focus', function(event) {
+			showBioIDNumbrzExist(bionumberget.value);
+		});
+		bionumberget.addEventListener('input', function(event) {
+			showBioIDNumbrzExist(bionumberget.value);
+		});
+		bionumberget.addEventListener('blur', function(event) {
+			showBioIDNumbrzExist(bionumberget.value);
+		});
+
+		function showEmpIDNumbrzExist(bioempidnmbr) {
+			if (bioempidnmbr.length == 0) {
+				emplidnmbrresult.innerHTML = "<div class='text-danger'><i class='fas fa-ban'></i> Employee ID Number NOT Available</div>";
+				return;
+			} else {
+				const xmlhttptt = new XMLHttpRequest();
+				xmlhttptt.onload = function() {
+					emplidnmbrresult.innerHTML = this.responseText;
+				}
+				xmlhttptt.open("GET", "model/employee/ifemplymbrexist.php?bioempidnmbr=" + bioempidnmbr);
+				xmlhttptt.send();
+			}
+		}
+
+		employeeidget.addEventListener('focus', function(event) {
+			showEmpIDNumbrzExist(employeeidget.value);
+		});
+		employeeidget.addEventListener('input', function(event) {
+			showEmpIDNumbrzExist(employeeidget.value);
+		});
+		employeeidget.addEventListener('blur', function(event) {
+			showEmpIDNumbrzExist(employeeidget.value);
+		});
 
 		clcktopinfo2.addEventListener('click', function(event) {
 			if ( imgdata2.value && zipcode.value ) { 
@@ -986,14 +1146,104 @@
 		let canvas = document.querySelector("#canvas");
 		let imgdata = document.querySelector("#imgdata");
 
+		// New elements for camera selection
+		let cameraSelect = document.querySelector("#camera-select"); // Assuming a <select> element with id="camera-select"
+		let selectContainer = document.querySelector("#select-container"); // Assuming a container for the select element
+
 		let videowidth = video.offsetWidth;
 		let videoheight = video.offsetHeight;
 
-		camera_button.addEventListener('click', async function() {
+		// New elements for zoom
+		let zoomContainer = document.querySelector("#zoom-container");
+		let zoomSlider = document.querySelector("#zoom-slider");
+		let zoomValueSpan = document.querySelector("#zoom-value");
+		let videoTrack; // Global variable to hold the active video track
+
+		/**
+		 * Populates the camera selection dropdown with available video input devices.
+		 */
+		async function populateCameraSelect() {
 			try {
+				// Request permission first, otherwise device labels might be empty
+				await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+				// Stop the temporary stream immediately
+				if (videoStream) {
+					videoStream.getTracks().forEach(track => track.stop());
+					videoStream = null;
+				}
+
+				const devices = await navigator.mediaDevices.enumerateDevices();
+				const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+				// Clear existing options
+				cameraSelect.innerHTML = '';
+
+				if (videoDevices.length > 0) {
+					videoDevices.forEach(device => {
+						const option = document.createElement('option');
+						option.value = device.deviceId;
+						// Use device label if available, otherwise default to a generic name
+						option.text = device.label || `Camera ${cameraSelect.options.length + 1}`;
+
+						// A simple heuristic to guess front/back based on label
+						if (device.label.toLowerCase().includes('front')) {
+							option.text += ' (Front)';
+						} else if (device.label.toLowerCase().includes('back')) {
+							option.text += ' (Back)';
+						}
+
+						cameraSelect.appendChild(option);
+					});
+					// Show the selector if there's more than one device to choose from
+					if (videoDevices.length > 1) {
+						selectContainer.classList.remove('d-none');
+					} else {
+						selectContainer.classList.add('d-none'); // Hide if only one camera is found
+					}
+				} else {
+					// No video devices found
+					console.warn("No video input devices found.");
+					selectContainer.classList.add('d-none');
+				}
+			} catch (err) {
+				console.error("Error enumerating devices: ", err);
+				selectContainer.classList.add('d-none');
+			}
+		}
+
+		// Initial population of the camera select dropdown
+		populateCameraSelect();
+
+		/**
+		 * Starts the video stream from the selected camera.
+		 * @param {string} deviceId - The device ID of the camera to use.
+		 */
+		async function startCamera(deviceId) {
+			// Stop any existing stream first
+			if (videoStream) {
+				videoStream.getTracks().forEach(track => track.stop());
+				video.srcObject = null;
+				videoStream = null;
+				videoTrack = null; // Clear track reference
+				zoomContainer.classList.add('d-none'); // Hide zoom controls on stop
+			}
+
+			try {
+				// Constraints object using the selected deviceId
+				const constraints = {
+					video: { deviceId: deviceId ? { exact: deviceId } : undefined },
+					audio: false
+				};
+
 				// Request video stream and store it in the global variable
-				videoStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+				videoStream = await navigator.mediaDevices.getUserMedia(constraints);
 				video.srcObject = videoStream;
+
+				// 1. Get the current video track
+				videoTrack = videoStream.getVideoTracks()[0];
+
+				// 2. Initialize Zoom Controls
+				initializeZoomControls();
 
 				// Show/hide buttons and video elements
 				dispvid.classList.remove('d-none');
@@ -1005,8 +1255,74 @@
 				retakephoto.classList.add('d-none');
 			} catch (err) {
 				console.error("Error accessing camera: ", err);
-				alert("Error: Could not access the camera. Please check your browser permissions.");
+				alert("Error: Could not access the camera. Please check your browser permissions or if the device is in use.");
+				// Re-enable start button if camera access failed
+				camera_button.classList.remove("d-none");
+				click_button.classList.add('d-none');
+				stopCameraBtn.classList.add('d-none');
+				retakephoto.classList.add('d-none');
+				dispvid.classList.add('d-none');
+				disppix.classList.add('d-none');
+				// Ensure zoom controls are hidden on failure
+				zoomContainer.classList.add('d-none');
 			}
+		}
+
+		/**
+		 * Checks video track capabilities and sets up the zoom slider.
+		 */
+		function initializeZoomControls() {
+			if (!videoTrack) {
+				zoomContainer.classList.add('d-none'); // FIX: Ensure it's hidden if no track
+				return;
+			}
+
+			const capabilities = videoTrack.getCapabilities();
+
+			// Check if the camera supports the 'zoom' constraint
+			if (capabilities.zoom) {
+				const { min, max, step } = capabilities.zoom;
+
+				// Configure the slider based on camera capabilities
+				zoomSlider.min = min;
+				zoomSlider.max = max;
+				zoomSlider.step = step || 0.1; // Fallback step
+				zoomSlider.value = capabilities.zoom.current || min; // Set initial value
+
+				zoomValueSpan.textContent = `${parseFloat(zoomSlider.value).toFixed(1)}x`;
+				zoomContainer.classList.remove('d-none'); // FIX: Show the controls when supported
+
+				// Apply the initial zoom constraint in case the default isn't min
+				applyZoom(zoomSlider.value);
+			} else {
+				// Hide controls if zoom is not supported
+				zoomContainer.classList.add('d-none'); // FIX: Hide the controls
+				console.log("Zoom not supported by this camera.");
+			}
+		}
+
+		/**
+		 * Applies the new zoom value to the video track.
+		 * @param {number} value - The zoom level to apply.
+		 */
+		async function applyZoom(value) {
+			if (videoTrack) {
+				try {
+					await videoTrack.applyConstraints({
+						advanced: [{ zoom: parseFloat(value) }]
+					});
+					zoomValueSpan.textContent = `${parseFloat(value).toFixed(1)}x`;
+				} catch (err) {
+					// This error might happen if a non-supported value is set, or the track is no longer active
+					console.error("Failed to set zoom constraint: ", err);
+				}
+			}
+		}
+
+		camera_button.addEventListener('click', async function() {
+			// Get the selected camera ID from the dropdown
+			const selectedDeviceId = cameraSelect.value;
+			startCamera(selectedDeviceId);
 		});
 
 		stopCameraBtn.addEventListener('click', async function() {
@@ -1021,6 +1337,10 @@
 				// Clear the video source
 				video.srcObject = null;
 				videoStream = null;
+				videoTrack = null; // Clear the track reference
+
+				// FIX: Hide Zoom controls when the camera is stopped
+				zoomContainer.classList.add('d-none');
 
 				// Update button visibility
 				camera_button.classList.remove("d-none");
@@ -1030,6 +1350,12 @@
 				dispvid.classList.add('d-none');
 				disppix.classList.add('d-none');
 			}
+		});
+
+		// Zoom Slider Event Listener
+		zoomSlider.addEventListener('input', function() {
+			// Apply the zoom as the user drags the slider
+			applyZoom(this.value);
 		});
 
 		click_button.addEventListener('click', async function() {
@@ -1080,6 +1406,9 @@
 			dispvid.classList.add('d-none');
 			retakephoto.classList.remove('d-none');
 			click_button.classList.add('d-none');
+			
+			// FIX: Hide the zoom controls after the photo is taken
+			zoomContainer.classList.add('d-none');
 		});
 
 		retakephoto.addEventListener('click', async function() {
@@ -1089,5 +1418,10 @@
 			camera_button.classList.add("d-none");
 			retakephoto.classList.add('d-none');
 			click_button.classList.remove('d-none');
+			
+			// FIX: Show the zoom controls again when retaking a photo (if supported)
+			if (videoTrack && videoTrack.getCapabilities().zoom) {
+				zoomContainer.classList.remove('d-none');
+			}
 		});
 	</script>

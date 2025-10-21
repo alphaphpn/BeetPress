@@ -17,6 +17,7 @@
 					$empidcodecc1 = $empidcodeNow;
 					$nicknamecc1 = $nicknamecc;
 					$empnameforidcc1 = $empnameforidcc;
+					$birthdaycc1 = $birthdaycc;
 					$designationforidcc1 = $designationforidcc;
 					$officenameforidcc1 = $officenameforidcc;
 					$mphonecc1 = $mphonecc;
@@ -33,6 +34,7 @@
 					$empidcodecc2 = $empidcodeNow;
 					$nicknamecc2 = $nicknamecc;
 					$empnameforidcc2 = $empnameforidcc;
+					$birthdaycc2 = $birthdaycc;
 					$designationforidcc2 = $designationforidcc;
 					$officenameforidcc2 = $officenameforidcc;
 					$mphonecc2 = $mphonecc;

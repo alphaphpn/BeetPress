@@ -221,7 +221,7 @@
 			}
 
 			// Create or insert new data on the Database Table
-			public function insert_clssProfile($profileidii,$nicknameii,$ptitleii,$firstnameii,$middlenameii,$lastnameii,$suffixii,$genderii,$birthdateii,$birthplaceii,$nationalityii,$civilstatusii,$bloodtypeii,$emailii,$photoii,$mobileii,$mobile2ii,$fbidii,$addressii,$addressline2ii,$streetii,$barangaycodeii,$barangayii,$municipalitycodeii,$municipalityii,$zipcodeii,$districtnoii,$districtsignii,$provincecodeii,$provinceii,$regioncodeii,$regionnoii,$regionsignii,$regionii,$countryidii,$countrycodeii,$countryii,$postalii,$foreignaddressii,$createdbyii,$modifiedbyii) {
+			public function insert_clssProfile($profileidii,$nicknameii,$ptitleii,$firstnameii,$middlenameii,$lastnameii,$suffixii,$genderii,$birthdateii,$birthplaceii,$nationalityii,$civilstatusii,$bloodtypeii,$emailii,$photoii,$mobileii,$mobile2ii,$fbidii,$addressii,$addressline2ii,$streetii,$barangaycodeii,$barangayii,$municipalitycodeii,$municipalityii,$zipcodeii,$districtnoii,$districtsignii,$provincecodeii,$provinceii,$regioncodeii,$regionnoii,$regionsignii,$regionii,$countryidii,$countrycodeii,$countryii,$postalii,$foreignaddressii,$createdbyii,$modifiedbyii,$msg) {
 				$this->clearlist_clssProfile();
 				$this->getConnection();
 
@@ -354,6 +354,19 @@
 				$stmt->bindParam(':createdby', $createdby);
 				$stmt->bindParam(':modifiedby', $modifiedby);
 				$stmt->execute();
+
+				echo '<div class="alert alert-info alert-dismissible fade show m-1">';
+					echo '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+					echo 'Profile Successfully Registered. ['.$msg.'] You may <a href="login">Login</a> Now!';
+				echo '</div>';
+
+				$profileidfinale = trim($profileid);
+				$imgdata = trim(htmlspecialchars(trim($photo)));
+				if (file_exists("lib/profile-img-saved.php")) {
+					require_once "lib/profile-img-saved.php";
+				} elseif (file_exists("../../lib/profile-img-saved.php")) {
+					require_once "../../lib/profile-img-saved.php";
+				}
 			}
 
 			// Reading of data values Memory list variable base on Database Table Fieldnames

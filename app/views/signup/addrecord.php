@@ -64,11 +64,32 @@
 			$reg_typeemployeelabel = isset($_POST["type-employee-label"]) ? $_POST["type-employee-label"] : null;
 			$reg_designation = isset($_POST["designation"]) ? $_POST["designation"] : null;
 
+			$reg_biolocation = isset($_POST["biolocation"]) ? $_POST["biolocation"] : null;
 			$reg_bioloclabel = isset($_POST["bioloclabel"]) ? $_POST["bioloclabel"] : null;
 
+			$reg_bionumber = isset($_POST["bionumber"]) ? $_POST["bionumber"] : null;
+			$reg_employeeid = isset($_POST["employeeid"]) ? $_POST["employeeid"] : null;
+			$reg_pincode = isset($_POST["pincode"]) ? $_POST["pincode"] : null;
+			$reg_pincode2 = isset($_POST["pincode2"]) ? $_POST["pincode2"] : null;
+
+			$reg_officeid = isset($_POST["officeid"]) ? $_POST["officeid"] : null;
+			$reg_officecode = isset($_POST["officecode"]) ? $_POST["officecode"] : null;
+			$reg_officename = isset($_POST["officename"]) ? $_POST["officename"] : null;
+			$reg_officetitle = isset($_POST["officetitle"]) ? $_POST["officetitle"] : null;
+			$reg_officeabrv = isset($_POST["officeabrv"]) ? $_POST["officeabrv"] : null;
+			$reg_oldofficeabrv = isset($_POST["oldofficeabrv"]) ? $_POST["oldofficeabrv"] : null;
+			$reg_headofficer = isset($_POST["headofficer"]) ? $_POST["headofficer"] : null;
+			$reg_headtitle = isset($_POST["headtitle"]) ? $_POST["headtitle"] : null;
+			$reg_authhead = isset($_POST["authhead"]) ? $_POST["authhead"] : null;
+			$reg_authtitle = isset($_POST["bioloclabel"]) ? $_POST["bioloclabel"] : null;
+			$reg_authdescription = isset($_POST["bioloclabel"]) ? $_POST["bioloclabel"] : null;
+			$reg_officegpslocation = isset($_POST["bioloclabel"]) ? $_POST["bioloclabel"] : null;
+
 			$fullname = null;
+			$fullname_mi = null;
 			if ( empty(trim($reg_ntitle)) && empty(trim($reg_mname)) && empty(trim($reg_suffix)) && empty(trim($reg_profession)) ) {
 				$fullname = trim(strtoupper($reg_fname))." ".trim(strtoupper($reg_lname));
+				$fullname_mi = trim(strtoupper($reg_fname))." ".trim(strtoupper($reg_lname));
 			} elseif ( empty(trim($reg_ntitle)) && empty(trim($reg_suffix)) && empty(trim($reg_profession)) ) {
 				$fullname = trim(strtoupper($reg_fname))." ".trim(strtoupper($reg_mname))." ".trim(strtoupper($reg_lname));
 				$fullname_mi = trim(strtoupper($reg_fname))." ".trim(substr(strtoupper($reg_mname),0,1)).". ".trim(strtoupper($reg_lname));
@@ -168,13 +189,13 @@
 						echo 'Profile already exist!';
 					echo '</div>';
 				} else {
-					if ( $reg_typeemployee || $reg_office || $reg_biolocation || $reg_bionumber || $reg_employeeid || $reg_pincode || $reg_pincode2 ) {
+					if ( $reg_typeemployee || $reg_officename || $reg_biolocation || $reg_bionumber || $reg_employeeid || $reg_pincode || $reg_pincode2 ) {
 						if ( empty($reg_typeemployee) ) {
 							echo '<div class="alert alert-danger alert-dismissible fade show m-1">';
 								echo '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
 								echo 'Type of Empoyee is Required!.';
 							echo '</div>';
-						} elseif ( empty($reg_office) ) {
+						} elseif ( empty($reg_officename) ) {
 							echo '<div class="alert alert-danger alert-dismissible fade show m-1">';
 								echo '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
 								echo 'Office is Required!.';
@@ -223,10 +244,10 @@
 									echo '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
 									echo 'Employee ID Number already exist!';
 								echo '</div>';
-							} elseif ( $emplyAcctx->Search_employeeAcct_BioNumber($biolocbrrr,$bionumbrrr) ) {
+							} elseif ( $emplyAcctx->Search_employeeAcct_BioNmr($reg_bionumber) ) {
 								echo '<div class="alert alert-danger alert-dismissible fade show m-1">';
 									echo '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
-									echo 'Biometric Number in Locatio ['.$biolocbrrr.'] already exist!';
+									echo 'Biometric Number in Location ['.$reg_bionumber.'] already exist!';
 								echo '</div>';
 							} else {
 								// Proceed
@@ -247,9 +268,9 @@
 										} else {
 											// Proceed
 											$msg = "Phone Valid";
-											$authAcctx->insert_userAcct($the_agency_code,$the_agency_name,$usserIDme,$profilleIDme,$reg_username,$reg_nickname,$reg_password2,$the_country,$the_country_code,$reg_zipcode,$reg_phone,$reg_email,0,0,$the_ulevel_empl,$the_uposition_empl,$reg_imgpic,$createdby,$modifiedby,$msg);
-											$profileAcctx->insert_clssProfile($profilleIDme,$reg_nickname,$reg_ntitle,$reg_fname,$reg_mname,$reg_lname,$reg_suffix,$reg_gender,$birthdayme,$reg_plbirth,$the_nationality,'','',$reg_email,$reg_imgpic,$reg_phone,$reg_phone2,$reg_fbid,'','','','','','',$reg_town,$reg_zipcode,'','',$the_province_code,$the_province,$the_region_code,$the_region_no,$the_region_sign,$the_region,$the_country_id,$the_country_code,$the_country,$reg_zipcode,'',$createdby,$modifiedby);
-
+											$authAcctx->insert_userAcct($the_agency_code,$the_agency_name,$usserIDme,$profilleIDme,$reg_username,$reg_nickname,$reg_password2,$the_country,$the_country_code,$reg_zipcode,$reg_phone,$reg_email,0,1,$the_ulevel_empl,$the_uposition_empl,$reg_imgpic,$createdby,$modifiedby,$msg,$birthdayme);
+											$profileAcctx->insert_clssProfile($profilleIDme,$reg_nickname,$reg_ntitle,$reg_fname,$reg_mname,$reg_lname,$reg_suffix,$reg_gender,$birthdayme,$reg_plbirth,$the_nationality,'','',$reg_email,$reg_imgpic,$reg_phone,$reg_phone2,$reg_fbid,'','','','','','',$reg_town,$reg_zipcode,'','',$the_province_code,$the_province,$the_region_code,$the_region_no,$the_region_sign,$the_region,$the_country_id,$the_country_code,$the_country,$reg_zipcode,'',$createdby,$modifiedby,$msg);
+											$emplyAcctx->insert_Employee($the_agency_code,$the_agency_name,$reg_nickname,$fullname_mi,$reg_officetitle,$reg_designation,$profilleIDme,$usserIDme,$reg_employeeid,$reg_pincode2,$reg_employeeid,$reg_biolocation,$reg_bionumber,$fullname,$reg_gender,$birthdayme,$reg_officeid,$reg_officecode,$reg_officename,$reg_officetitle,$reg_officeabrv,$reg_oldofficeabrv,$reg_officegpslocation,$reg_headofficer,$reg_headtitle,$reg_authhead,$reg_authtitle,$reg_authdescription,2022,$reg_typeemployee,$reg_typeemployeeabrv,$reg_typeemployeelabel,0,1,0,0,0,0,3,0,$reg_designation,$reg_designation,$reg_phone,$reg_email,$reg_officetitle,$createdby,$modifiedby,$reg_bioloclabel,$reg_imgpic);
 										}
 									}
 								} elseif ( $reg_phone2 ) {
@@ -261,8 +282,9 @@
 									} else {
 										// Proceed
 										$msg = "2nd Phone Valid";
-										$authAcctx->insert_userAcct($the_agency_code,$the_agency_name,$usserIDme,$profilleIDme,$reg_username,$reg_nickname,$reg_password2,$the_country,$the_country_code,$reg_zipcode,$reg_phone,$reg_email,0,0,$the_ulevel_empl,$the_uposition_empl,$reg_imgpic,$createdby,$modifiedby,$msg);
-										$profileAcctx->insert_clssProfile($profilleIDme,$reg_nickname,$reg_ntitle,$reg_fname,$reg_mname,$reg_lname,$reg_suffix,$reg_gender,$birthdayme,$reg_plbirth,$the_nationality,'','',$reg_email,$reg_imgpic,$reg_phone,$reg_phone2,$reg_fbid,'','','','','','',$reg_town,$reg_zipcode,'','',$the_province_code,$the_province,$the_region_code,$the_region_no,$the_region_sign,$the_region,$the_country_id,$the_country_code,$the_country,$reg_zipcode,'',$createdby,$modifiedby);
+										$authAcctx->insert_userAcct($the_agency_code,$the_agency_name,$usserIDme,$profilleIDme,$reg_username,$reg_nickname,$reg_password2,$the_country,$the_country_code,$reg_zipcode,$reg_phone,$reg_email,0,1,$the_ulevel_empl,$the_uposition_empl,$reg_imgpic,$createdby,$modifiedby,$msg,$birthdayme);
+										$profileAcctx->insert_clssProfile($profilleIDme,$reg_nickname,$reg_ntitle,$reg_fname,$reg_mname,$reg_lname,$reg_suffix,$reg_gender,$birthdayme,$reg_plbirth,$the_nationality,'','',$reg_email,$reg_imgpic,$reg_phone,$reg_phone2,$reg_fbid,'','','','','','',$reg_town,$reg_zipcode,'','',$the_province_code,$the_province,$the_region_code,$the_region_no,$the_region_sign,$the_region,$the_country_id,$the_country_code,$the_country,$reg_zipcode,'',$createdby,$modifiedby,$msg);
+										$emplyAcctx->insert_Employee($the_agency_code,$the_agency_name,$reg_nickname,$fullname_mi,$reg_officetitle,$reg_designation,$profilleIDme,$usserIDme,$reg_employeeid,$reg_pincode2,$reg_employeeid,$reg_biolocation,$reg_bionumber,$fullname,$reg_gender,$birthdayme,$reg_officeid,$reg_officecode,$reg_officename,$reg_officetitle,$reg_officeabrv,$reg_oldofficeabrv,$reg_officegpslocation,$reg_headofficer,$reg_headtitle,$reg_authhead,$reg_authtitle,$reg_authdescription,2022,$reg_typeemployee,$reg_typeemployeeabrv,$reg_typeemployeelabel,0,1,0,0,0,0,3,0,$reg_designation,$reg_designation,$reg_phone,$reg_email,$reg_officetitle,$createdby,$modifiedby,$reg_bioloclabel,$reg_imgpic);
 									}
 								} elseif ( $reg_email ) {
 									if ( filter_var($reg_email, FILTER_VALIDATE_EMAIL) ) {
@@ -274,8 +296,9 @@
 										} else {
 											// Proceed
 											$msg = "Email Valid";
-											$authAcctx->insert_userAcct($the_agency_code,$the_agency_name,$usserIDme,$profilleIDme,$reg_username,$reg_nickname,$reg_password2,$the_country,$the_country_code,$reg_zipcode,$reg_phone,$reg_email,0,0,$the_ulevel_empl,$the_uposition_empl,$reg_imgpic,$createdby,$modifiedby,$msg);
-											$profileAcctx->insert_clssProfile($profilleIDme,$reg_nickname,$reg_ntitle,$reg_fname,$reg_mname,$reg_lname,$reg_suffix,$reg_gender,$birthdayme,$reg_plbirth,$the_nationality,'','',$reg_email,$reg_imgpic,$reg_phone,$reg_phone2,$reg_fbid,'','','','','','',$reg_town,$reg_zipcode,'','',$the_province_code,$the_province,$the_region_code,$the_region_no,$the_region_sign,$the_region,$the_country_id,$the_country_code,$the_country,$reg_zipcode,'',$createdby,$modifiedby);
+											$authAcctx->insert_userAcct($the_agency_code,$the_agency_name,$usserIDme,$profilleIDme,$reg_username,$reg_nickname,$reg_password2,$the_country,$the_country_code,$reg_zipcode,$reg_phone,$reg_email,0,1,$the_ulevel_empl,$the_uposition_empl,$reg_imgpic,$createdby,$modifiedby,$msg,$birthdayme);
+											$profileAcctx->insert_clssProfile($profilleIDme,$reg_nickname,$reg_ntitle,$reg_fname,$reg_mname,$reg_lname,$reg_suffix,$reg_gender,$birthdayme,$reg_plbirth,$the_nationality,'','',$reg_email,$reg_imgpic,$reg_phone,$reg_phone2,$reg_fbid,'','','','','','',$reg_town,$reg_zipcode,'','',$the_province_code,$the_province,$the_region_code,$the_region_no,$the_region_sign,$the_region,$the_country_id,$the_country_code,$the_country,$reg_zipcode,'',$createdby,$modifiedby,$msg);
+											$emplyAcctx->insert_Employee($the_agency_code,$the_agency_name,$reg_nickname,$fullname_mi,$reg_officetitle,$reg_designation,$profilleIDme,$usserIDme,$reg_employeeid,$reg_pincode2,$reg_employeeid,$reg_biolocation,$reg_bionumber,$fullname,$reg_gender,$birthdayme,$reg_officeid,$reg_officecode,$reg_officename,$reg_officetitle,$reg_officeabrv,$reg_oldofficeabrv,$reg_officegpslocation,$reg_headofficer,$reg_headtitle,$reg_authhead,$reg_authtitle,$reg_authdescription,2022,$reg_typeemployee,$reg_typeemployeeabrv,$reg_typeemployeelabel,0,1,0,0,0,0,3,0,$reg_designation,$reg_designation,$reg_phone,$reg_email,$reg_officetitle,$createdby,$modifiedby,$reg_bioloclabel,$reg_imgpic);
 										}
 									} else {
 										echo '<div class="alert alert-danger alert-dismissible fade show m-1">';
@@ -291,9 +314,9 @@
 								} else {
 									// Proceed
 									$msg = "All Valid";
-									$authAcctx->insert_userAcct($the_agency_code,$the_agency_name,$usserIDme,$profilleIDme,$reg_username,$reg_nickname,$reg_password2,$the_country,$the_country_code,$reg_zipcode,$reg_phone,$reg_email,0,0,$the_ulevel_empl,$the_uposition_empl,$reg_imgpic,$createdby,$modifiedby,$msg);
-									$profileAcctx->insert_clssProfile($profilleIDme,$reg_nickname,$reg_ntitle,$reg_fname,$reg_mname,$reg_lname,$reg_suffix,$reg_gender,$birthdayme,$reg_plbirth,$the_nationality,'','',$reg_email,$reg_imgpic,$reg_phone,$reg_phone2,$reg_fbid,'','','','','','',$reg_town,$reg_zipcode,'','',$the_province_code,$the_province,$the_region_code,$the_region_no,$the_region_sign,$the_region,$the_country_id,$the_country_code,$the_country,$reg_zipcode,'',$createdby,$modifiedby);
-									$emplyAcctx->insert_Employee($the_agency_code,$the_agency_name,$reg_nickname,$fullname_mi,$officenameforid,$reg_designation,$profilleIDme,$usserIDme,$reg_employeeid,$pinword,$reg_employeeid,$reg_biolocation,$reg_bionumber,$fullname,$reg_gender,$birthdayme,$officeid,$officecode,$officename,$officetitle,$officeabrv,$oldofficeabrv,$officegpslocation,$headofficer,$headtitle,$authhead,$authtitle,$authdescription,$yearemployed,$reg_typeemployee,$reg_typeemployeeabrv,$reg_typeemployeelabel,0,1,$worklocation,0,0,0,3,0,$reg_designation,$reg_designation,$reg_phone,$reg_email,$designationat,$createdby,$modifiedby);
+									$authAcctx->insert_userAcct($the_agency_code,$the_agency_name,$usserIDme,$profilleIDme,$reg_username,$reg_nickname,$reg_password2,$the_country,$the_country_code,$reg_zipcode,$reg_phone,$reg_email,0,1,$the_ulevel_empl,$the_uposition_empl,$reg_imgpic,$createdby,$modifiedby,$msg,$birthdayme);
+									$profileAcctx->insert_clssProfile($profilleIDme,$reg_nickname,$reg_ntitle,$reg_fname,$reg_mname,$reg_lname,$reg_suffix,$reg_gender,$birthdayme,$reg_plbirth,$the_nationality,'','',$reg_email,$reg_imgpic,$reg_phone,$reg_phone2,$reg_fbid,'','','','','','',$reg_town,$reg_zipcode,'','',$the_province_code,$the_province,$the_region_code,$the_region_no,$the_region_sign,$the_region,$the_country_id,$the_country_code,$the_country,$reg_zipcode,'',$createdby,$modifiedby,$msg);
+									$emplyAcctx->insert_Employee($the_agency_code,$the_agency_name,$reg_nickname,$fullname_mi,$reg_officetitle,$reg_designation,$profilleIDme,$usserIDme,$reg_employeeid,$reg_pincode2,$reg_employeeid,$reg_biolocation,$reg_bionumber,$fullname,$reg_gender,$birthdayme,$reg_officeid,$reg_officecode,$reg_officename,$reg_officetitle,$reg_officeabrv,$reg_oldofficeabrv,$reg_officegpslocation,$reg_headofficer,$reg_headtitle,$reg_authhead,$reg_authtitle,$reg_authdescription,2022,$reg_typeemployee,$reg_typeemployeeabrv,$reg_typeemployeelabel,0,1,0,0,0,0,3,0,$reg_designation,$reg_designation,$reg_phone,$reg_email,$reg_officetitle,$createdby,$modifiedby,$reg_bioloclabel,$reg_imgpic);
 								}
 							}
 						}
@@ -316,9 +339,8 @@
 								} else {
 									// Proceed
 									$msg = "Phone Valid";
-									$authAcctx->insert_userAcct($the_agency_code,$the_agency_name,$usserIDme,$profilleIDme,$reg_username,$reg_nickname,$reg_password2,$the_country,$the_country_code,$reg_zipcode,$reg_phone,$reg_email,0,0,$the_ulevel,$the_uposition,$reg_imgpic,$createdby,$modifiedby,$msg);
-									$profileAcctx->insert_clssProfile($profilleIDme,$reg_nickname,$reg_ntitle,$reg_fname,$reg_mname,$reg_lname,$reg_suffix,$reg_gender,$birthdayme,$reg_plbirth,$the_nationality,'','',$reg_email,$reg_imgpic,$reg_phone,$reg_phone2,$reg_fbid,'','','','','','',$reg_town,$reg_zipcode,'','',$the_province_code,$the_province,$the_region_code,$the_region_no,$the_region_sign,$the_region,$the_country_id,$the_country_code,$the_country,$reg_zipcode,'',$createdby,$modifiedby);
-
+									$authAcctx->insert_userAcct($the_agency_code,$the_agency_name,$usserIDme,$profilleIDme,$reg_username,$reg_nickname,$reg_password2,$the_country,$the_country_code,$reg_zipcode,$reg_phone,$reg_email,0,1,$the_ulevel,$the_uposition,$reg_imgpic,$createdby,$modifiedby,$msg,$birthdayme);
+									$profileAcctx->insert_clssProfile($profilleIDme,$reg_nickname,$reg_ntitle,$reg_fname,$reg_mname,$reg_lname,$reg_suffix,$reg_gender,$birthdayme,$reg_plbirth,$the_nationality,'','',$reg_email,$reg_imgpic,$reg_phone,$reg_phone2,$reg_fbid,'','','','','','',$reg_town,$reg_zipcode,'','',$the_province_code,$the_province,$the_region_code,$the_region_no,$the_region_sign,$the_region,$the_country_id,$the_country_code,$the_country,$reg_zipcode,'',$createdby,$modifiedby,$msg);
 								}
 							}
 						} elseif ( $reg_phone2 ) {
@@ -330,8 +352,8 @@
 							} else {
 								// Proceed
 								$msg = "2nd Phone Valid";
-								$authAcctx->insert_userAcct($the_agency_code,$the_agency_name,$usserIDme,$profilleIDme,$reg_username,$reg_nickname,$reg_password2,$the_country,$the_country_code,$reg_zipcode,$reg_phone,$reg_email,0,0,$the_ulevel,$the_uposition,$reg_imgpic,$createdby,$modifiedby,$msg);
-								$profileAcctx->insert_clssProfile($profilleIDme,$reg_nickname,$reg_ntitle,$reg_fname,$reg_mname,$reg_lname,$reg_suffix,$reg_gender,$birthdayme,$reg_plbirth,$the_nationality,'','',$reg_email,$reg_imgpic,$reg_phone,$reg_phone2,$reg_fbid,'','','','','','',$reg_town,$reg_zipcode,'','',$the_province_code,$the_province,$the_region_code,$the_region_no,$the_region_sign,$the_region,$the_country_id,$the_country_code,$the_country,$reg_zipcode,'',$createdby,$modifiedby);
+								$authAcctx->insert_userAcct($the_agency_code,$the_agency_name,$usserIDme,$profilleIDme,$reg_username,$reg_nickname,$reg_password2,$the_country,$the_country_code,$reg_zipcode,$reg_phone,$reg_email,0,1,$the_ulevel,$the_uposition,$reg_imgpic,$createdby,$modifiedby,$msg,$birthdayme);
+								$profileAcctx->insert_clssProfile($profilleIDme,$reg_nickname,$reg_ntitle,$reg_fname,$reg_mname,$reg_lname,$reg_suffix,$reg_gender,$birthdayme,$reg_plbirth,$the_nationality,'','',$reg_email,$reg_imgpic,$reg_phone,$reg_phone2,$reg_fbid,'','','','','','',$reg_town,$reg_zipcode,'','',$the_province_code,$the_province,$the_region_code,$the_region_no,$the_region_sign,$the_region,$the_country_id,$the_country_code,$the_country,$reg_zipcode,'',$createdby,$modifiedby,$msg);
 							}
 						} elseif ( $reg_email ) {
 							if ( filter_var($reg_email, FILTER_VALIDATE_EMAIL) ) {
@@ -343,8 +365,8 @@
 								} else {
 									// Proceed
 									$msg = "Email Valid";
-									$authAcctx->insert_userAcct($the_agency_code,$the_agency_name,$usserIDme,$profilleIDme,$reg_username,$reg_nickname,$reg_password2,$the_country,$the_country_code,$reg_zipcode,$reg_phone,$reg_email,0,0,$the_ulevel,$the_uposition,$reg_imgpic,$createdby,$modifiedby,$msg);
-									$profileAcctx->insert_clssProfile($profilleIDme,$reg_nickname,$reg_ntitle,$reg_fname,$reg_mname,$reg_lname,$reg_suffix,$reg_gender,$birthdayme,$reg_plbirth,$the_nationality,'','',$reg_email,$reg_imgpic,$reg_phone,$reg_phone2,$reg_fbid,'','','','','','',$reg_town,$reg_zipcode,'','',$the_province_code,$the_province,$the_region_code,$the_region_no,$the_region_sign,$the_region,$the_country_id,$the_country_code,$the_country,$reg_zipcode,'',$createdby,$modifiedby);
+									$authAcctx->insert_userAcct($the_agency_code,$the_agency_name,$usserIDme,$profilleIDme,$reg_username,$reg_nickname,$reg_password2,$the_country,$the_country_code,$reg_zipcode,$reg_phone,$reg_email,0,1,$the_ulevel,$the_uposition,$reg_imgpic,$createdby,$modifiedby,$msg,$birthdayme);
+									$profileAcctx->insert_clssProfile($profilleIDme,$reg_nickname,$reg_ntitle,$reg_fname,$reg_mname,$reg_lname,$reg_suffix,$reg_gender,$birthdayme,$reg_plbirth,$the_nationality,'','',$reg_email,$reg_imgpic,$reg_phone,$reg_phone2,$reg_fbid,'','','','','','',$reg_town,$reg_zipcode,'','',$the_province_code,$the_province,$the_region_code,$the_region_no,$the_region_sign,$the_region,$the_country_id,$the_country_code,$the_country,$reg_zipcode,'',$createdby,$modifiedby,$msg);
 								}
 							} else {
 								echo '<div class="alert alert-danger alert-dismissible fade show m-1">';
@@ -360,8 +382,8 @@
 						} else {
 							// Proceed
 							$msg = "All Valid";
-							$authAcctx->insert_userAcct($the_agency_code,$the_agency_name,$usserIDme,$profilleIDme,$reg_username,$reg_nickname,$reg_password2,$the_country,$the_country_code,$reg_zipcode,$reg_phone,$reg_email,0,0,$the_ulevel,$the_uposition,$reg_imgpic,$createdby,$modifiedby,$msg);
-							$profileAcctx->insert_clssProfile($profilleIDme,$reg_nickname,$reg_ntitle,$reg_fname,$reg_mname,$reg_lname,$reg_suffix,$reg_gender,$birthdayme,$reg_plbirth,$the_nationality,'','',$reg_email,$reg_imgpic,$reg_phone,$reg_phone2,$reg_fbid,'','','','','','',$reg_town,$reg_zipcode,'','',$the_province_code,$the_province,$the_region_code,$the_region_no,$the_region_sign,$the_region,$the_country_id,$the_country_code,$the_country,$reg_zipcode,'',$createdby,$modifiedby);
+							$authAcctx->insert_userAcct($the_agency_code,$the_agency_name,$usserIDme,$profilleIDme,$reg_username,$reg_nickname,$reg_password2,$the_country,$the_country_code,$reg_zipcode,$reg_phone,$reg_email,0,1,$the_ulevel,$the_uposition,$reg_imgpic,$createdby,$modifiedby,$msg,$birthdayme);
+							$profileAcctx->insert_clssProfile($profilleIDme,$reg_nickname,$reg_ntitle,$reg_fname,$reg_mname,$reg_lname,$reg_suffix,$reg_gender,$birthdayme,$reg_plbirth,$the_nationality,'','',$reg_email,$reg_imgpic,$reg_phone,$reg_phone2,$reg_fbid,'','','','','','',$reg_town,$reg_zipcode,'','',$the_province_code,$the_province,$the_region_code,$the_region_no,$the_region_sign,$the_region,$the_country_id,$the_country_code,$the_country,$reg_zipcode,'',$createdby,$modifiedby,$msg);
 						}
 					}
 				}
