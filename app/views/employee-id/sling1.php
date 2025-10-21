@@ -63,7 +63,6 @@
 
 	<textarea id="slgqrcodz1" type="text" name="slgqrcodz1" class="d-none" readonly>
 		<?php echo trim($domainhome)."/employee/".$empidcodecc1; ?>
-		
 
 		<?php echo trim($slgqrcodz1); ?>
 	</textarea>
