@@ -154,7 +154,7 @@
 
 			// Return Count Record base on Database Table Fieldnames
 			public function count_userAcct() {
-				$this->clearlist_myCRUD();
+				$this->clearlist_userAcct();
 				$this->getConnection();
 				$selectQuery = "SELECT * FROM user_tbl";
 				$stmt = $this->cnn->prepare($selectQuery);
@@ -162,6 +162,74 @@
 				$cntRcrd = $stmt->rowCount();
 
 				return $cntRcrd;
+			}
+
+			// Authenticate User Account
+			public function authenticate_userAcct($userid,$userpw) {
+				if ( empty(trim($userid)) ) {
+					echo '<div class="alert alert-danger alert-dismissible fade show m-1">';
+						echo '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+						echo 'User ID is required!';
+					echo '</div>';
+				} elseif ( empty(trim($userpw)) ) {
+					echo '<div class="alert alert-danger alert-dismissible fade show m-1">';
+						echo '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+						echo 'Password is required!';
+					echo '</div>';
+				} else {
+					$this->clearlist_userAcct();
+					$this->getConnection();
+					$auth_userid = trim(htmlspecialchars(trim($userid)));
+					$auth_userpw = trim(md5(trim($userpw)));
+
+					$selectQuery = "SELECT * FROM user_tbl WHERE TRIM(uname)=:authuserid AND TRIM(pword)=:authuserpw LIMIT 1";
+					$stmt = $this->cnn->prepare($selectQuery);
+					$stmt->bindParam(':authuserid', $auth_userid);
+					$stmt->bindParam(':authuserpw', $auth_userpw);
+					$stmt->execute();
+
+					$cntRcrd = $stmt->rowCount();
+
+					if ($cntRcrd > 0) {
+						// Record Found
+						foreach ($stmt as $rwRcrd) {
+							$this->list_authidgg[] = $rwRcrd['authid'];
+							$this->list_agencycodegg[] = $rwRcrd['agency_code'];
+							$this->list_agencynamegg[] = $rwRcrd['agency_name'];
+							$this->list_uidgg[] = $rwRcrd['uid'];
+							$this->list_profileidgg[] = $rwRcrd['profileid'];
+							$this->list_unamegg[] = $rwRcrd['uname'];
+							$this->list_nicknamegg[] = $rwRcrd['nickname'];
+							$this->list_pwordgg[] = $rwRcrd['pword'];
+							$this->list_countrygg[] = $rwRcrd['country'];
+							$this->list_countrycodegg[] = $rwRcrd['countrycode'];
+							$this->list_zipcodegg[] = $rwRcrd['zipcode'];
+							$this->list_phonegg[] = $rwRcrd['phone'];
+							$this->list_emailgg[] = $rwRcrd['email'];
+							$this->list_birthdategg[] = $rwRcrd['birthdate'];
+							$this->list_verifiedgg[] = $rwRcrd['verified'];
+							$this->list_ustatgg[] = $rwRcrd['ustat'];
+							$this->list_ulevelgg[] = $rwRcrd['ulevel'];
+							$this->list_upositiongg[] = $rwRcrd['uposition'];
+							$this->list_onofflinegg[] = $rwRcrd['onoffline'];
+							$this->list_securequestiongg[] = $rwRcrd['secure_question'];
+							$this->list_secureanswergg[] = $rwRcrd['secure_answer'];
+							$this->list_officeidgg[] = $rwRcrd['officeid'];
+							$this->list_officeabrvgg[] = $rwRcrd['officeabrv'];
+							$this->list_officecodegg[] = $rwRcrd['officecode'];
+							$this->list_xdelgg[] = $rwRcrd['xdel'];
+							$this->list_createdbygg[] = $rwRcrd['createdby'];
+							$this->list_modifiedbygg[] = $rwRcrd['modifiedby'];
+							$this->list_modifiedatgg[] = $rwRcrd['modified_at'];
+							$this->list_createdatgg[] = $rwRcrd['created_at'];
+						}
+
+						return true;
+					} else {
+						// Record Not Found
+						return false;
+					}
+				}
 			}
 
 			// Searching for Duplicate UserID

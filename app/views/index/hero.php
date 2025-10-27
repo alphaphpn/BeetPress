@@ -1,5 +1,5 @@
 
-	<section class="position-relative third-bg-color w-100 vh-100 clearfix" style="margin-top: -112px;">
+	<section id="home" class="position-relative third-bg-color w-100 vh-100 clearfix" style="margin-top: -112px;">
 		<div class="position-absolute vh-100 m-auto text-center clearfix" style="z-index: 1; width: 94%; left: 0; right: 0;">
 			<div class="row vh-100">
 				<div class="col-lg-12 m-auto text-center">

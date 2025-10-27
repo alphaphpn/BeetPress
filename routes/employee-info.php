@@ -4,7 +4,7 @@
 	include_once "lib/env.php";
 	include_once "lib/function.php";
 	$the_htitle = "Employee Profile";
-	$the_refresh = 20;
+	$the_refresh = null;
 	$the_expires = '-1';
 	include_once "app/theme/{$theme}/template-part/header.php";
 	include_once "app/theme/{$theme}/template-part/navbar.php";

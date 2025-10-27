@@ -922,6 +922,144 @@
 					// Record Not Found
 				}
 			}
+
+			// Auth Employee using User ID
+			public function authEmployee_usingUserID($userid) {
+				$this->clearlist_employeeAcct();
+				$this->getConnection();
+				$authxuserid = trim(htmlspecialchars($userid));
+
+				$selectQuery = "SELECT * FROM employee_tbl WHERE uid=:authxuserid LIMIT 1";
+				$stmt = $this->cnn->prepare($selectQuery);
+				$stmt->bindParam(':authxuserid', $authxuserid);
+				$stmt->execute();
+
+				$cntRcrd = $stmt->rowCount();
+
+				if ($cntRcrd > 0) {
+					foreach ($stmt as $rwRcrd) {
+						$this->list_empautoidee[] = $rwRcrd['emp_autoid'];
+						$this->list_profileidee[] = $rwRcrd['profileid'];
+						$this->list_uidee[] = $rwRcrd['uid'];
+						$this->list_empidcodeee[] = $rwRcrd['emp_idcode'];
+						$this->list_pinwordee[] = $rwRcrd['pinword'];
+						$this->list_hrempidee[] = $rwRcrd['hr_emp_id'];
+						$this->list_bionoee[] = $rwRcrd['bio_no'];
+						$this->list_birthdayee[] = $rwRcrd['birthday'];
+						$this->list_empageee[] = $rwRcrd['emp_age'];
+						$this->list_officeidee[] = $rwRcrd['officeid'];
+						$this->list_officegpslocationee[] = $rwRcrd['office_gps_location'];
+						$this->list_yearemployedee[] = $rwRcrd['year_employed'];
+						$this->list_yearcalcee[] = $rwRcrd['year_calc'];
+						$this->list_typeemployeenoee[] = $rwRcrd['type_employee_no'];
+						$this->list_verifiedee[] = $rwRcrd['verified'];
+						$this->list_activatedee[] = $rwRcrd['activated'];
+						$this->list_shiftstatusee[] = $rwRcrd['shift_status'];
+						$this->list_timeeditableee[] = $rwRcrd['time_editable'];
+						$this->list_prioritydtree[] = $rwRcrd['priority_dtr'];
+						$this->list_timeeditablevalueee[] = $rwRcrd['time_editable_value'];
+						$this->list_allowedotee[] = $rwRcrd['allowed_ot'];
+						$this->list_plantillanoee[] = $rwRcrd['plantilla_no'];
+						$this->list_positionclassee[] = $rwRcrd['position_class'];
+						$this->list_salaryamountee[] = $rwRcrd['salary_amount'];
+						$this->list_salaryperiodee[] = $rwRcrd['salary_period'];
+						$this->list_salaryamountperperiodee[] = $rwRcrd['salary_amount_per_period'];
+						$this->list_authannualsalaryee[] = $rwRcrd['auth_annual_salary'];
+						$this->list_actualannualsalaryee[] = $rwRcrd['actual_annual_salary'];
+						$this->list_salarygradeee[] = $rwRcrd['salary_grade'];
+						$this->list_salarystepsee[] = $rwRcrd['salary_steps'];
+						$this->list_empareacodeee[] = $rwRcrd['emp_area_code'];
+						$this->list_empareatypeee[] = $rwRcrd['emp_area_type'];
+						$this->list_emplevelee[] = $rwRcrd['emp_level'];
+						$this->list_philhealthcontributionee[] = $rwRcrd['philhealth_contribution'];
+						$this->list_pagibibcontributionee[] = $rwRcrd['pagibib_contribution'];
+						$this->list_ssscontributionee[] = $rwRcrd['sss_contribution'];
+						$this->list_gsiscontributionee[] = $rwRcrd['gsis_contribution'];
+						$this->list_employeecontributionee[] = $rwRcrd['employee_contribution'];
+						$this->list_payrollbanknameee[] = $rwRcrd['payroll_bank_name'];
+						$this->list_payrollbanknumberee[] = $rwRcrd['payroll_bank_number'];
+						$this->list_philhealthnoee[] = $rwRcrd['philhealth_no'];
+						$this->list_pagibibnoee[] = $rwRcrd['pagibib_no'];
+						$this->list_sssnoee[] = $rwRcrd['sss_no'];
+						$this->list_gsisnoee[] = $rwRcrd['gsis_no'];
+						$this->list_taxidee[] = $rwRcrd['tax_id'];
+						$this->list_lastdateemploymentee[] = $rwRcrd['last_date_employment'];
+						$this->list_dateissuedee[] = $rwRcrd['date_issued'];
+						$this->list_monthsvalidityee[] = $rwRcrd['months_validity'];
+						$this->list_employmentstatusnoee[] = $rwRcrd['employment_status_no'];
+						$this->list_employmentstatusee[] = $rwRcrd['employment_status'];
+						$this->list_validuntilee[] = $rwRcrd['valid_until'];
+						$this->list_mphoneee[] = $rwRcrd['mphone'];
+						$this->list_empemailee[] = $rwRcrd['empemail'];
+						$this->list_xdelee[] = $rwRcrd['xdel'];
+						$this->list_createdbyee[] = $rwRcrd['createdby'];
+						$this->list_modifiedbyee[] = $rwRcrd['modifiedby'];
+						$this->list_modifiedatee[] = $rwRcrd['modified_at'];
+						$this->list_createdatee[] = $rwRcrd['created_at'];
+
+						include "lib/onoffline.php";
+						if ( $onlineornot == 1 ) {
+							$this->list_agencycodeee[] = utf8_encode($rwRcrd['agency_code']);
+							$this->list_agencynameee[] = utf8_encode($rwRcrd['agency_name']);
+							$this->list_nicknameee[] = utf8_encode($rwRcrd['nickname']);
+							$this->list_empnameforidee[] = utf8_encode($rwRcrd['emp_name_forid']);
+							$this->list_officenameforidee[] = utf8_encode($rwRcrd['officename_forid']);
+							$this->list_designationforidee[] = utf8_encode($rwRcrd['designationforid']);
+							$this->list_biolocationee[] = utf8_encode($rwRcrd['bio_location']);
+							$this->list_empnameee[] = utf8_encode($rwRcrd['emp_name']);
+							$this->list_genderee[] = utf8_encode($rwRcrd['gender']);
+							$this->list_officecodeee[] = utf8_encode($rwRcrd['officecode']);
+							$this->list_officenameee[] = utf8_encode($rwRcrd['officename']);
+							$this->list_officetitleee[] = utf8_encode($rwRcrd['officetitle']);
+							$this->list_officeabrvee[] = utf8_encode($rwRcrd['officeabrv']);
+							$this->list_oldofficeabrvee[] = utf8_encode($rwRcrd['oldofficeabrv']);
+							$this->list_headofficeree[] = utf8_encode($rwRcrd['headofficer']);
+							$this->list_headtitleee[] = utf8_encode($rwRcrd['headtitle']);
+							$this->list_authheadee[] = utf8_encode($rwRcrd['auth_head']);
+							$this->list_authtitleee[] = utf8_encode($rwRcrd['auth_title']);
+							$this->list_authdescriptionee[] = utf8_encode($rwRcrd['auth_description']);
+							$this->list_typeemployeeabrvee[] = utf8_encode($rwRcrd['type_employee_abrv']);
+							$this->list_typeemployeeee[] = utf8_encode($rwRcrd['type_employee']);
+							$this->list_worklocationee[] = utf8_encode($rwRcrd['work_location']);
+							$this->list_positionee[] = utf8_encode($rwRcrd['position']);
+							$this->list_designationee[] = utf8_encode($rwRcrd['designation']);
+							$this->list_employmentstatusabvree[] = utf8_encode($rwRcrd['employment_status_abvr']);
+							$this->list_designationatee[] = utf8_encode($rwRcrd['designation_at']);
+						} else {
+							$this->list_agencycodeee[] = $rwRcrd['agency_code'];
+							$this->list_agencynameee[] = $rwRcrd['agency_name'];
+							$this->list_nicknameee[] = $rwRcrd['nickname'];
+							$this->list_empnameforidee[] = $rwRcrd['emp_name_forid'];
+							$this->list_officenameforidee[] = $rwRcrd['officename_forid'];
+							$this->list_designationforidee[] = $rwRcrd['designationforid'];
+							$this->list_biolocationee[] = $rwRcrd['bio_location'];
+							$this->list_empnameee[] = $rwRcrd['emp_name'];
+							$this->list_genderee[] = $rwRcrd['gender'];
+							$this->list_officecodeee[] = $rwRcrd['officecode'];
+							$this->list_officenameee[] = $rwRcrd['officename'];
+							$this->list_officetitleee[] = $rwRcrd['officetitle'];
+							$this->list_officeabrvee[] = $rwRcrd['officeabrv'];
+							$this->list_oldofficeabrvee[] = $rwRcrd['oldofficeabrv'];
+							$this->list_headofficeree[] = $rwRcrd['headofficer'];
+							$this->list_headtitleee[] = $rwRcrd['headtitle'];
+							$this->list_authheadee[] = $rwRcrd['auth_head'];
+							$this->list_authtitleee[] = $rwRcrd['auth_title'];
+							$this->list_authdescriptionee[] = $rwRcrd['auth_description'];
+							$this->list_typeemployeeabrvee[] = $rwRcrd['type_employee_abrv'];
+							$this->list_typeemployeeee[] = $rwRcrd['type_employee'];
+							$this->list_worklocationee[] = $rwRcrd['work_location'];
+							$this->list_positionee[] = $rwRcrd['position'];
+							$this->list_designationee[] = $rwRcrd['designation'];
+							$this->list_employmentstatusabvree[] = $rwRcrd['employment_status_abvr'];
+							$this->list_designationatee[] = $rwRcrd['designation_at'];
+						}
+					}
+
+					return true;
+				} else {
+					return false;
+				}
+			}
 		}
 
 	} catch (PDOException $error) {

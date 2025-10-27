@@ -125,10 +125,12 @@ function PwHideShow() {
 		x.type = "text";
 		$('#show_hide_password i').removeClass( "fa-eye-slash" );
 		$('#show_hide_password i').addClass( "fa-eye" );
+		x.onpaste = true;
 	} else {
 		x.type = "password";
 		$('#show_hide_password i').addClass( "fa-eye-slash" );
 		$('#show_hide_password i').removeClass( "fa-eye" );
+		x.onpaste = false;
 	}
 }
 
@@ -172,7 +174,7 @@ function fnUpDateTime() {
 	}).format(currentTime);
 
 	let dateBeginNow = currDay + " | " + currMonthName + " " + currDayNo + ", " + curYear + " | " + formattedTime;
-	const currntDateX = currMonthName + " " + currDayNo + ", " + curYear;
+	let currntDateX = currMonthName + " " + currDayNo + ", " + curYear;
 
 	document.getElementById("nvbr-date").innerHTML = dateBeginNow;
 	document.getElementById("label-datereturn").innerHTML = currntDateX;

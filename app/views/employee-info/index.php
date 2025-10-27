@@ -52,7 +52,7 @@
 							</div>
 							<div class="card-body">
 								<div class="w-100 text-center">
-									<div class="img-profile-pix bg-obj-cover mb-2 border border-4" style="background-image: url('<?php echo trim($domainhome).'/public/employeeID/'.trim($empidcodecc).'.jpg'; ?>');"></div>
+									<div class="img-profile-pix bg-obj-cover-top mb-2 border border-4" style="background-image: url('<?php echo trim($domainhome).'/public/employeeID/'.trim($empidcodecc).'.jpeg'; ?>');"></div>
 								</div>
 
 								<div class="w-100 position-relative text-center mb-2">
@@ -121,7 +121,7 @@
 				<div class="col-lg-6 d-mobile-none mb-2">
 				<?php 
 
-					include "post.php"
+					include "post.php";
 
 				?>
 				</div>
@@ -434,9 +434,9 @@
 			let dateBeginNow = currDay + " | " + currMonthName + " " + currDayNo + ", " + curYear + " | " + formattedTime;
 			const currntDateX = currMonthName + " " + currDayNo + ", " + curYear;
 
-			document.getElementById("pdatereturn2").innerHTML = currntDateX;
-			document.getElementById("pdaynreturn2").innerHTML = currDay;
-			document.getElementById("ptimereturn2").innerHTML = formattedTime;
+			// document.getElementById("pdatereturn2").innerHTML = currntDateX;
+			// document.getElementById("pdaynreturn2").innerHTML = currDay;
+			// document.getElementById("ptimereturn2").innerHTML = formattedTime;
 		}
 		setInterval(fnTimeDateEmp, 1000); // Run updateTime() every second
 
@@ -445,7 +445,7 @@
 		let currHour2 = currentTime2.getHours(); // 24hour
 
 		combiHrz = currHour2 + "" + currMin2.toString().padStart(2, '0');
-		console.log(combiHrz);
+		// console.log(combiHrz);
 		
 		if (combiHrz > 1230) {
 			$('#pm-time-atttlog').removeClass( "d-none" );

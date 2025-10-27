@@ -46,6 +46,13 @@ table.memo-post-header tr td.d-block { width: 80px; }
 	background-repeat: no-repeat;
 }
 
+.bg-obj-cover-top {
+	background-color: #fff;
+	background-position: top center;
+	background-size: cover;
+	background-repeat: no-repeat;
+}
+
 .bg-color-transp { background-color: transparent!important; }
 
 .box-shadow { box-shadow: rgba(0, 0, 0, 0.16) 0px 2px 5px 0px, rgba(0, 0, 0, 0.12) 0px 2px 10px 0px; }

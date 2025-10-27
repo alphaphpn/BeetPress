@@ -32,7 +32,7 @@
 
 						<div class="card m-auto" style="width: 100%; max-width: 425px;">
 							<div class="card-body p-2">
-								<?php include "pocket-id-front-blank.php" ?>
+								<?php include "pocket-id-back-blank.php" ?>
 							</div>
 						</div>
 					</div>

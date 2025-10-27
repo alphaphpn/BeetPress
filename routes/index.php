@@ -3,6 +3,7 @@
 	include_once "lib/core.php";
 	include_once "lib/env.php";
 	include_once "lib/function.php";
+	$the_homepage = 1;
 	$the_htitle = "eSibugay PH";
 	$the_refresh = null;
 	$the_expires = null;

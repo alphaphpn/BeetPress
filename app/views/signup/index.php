@@ -1,6 +1,7 @@
 <?php 
 
-	// ?isemployee=96b38fec15b3949d94c27fae3ea9849d
+	// ?isemployee=e4f3da8093d4a2ed4809a011562092b8
+
 	$settedsec = trim('96b38fec15b3949d94c27fae3ea9849d');
 	$emplyornot = isset($_GET['isemployee']) ? $_GET['isemployee'] : null;
 
@@ -610,7 +611,7 @@
 												$chelected_office = "selected";
 											}
 
-											echo "<option id='officexid-".$officesignatoryautoidjj."' value='".$officesignatoryautoidjj."' label='".$officenamejj."' data-value='".$officesignatoryautoidjj."' data-code='".$officecodejj."' data-title='".$officetitlejj."' data-abvr='".$officeabrvjj."' data-head='".$headofficerjj."' data-htitle='".$headtitlejj."' data-authead='".$authheadjj."' data-autheadtitle='".$authtitlejj."' data-authdesc='".$authdescriptionjj."' data-oldabvr='".$oldofficeabrvjj."' data-offgpsloc='".$officegpslocationjj."' data-seqnmbr='".$nokey."' ".$chelected_office.">".$officenamejj."</option>";
+											echo "<option id='officexid-".$officesignatoryautoidjj."' value='".$officesignatoryautoidjj."' label='".$officenamejj."' data-value='".$officesignatoryautoidjj."' data-code='".$officecodejj."' data-title='".$officetitlejj."' data-abvr='".$officeabrvjj."' data-head='".$headofficerjj."' data-htitle='".$headtitlejj."' data-authead='".$authheadjj."' data-autheadtitle='".$authtitlejj."' data-authdesc='".$authdescriptionjj."' data-oldabvr='".$oldofficeabrvjj."' data-offgpsloc='".$officegpslocationjj."' data-seqnmbr='".$nokey."' ".$chelected_office." data-officeid='".$officeidjj."'>".$officenamejj."</option>";
 										}
 									?>
 									</select>
@@ -904,13 +905,6 @@
 			typeemployeelabel.value = document.querySelector('option[id="emptypex-' + typeemployeeval + '"]').label;
 		});
 
-		const biolocation = document.getElementById("biolocation");
-		const bioloclabel = document.getElementById("bioloclabel");
-		biolocation.addEventListener('change', async function() {
-			var biolocationval = biolocation.value;
-			bioloclabel.value = document.querySelector('option[id="bioloc-' + biolocationval + '"]').label;
-		});
-
 		const office = document.getElementById("office");
 		const officeid = document.getElementById("officeid");
 		const officecode = document.getElementById("officecode");
@@ -927,7 +921,7 @@
 		const officenmbering = document.getElementById("officenmbering");
 		office.addEventListener('change', async function() {
 			var officeval = office.value;
-			officeid.value = document.querySelector('option[id="officexid-' + officeval + '"]').value;
+			officeid.value = document.querySelector('option[id="officexid-' + officeval + '"]').dataset.officeid;
 			officecode.value = document.querySelector('option[id="officexid-' + officeval + '"]').dataset.code;
 			officename.value = document.querySelector('option[id="officexid-' + officeval + '"]').label;
 
@@ -942,6 +936,13 @@
 			officegpslocation.value = document.querySelector('option[id="officexid-' + officeval + '"]').dataset.offgpsloc;
 
 			officenmbering.value = document.querySelector('option[id="officexid-' + officeval + '"]').dataset.seqnmbr;
+		});
+
+		const biolocation = document.getElementById("biolocation");
+		const bioloclabel = document.getElementById("bioloclabel");
+		biolocation.addEventListener('change', async function() {
+			var biolocationval = biolocation.value;
+			bioloclabel.value = document.querySelector('option[id="bioloc-' + biolocationval + '"]').label;
 		});
 
 		function showUserExist(maoniuser) {

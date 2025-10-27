@@ -344,7 +344,7 @@
 		let currHour2 = currentTime2.getHours(); // 24hour
 
 		combiHrz = currHour2 + "" + currMin2.toString().padStart(2, '0');
-		console.log(combiHrz);
+		// console.log(combiHrz);
 		
 		if (combiHrz > 1230) {
 			$('#pm-time-atttlog').removeClass( "d-none" );
