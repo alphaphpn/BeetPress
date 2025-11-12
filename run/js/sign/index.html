@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>My First JavaScript</h2>
+
+    <canvas id="signatureCanvas" width="400" height="200" style="border: 1px solid black;"></canvas>
+    <button id="clearButton">Clear</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js"></script>
+    <script>
+        var canvas = document.getElementById('signatureCanvas');
+        var signaturePad = new SignaturePad(canvas);
+
+        document.getElementById('clearButton').addEventListener('click', function () {
+            signaturePad.clear();
+        });
+
+        // To get the signature as an image data URL:
+        // var imageData = signaturePad.toDataURL();
+        // To get the signature as an array of points:
+        // var signatureData = signaturePad.toData();
+    </script>
+
+</body>
+</html> 

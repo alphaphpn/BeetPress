@@ -220,18 +220,22 @@
 							echo '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
 							echo 'Access Granted! You can now <a href="bp-mngr">Manage</a> the <span class="text-danger">System</span>.';
 						echo '</div>';
+						exit();
 					} else {
 						echo '<div class="alert alert-info alert-dismissible fade show m-1">';
 							echo '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
 							echo 'Access Granted! You can now <a href="employee-info">Manage</a> your <span class="text-primary">Account</span>.';
 						echo '</div>';
+						exit();
 					}
 
 				} else {
 					echo '<div class="alert alert-danger alert-dismissible fade show m-1">';
 						echo '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
-						echo 'Access denied! Invalid Username or Password.';
+						echo 'Access denied! Invalid Username or Password. <br>';
+						echo 'Try again? <a href="login" class="text-decoration-none">Yes</a> | <a href="home" class="text-decoration-none">No</a>';
 					echo '</div>';
+					exit();
 				}
 			}
 		}

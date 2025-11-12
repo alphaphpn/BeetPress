@@ -30,7 +30,7 @@
 					<p style="font-weight: bolder; font-size: large; margin-top: 0; margin-bottom: 0px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;"><?php echo trim(mb_strtoupper($empnameforidcc)); ?></p>
 					<!-- Fullname max-size 28char only -->
 					<p style="font-weight: bold; font-size: medium; margin-top: 0; margin-bottom: 2px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;"><?php echo trim($designationforidcc); ?></p>
-					<p style="font-size: smaller; font-weight: 400; margin-top: 0; margin-bottom: 8px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;"><?php echo trim($officenameforidcc); ?></p>
+					<p style="font-size: smaller; font-weight: 400; margin-top: 0; margin-bottom: 2px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;"><?php echo trim($officenameforidcc); ?></p>
 					<p style="font-size: 2px; font-weight: bolder; margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;">PLGU-ZSP PLGU-ZSP PLGU-ZSP <?php echo trim($createdatcc); ?> <?php echo trim($createdatcc); ?> PLGU-ZSP <?php echo trim($createdatcc); ?> PLGU-ZSP PLGU-ZSP PLGU-ZSP PLGU-ZSP <?php echo trim($createdatcc); ?> PLGU-ZSP PLGU-ZSP PLGU-ZSP <?php echo trim($createdatcc); ?> PLGU-ZSP PLGU-ZSP <?php echo trim($createdatcc); ?> PLGU-ZSP PLGU-ZSP PLGU-ZSP</p>
 				</td>
 			</tr>

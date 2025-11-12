@@ -1,3 +1,4 @@
+<?php $photourl3 = trim($pixloc); ?>
 
 	<style>
 		#barcode { border-radius: 50px; }
@@ -19,7 +20,7 @@
 
 			<tr>
 				<td colspan="3">
-					<div style="width: 100%; width: -webkit-fill-available; max-width: 110px; height: 140px; background-image: url('<?php echo trim($domainhome)."/public/employeeID/".trim($empidcodecc2).".jpeg"; ?>'); background-repeat: no-repeat; background-position: center; background-size: cover; margin-top: auto; margin-left: auto; margin-right: auto; margin-bottom: -6px; box-shadow: rgba(0, 0, 0, 0.16) 0px 2px 5px 0px, rgba(0, 0, 0, 0.12) 0px 2px 10px 0px; border: 2px solid #ffffff; border-radius: 5px;"></div>
+					<div id="idempl-d" style="width: 100%; width: -webkit-fill-available; max-width: 110px; height: 140px; background-image: url('<?php echo trim($photourl3)."/public/employeeID/".trim($empidcodecc2).".jpeg"; ?>'); background-repeat: no-repeat; background-position: center; background-size: cover; margin-top: auto; margin-left: auto; margin-right: auto; margin-bottom: -6px; box-shadow: rgba(0, 0, 0, 0.16) 0px 2px 5px 0px, rgba(0, 0, 0, 0.12) 0px 2px 10px 0px; border: 2px solid #ffffff; border-radius: 5px;"></div>
 				</td>
 			</tr>
 
@@ -30,14 +31,15 @@
 					<p style="font-weight: bolder; font-size: large; margin-top: 0; margin-bottom: 0px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;"><?php echo trim(mb_strtoupper($empnameforidcc2)); ?></p>
 					<!-- Fullname max-size 28char only -->
 					<p style="font-weight: bold; font-size: medium; margin-top: 0; margin-bottom: 2px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;"><?php echo trim($designationforidcc2); ?></p>
-					<p style="font-size: smaller; font-weight: 400; margin-top: 0; margin-bottom: 8px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;"><?php echo trim($officenameforidcc2); ?></p>
+					<p style="font-size: smaller; font-weight: 400; margin-top: 0; margin-bottom: 2px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;"><?php echo trim($officenameforidcc2); ?></p>
 					<p style="font-size: 2px; font-weight: bolder; margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;">PLGU-ZSP PLGU-ZSP PLGU-ZSP <?php echo trim($createdatcc2); ?> <?php echo trim($createdatcc2); ?> PLGU-ZSP <?php echo trim($createdatcc2); ?> PLGU-ZSP PLGU-ZSP PLGU-ZSP PLGU-ZSP <?php echo trim($createdatcc2); ?> PLGU-ZSP PLGU-ZSP PLGU-ZSP <?php echo trim($createdatcc2); ?> PLGU-ZSP PLGU-ZSP <?php echo trim($createdatcc2); ?> PLGU-ZSP PLGU-ZSP PLGU-ZSP</p>
 				</td>
 			</tr>
 
 			<tr>
 				<td style="width: 33.3333%; vertical-align: bottom;">
-					<p style="font-size: xx-small; font-weight: 400; margin-top: auto; margin-bottom: 8px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: 12px; line-height: 1; text-align: left; color: #ffffff;">Phone: <br><?php echo trim($mphonecc2); ?></p>
+					<p style="font-size: 8px; font-weight: 400; margin-top: auto; margin-bottom: 8px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: 12px; line-height: 1; text-align: left; color: #ffffff;">Phone: <br><?php echo trim($mphonecc2); ?></p>
+					<div style="font-size: 7px; font-weight: 400; margin-top: auto; margin-bottom: 8px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; margin-right: auto; margin-left: 12px; line-height: 1; text-align: left; color: #ffffff;">Verify: <br>sibugay.gov.ph/employee</div>
 				</td>
 
 				<td style="width: 33.3333%;">

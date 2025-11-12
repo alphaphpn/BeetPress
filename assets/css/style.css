@@ -20,6 +20,7 @@ body {
 .vh-91 { height: 91vh!important; }
 .vh-90 { height: 90vh!important; }
 .vh-86 { height: 86vh!important; }
+.vh-75 { height: 75vh!important; }
 .vh-70 { height: 70vh!important; }
 .vh-65 { height: 65vh!important; }
 .vh-58 { height: 58vh!important; }
@@ -114,6 +115,11 @@ table.memo-post-header tr td.d-block { width: 80px; }
 	padding: 0;
 	margin-top: -12px;
 	margin-right: -4px;
+}
+
+.table-responsive table.table thead tr th {
+	text-align: center;
+	vertical-align: middle;
 }
 
 @keyframes .slide {

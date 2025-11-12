@@ -1,5 +1,6 @@
 <?php 
 
+	include_once "lib/env.php";
 	if ( isset($_GET['logout']) ) {
 		if ( $_GET['logout'] == 1 ) {
 			session_destroy();
@@ -8,11 +9,12 @@
 	} elseif ( isset($_SESSION["empidcode"]) && isset($_SESSION["biono"]) && isset($_SESSION["empname"]) && isset($_SESSION["employeeactivated"]) ) {
 		echo '<script>window.open("home","_self");</script>';
 	} elseif ( isset($_GET['employeeID']) || isset($_GET['pinInput']) ) {
-		$ehemploid = trim($_GET['employeeID']);
-		$ehempincoder = trim($_GET['pinInput']);
+		$ehemploid = isset($_GET['employeeID']) ? $_GET['employeeID'] : null;
+		$ehempincoder = isset($_GET['pinInput']) ? $_GET['pinInput'] : null;
+	} else {
+		$ehemploid = null;
+		$ehempincoder = null;
 	}
-
-	include_once "lib/env.php";
 
 ?>
 
@@ -34,16 +36,23 @@
 								<form id="empLogin" method="post" class="needs-validation" novalidate>
 									<div class="mb-3">
 										<label for="emailInput" class="form-label">Employee ID</label>
-										<input type="number" value="<?php echo trim($ehemploid); ?>" min="10000000" max="99999999" class="form-control w-100" id="employeeID" name="employeeID" aria-describedby="employeeHelp" required>
+										<input type="number" value="<?php echo trim($ehemploid); ?>" min="10000000" max="99999999" class="form-control" id="employeeID" name="employeeID" onfocus="this.select();" aria-describedby="employeeHelp" required>
 										<div class="valid-feedback">Valid.</div>
 										<div class="invalid-feedback">Invalid Employee ID.</div>
 									</div>
 
 									<div class="mb-3">
-										<label for="passwordInput" class="form-label">PIN</label>
-										<input type="number" value="<?php echo trim($ehempincoder); ?>" min="100000" max="999999" class="form-control w-100" id="pinInput" name="pinInput" required>
-										<div class="valid-feedback">Valid.</div>
-										<div class="invalid-feedback">Invalid PIN Code.</div>
+										<label for="pinInput" class="form-label">PIN</label>
+										<div class="input-group">
+											<input type="password" value="<?php echo trim($ehempincoder); ?>" onfocus="this.select();" pattern="[0-9]{6,8}" class="form-control password" id="pinInput" name="pinInput" autocomplete="new-password" onpaste="return false;" required>
+											<div class="input-group-prepend cursor-hand">
+												<span id="show_hide_pin" class="input-group-text h-100 rounded-0 rounded-end">
+													<i class="fa fa-eye-slash" aria-hidden="true" onclick="PinHideShow()"></i>
+												</span>
+											</div>
+											<div class="valid-feedback">Valid.</div>
+											<div class="invalid-feedback">Invalid PIN Code. Numbers only.</div>
+										</div>
 									</div>
 
 									<div class="mb-3 form-check">

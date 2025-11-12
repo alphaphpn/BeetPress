@@ -12,8 +12,8 @@
 	<link rel="icon" type="image/png" href="<?php echo trim($domainhome).'/assets/media/favicon.png'; ?>">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Marck+Script&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+	<!-- <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet"> -->
+	<!-- <link href="https://fonts.googleapis.com/css2?family=Marck+Script&family=UnifrakturMaguntia&display=swap" rel="stylesheet"> -->
 	<link href="<?php echo trim($domainhome); ?>/assets/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="<?php echo trim($domainhome); ?>/assets/npm/slick-carousel@1.8.1/slick/slick.css">
 	<link rel="stylesheet" href="<?php echo trim($domainhome); ?>/assets/fontawesome/releases/v5.7.0/css/all.css">
@@ -34,7 +34,7 @@
 	<script src="<?php echo trim($domainhome); ?>/assets/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 	<script src="<?php echo trim($domainhome); ?>/assets/datatables/1.13.6/js/jquery.dataTables.min.js"></script>
 	<script src="<?php echo trim($domainhome); ?>/assets/datatables/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-	<script src="<?php echo trim($domainhome); ?>/assets/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+	<!-- <script src="<?php // echo trim($domainhome); ?>/assets/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script> -->
 	<script src="<?php echo trim($domainhome); ?>/assets/ajax/libs/particle-animate/1.0.0/js/particle-animate.js"></script>
 	<script src="<?php echo trim($domainhome); ?>/assets/js/functions.js"></script>
 </head>

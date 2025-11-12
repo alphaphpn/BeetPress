@@ -12,12 +12,16 @@
 			// Memory single variable base on Database Table Fieldnames
 			Public $profileautoidii,
 				$profileidii,
+				$useridii,
+				$ulevelii,
+				$upositionii,
 				$nicknameii,
 				$ptitleii,
 				$firstnameii,
 				$middlenameii,
 				$lastnameii,
 				$suffixii,
+				$fullnameii,
 				$genderii,
 				$birthdateii,
 				$birthplaceii,
@@ -59,12 +63,16 @@
 			// Memory list variable base on Database Table Fieldnames
 			Public $list_profileautoidii,
 				$list_profileidii,
+				$list_useridii,
+				$list_ulevelii,
+				$list_upositionii,
 				$list_nicknameii,
 				$list_ptitleii,
 				$list_firstnameii,
 				$list_middlenameii,
 				$list_lastnameii,
 				$list_suffixii,
+				$list_fullnameii,
 				$list_genderii,
 				$list_birthdateii,
 				$list_birthplaceii,
@@ -107,12 +115,16 @@
 			public function __construct() {
 				$this->list_profileautoidii = array();
 				$this->list_profileidii = array();
+				$this->list_useridii = array();
+				$this->list_ulevelii = array();
+				$this->list_upositionii = array();
 				$this->list_nicknameii = array();
 				$this->list_ptitleii = array();
 				$this->list_firstnameii = array();
 				$this->list_middlenameii = array();
 				$this->list_lastnameii = array();
 				$this->list_suffixii = array();
+				$this->list_fullnameii = array();
 				$this->list_genderii = array();
 				$this->list_birthdateii = array();
 				$this->list_birthplaceii = array();
@@ -156,12 +168,16 @@
 			public function clearlist_clssProfile() {
 				$this->list_profileautoidii = array();
 				$this->list_profileidii = array();
+				$this->list_useridii = array();
+				$this->list_ulevelii = array();
+				$this->list_upositionii = array();
 				$this->list_nicknameii = array();
 				$this->list_ptitleii = array();
 				$this->list_firstnameii = array();
 				$this->list_middlenameii = array();
 				$this->list_lastnameii = array();
 				$this->list_suffixii = array();
+				$this->list_fullnameii = array();
 				$this->list_genderii = array();
 				$this->list_birthdateii = array();
 				$this->list_birthplaceii = array();
@@ -218,6 +234,76 @@
 				}
 
 				return $data;
+			}
+
+			// Reading of data values Memory list variable base on Database Table Fieldnames
+			// For Employee Registration
+			public function list_forEmployeeReg() {
+				$this->clearlist_clssProfile();
+				$this->getConnection();
+
+				$selectQuery = "SELECT 
+						u.uid AS uid, 
+						u.ulevel AS ulevel, 
+						u.uposition AS uposition, 
+						p.profile_autoid AS profileautoid, 
+						p.profileid AS profileid, 
+						p.nickname AS nickname, 
+						p.ptitle AS ptitle, 
+						p.first_name AS firstname, 
+						p.middle_name AS middlename, 
+						p.last_name AS lastname, 
+						p.suffix AS suffix, 
+						p.gender AS gender, 
+						p.birth_date AS birthdate, 
+						p.email AS email, 
+						p.mobile AS mobile, 
+						p.photo AS photo 
+					FROM 
+						user_tbl AS u 
+					INNER JOIN 
+						profile_tbl AS p ON u.profileid = p.profileid 
+					WHERE 
+						u.ulevel = 12
+						";
+				$stmt = $this->cnn->prepare($selectQuery);
+				$stmt->execute();
+
+				$cntRcrd = $stmt->rowCount();
+
+				if ($cntRcrd > 0) {
+					foreach ($stmt as $rwRcrd) {
+						$this->list_useridii[] = $rwRcrd['uid'];
+						$this->list_ulevelii[] = $rwRcrd['ulevel'];
+						$this->list_upositionii[] = $rwRcrd['uposition'];
+						$this->list_profileautoidii[] = $rwRcrd['profileautoid'];
+						$this->list_profileidii[] = $rwRcrd['profileid'];
+						$this->list_nicknameii[] = $rwRcrd['nickname'];
+						$this->list_genderii[] = $rwRcrd['gender'];
+						$this->list_birthdateii[] = $rwRcrd['birthdate'];
+						$this->list_emailii[] = $rwRcrd['email'];
+						$this->list_photoii[] = $rwRcrd['photo'];
+						$this->list_mobileii[] = $rwRcrd['mobile'];
+
+						// create fullname
+						$fullname_mi = null;
+						if ( empty(trim($rwRcrd['ptitle'])) && empty(trim($rwRcrd['middlename'])) && empty(trim($rwRcrd['suffix'])) ) {
+							$fullname_mi = trim(strtoupper($rwRcrd['firstname']))." ".trim(strtoupper($rwRcrd['lastname']));
+						} elseif ( empty(trim($rwRcrd['ptitle'])) && empty(trim($rwRcrd['suffix'])) ) {
+							$fullname_mi = trim(strtoupper($rwRcrd['firstname']))." ".trim(substr(strtoupper($rwRcrd['middlename']),0,1)).". ".trim(strtoupper($rwRcrd['lastname']));
+						} elseif ( empty(trim($rwRcrd['ptitle'])) ) {
+							$fullname_mi = trim(strtoupper($rwRcrd['firstname']))." ".trim(substr(strtoupper($rwRcrd['middlename']),0,1)).". ".trim(strtoupper($rwRcrd['lastname'])).", ".trim(strtoupper($rwRcrd['suffix']));
+						} else {
+							$fullname_mi = trim(strtoupper($rwRcrd['ptitle']))." ".trim(strtoupper($rwRcrd['firstname']))." ".trim(substr(strtoupper($rwRcrd['middlename']),0,1)).". ".trim(strtoupper($rwRcrd['lastname'])).", ".trim(strtoupper($rwRcrd['suffix']));
+						}
+
+						$this->list_fullnameii[] = $fullname_mi;
+					}
+
+					return true;
+				} else {
+					return false;
+				}
 			}
 
 			// Create or insert new data on the Database Table

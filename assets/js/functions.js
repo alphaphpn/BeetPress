@@ -91,3 +91,23 @@ function randNmbrfive() {
 
 	return combine;
 }
+
+function fnNumericOnly(id) {
+	const numericInput = document.getElementById(id);
+
+	numericInput.onkeydown = (event) => {
+	// Allow numbers (0-9) and also essential keys like Backspace, Delete, Tab, Arrow keys
+		if (
+			isNaN(event.key) && // Check if the key is not a number
+			event.key !== 'Backspace' &&
+			event.key !== 'Delete' &&
+			event.key !== 'Tab' &&
+			!event.metaKey && // Allow Cmd/Ctrl key combinations (e.g., for copy/paste)
+			!event.ctrlKey &&
+			!event.altKey &&
+			event.key.indexOf('Arrow') === -1 // Allow arrow keys for navigation
+		) {
+			event.preventDefault(); // Prevent default action for non-numeric and non-control keys
+		}
+	};
+}

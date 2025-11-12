@@ -4,7 +4,8 @@
 	$alt_name = isset($_SESSION["d2s8wu_uname"]) ? strtoupper(substr($_SESSION["d2s8wu_uname"],0,1)) : null;
 	$disp_uname = isset($_SESSION["d2s8wu_uname"]) ? trim($_SESSION["d2s8wu_uname"]) : null;
 	$disp_uposition = isset($_SESSION["d2s8wu_uposition"]) ? trim($_SESSION["d2s8wu_uposition"]) : null;
-	$disp_officeid = isset($_SESSION["d2s8wu_officecode"]) ? trim($_SESSION["d2s8wu_officecode"]) : null;
+	$disp_officeid = isset($_SESSION["d2s8wu_officeid"]) ? trim($_SESSION["d2s8wu_officeid"]) : null;
+	$disp_officecode = isset($_SESSION["d2s8wu_officecode"]) ? trim($_SESSION["d2s8wu_officecode"]) : null;
 	$disp_officeabvr = isset($_SESSION["d2s8wu_officeabrv"]) ? trim($_SESSION["d2s8wu_officeabrv"]) : null;
 	$disp_ulevel = isset($_SESSION["d2s8wu_ulevel"]) ? trim($_SESSION["d2s8wu_ulevel"]) : null;
 
@@ -23,7 +24,7 @@
 							<?php echo trim($disp_uname); ?><br>
 							<strong><?php echo trim($disp_uposition); ?></strong>
 						</span>
-						<span class="user-role font-size-10"><?php echo trim($disp_officeid).' '.trim($disp_officeabvr); ?></span>
+						<span class="user-role font-size-10"><?php echo trim($disp_officeid).' '.trim($disp_officeabvr).' '.trim($disp_officecode); ?></span>
 						<span class="user-status font-size-10">
 							<i class="fa fa-circle text-success"></i>
 							<span>Online</span>

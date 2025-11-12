@@ -1,4 +1,4 @@
-
+<?php $photourl1 = trim($pixloc); ?>
 	<style>
 		#barcode { border-radius: 50px; }
 		#qrcode1 img { width: 100%; max-width: 58px; margin: auto; padding: 8px; }
@@ -19,7 +19,7 @@
 
 			<tr>
 				<td colspan="3">
-					<div style="width: 100%; width: -webkit-fill-available; max-width: 110px; height: 140px; background-image: url('<?php echo trim($domainhome)."/public/employeeID/".trim($empidcodecc1).".jpeg"; ?>'); background-repeat: no-repeat; background-position: center; background-size: cover; margin-top: auto; margin-left: auto; margin-right: auto; margin-bottom: -6px; box-shadow: rgba(0, 0, 0, 0.16) 0px 2px 5px 0px, rgba(0, 0, 0, 0.12) 0px 2px 10px 0px; border: 2px solid #ffffff; border-radius: 5px;"></div>
+					<div id="idempl-a" style="width: 100%; width: -webkit-fill-available; max-width: 110px; height: 140px; background-image: url('<?php echo trim($photourl1)."/public/employeeID/".trim($empidcodecc1).".jpeg"; ?>'); background-repeat: no-repeat; background-position: center; background-size: cover; margin-top: auto; margin-left: auto; margin-right: auto; margin-bottom: -6px; box-shadow: rgba(0, 0, 0, 0.16) 0px 2px 5px 0px, rgba(0, 0, 0, 0.12) 0px 2px 10px 0px; border: 2px solid #ffffff; border-radius: 5px;"></div>
 				</td>
 			</tr>
 
@@ -30,14 +30,15 @@
 					<p style="font-weight: bolder; font-size: large; margin-top: 0; margin-bottom: 0px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;"><?php echo trim(mb_strtoupper($empnameforidcc1)); ?></p>
 					<!-- Fullname max-size 28char only -->
 					<p style="font-weight: bold; font-size: medium; margin-top: 0; margin-bottom: 2px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;"><?php echo trim($designationforidcc1); ?></p>
-					<p style="font-size: smaller; font-weight: 400; margin-top: 0; margin-bottom: 8px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;"><?php echo trim($officenameforidcc1); ?></p>
+					<p style="font-size: smaller; font-weight: 400; margin-top: 0; margin-bottom: 2px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;"><?php echo trim($officenameforidcc1); ?></p>
 					<p style="font-size: 2px; font-weight: bolder; margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;">PLGU-ZSP PLGU-ZSP PLGU-ZSP <?php echo trim($createdatcc1); ?> <?php echo trim($createdatcc1); ?> PLGU-ZSP <?php echo trim($createdatcc1); ?> PLGU-ZSP PLGU-ZSP PLGU-ZSP PLGU-ZSP <?php echo trim($createdatcc1); ?> PLGU-ZSP PLGU-ZSP PLGU-ZSP <?php echo trim($createdatcc1); ?> PLGU-ZSP PLGU-ZSP <?php echo trim($createdatcc1); ?> PLGU-ZSP PLGU-ZSP PLGU-ZSP</p>
 				</td>
 			</tr>
 
 			<tr>
 				<td style="width: 33.3333%; vertical-align: bottom;">
-					<p style="font-size: xx-small; font-weight: 400; margin-top: auto; margin-bottom: 8px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: 12px; line-height: 1; text-align: left; color: #ffffff;">Phone: <br><?php echo trim($mphonecc1); ?></p>
+					<p style="font-size: 8px; font-weight: 400; margin-top: auto; margin-bottom: 8px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: 12px; line-height: 1; text-align: left; color: #ffffff;">Phone: <br><?php echo trim($mphonecc1); ?></p>
+					<div style="font-size: 7px; font-weight: 400; margin-top: auto; margin-bottom: 8px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; margin-right: auto; margin-left: 12px; line-height: 1; text-align: left; color: #ffffff;">Verify: <br>sibugay.gov.ph/employee</div>
 				</td>
 
 				<td style="width: 33.3333%;">
@@ -57,17 +58,6 @@
 		</tbody>
 	</table>
 
-	<?php 
-		$slgqrcodz1 = genEmpQrCodeZ($empidcodecc1,$nicknamecc1,$empnameforidcc1,$birthdaycc1,$designationforidcc1,$officenameforidcc1,$createdatcc1); 
-	?>
-
-	<textarea id="slgqrcodz1" type="text" name="slgqrcodz1" class="d-none" readonly>
-		<?php echo trim($domainhome)."/employee/".$empidcodecc1; ?>
-
-		<?php echo trim($slgqrcodz1); ?>
-	</textarea>
-
 	<script>
-		const slgqrcodz1 = document.getElementById("slgqrcodz1").innerHTML;
-		new QRCode(document.getElementById("qrcode1"), slgqrcodz1);
+		new QRCode(document.getElementById("qrcode1"), "<?php echo trim($empidcodecc1); ?>");
 	</script>

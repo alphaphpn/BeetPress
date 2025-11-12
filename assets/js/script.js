@@ -147,6 +147,19 @@ function PwHideShow2() {
 	}
 }
 
+function PinHideShow() {
+	var x = document.getElementById("pinInput");
+	if (x.type === "password") {
+		x.type = "text";
+		$('#show_hide_pin i').removeClass( "fa-eye-slash" );
+		$('#show_hide_pin i').addClass( "fa-eye" );
+	} else {
+		x.type = "password";
+		$('#show_hide_pin i').addClass( "fa-eye-slash" );
+		$('#show_hide_pin i').removeClass( "fa-eye" );
+	}
+}
+
 function fnUpDateTime() {
 	let currentTime = new Date();
 	// let currentTime = currentTimeX.toLocaleString('en-US', { timeZone: 'Asia/Manila' });

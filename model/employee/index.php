@@ -362,6 +362,95 @@
 				$this->list_createdatee = array();
 			}
 
+			// List of Employee
+			public function fn_ListEmployee($officeid) {
+				$this->clearlist_employeeAcct();
+				$this->getConnection();
+
+				$officeidme = $officeid;
+				if ( empty($officeidme) || $officeidme == 0 || $officeidme = null ) {
+					$selectQuery = "SELECT * FROM employee_tbl WHERE xdel=0 ORDER BY modified_at DESC";
+					$stmt = $this->cnn->prepare($selectQuery);
+				} else {
+					$selectQuery = "SELECT * FROM employee_tbl WHERE officeid=:officeidme AND xdel=0 ORDER BY modified_at DESC";
+					$stmt = $this->cnn->prepare($selectQuery);
+					$stmt->bindParam(':officeidme', $officeidme);
+				}
+				$stmt->execute();
+
+				$cntRcrd = $stmt->rowCount();
+
+				if ($cntRcrd > 0) {
+					foreach ($stmt as $rwRcrd) {
+						$this->list_empautoidee[] = $rwRcrd['emp_autoid'];
+						$this->list_profileidee[] = $rwRcrd['profileid'];
+						$this->list_uidee[] = $rwRcrd['uid'];
+						$this->list_empidcodeee[] = $rwRcrd['emp_idcode'];
+						$this->list_pinwordee[] = $rwRcrd['pinword'];
+						$this->list_hrempidee[] = $rwRcrd['hr_emp_id'];
+						$this->list_bionoee[] = $rwRcrd['bio_no'];
+						$this->list_nicknameee[] = $rwRcrd['nickname'];
+						$this->list_empnameforidee[] = $rwRcrd['emp_name_forid'];
+						$this->list_officenameforidee[] = $rwRcrd['officename_forid'];
+						$this->list_designationforidee[] = $rwRcrd['designationforid'];
+						$this->list_birthdayee[] = $rwRcrd['birthday'];
+						$this->list_empageee[] = $rwRcrd['emp_age'];
+						$this->list_officeidee[] = $rwRcrd['officeid'];
+						$this->list_officegpslocationee[] = $rwRcrd['office_gps_location'];
+						$this->list_yearemployedee[] = $rwRcrd['year_employed'];
+						$this->list_yearcalcee[] = $rwRcrd['year_calc'];
+						$this->list_typeemployeenoee[] = $rwRcrd['type_employee_no'];
+						$this->list_verifiedee[] = $rwRcrd['verified'];
+						$this->list_activatedee[] = $rwRcrd['activated'];
+						$this->list_shiftstatusee[] = $rwRcrd['shift_status'];
+						$this->list_timeeditableee[] = $rwRcrd['time_editable'];
+						$this->list_prioritydtree[] = $rwRcrd['priority_dtr'];
+						$this->list_timeeditablevalueee[] = $rwRcrd['time_editable_value'];
+						$this->list_allowedotee[] = $rwRcrd['allowed_ot'];
+						$this->list_plantillanoee[] = $rwRcrd['plantilla_no'];
+						$this->list_positionclassee[] = $rwRcrd['position_class'];
+						$this->list_salaryamountee[] = $rwRcrd['salary_amount'];
+						$this->list_salaryperiodee[] = $rwRcrd['salary_period'];
+						$this->list_salaryamountperperiodee[] = $rwRcrd['salary_amount_per_period'];
+						$this->list_authannualsalaryee[] = $rwRcrd['auth_annual_salary'];
+						$this->list_actualannualsalaryee[] = $rwRcrd['actual_annual_salary'];
+						$this->list_salarygradeee[] = $rwRcrd['salary_grade'];
+						$this->list_salarystepsee[] = $rwRcrd['salary_steps'];
+						$this->list_empareacodeee[] = $rwRcrd['emp_area_code'];
+						$this->list_empareatypeee[] = $rwRcrd['emp_area_type'];
+						$this->list_emplevelee[] = $rwRcrd['emp_level'];
+						$this->list_philhealthcontributionee[] = $rwRcrd['philhealth_contribution'];
+						$this->list_pagibibcontributionee[] = $rwRcrd['pagibib_contribution'];
+						$this->list_ssscontributionee[] = $rwRcrd['sss_contribution'];
+						$this->list_gsiscontributionee[] = $rwRcrd['gsis_contribution'];
+						$this->list_employeecontributionee[] = $rwRcrd['employee_contribution'];
+						$this->list_payrollbanknameee[] = $rwRcrd['payroll_bank_name'];
+						$this->list_payrollbanknumberee[] = $rwRcrd['payroll_bank_number'];
+						$this->list_philhealthnoee[] = $rwRcrd['philhealth_no'];
+						$this->list_pagibibnoee[] = $rwRcrd['pagibib_no'];
+						$this->list_sssnoee[] = $rwRcrd['sss_no'];
+						$this->list_gsisnoee[] = $rwRcrd['gsis_no'];
+						$this->list_taxidee[] = $rwRcrd['tax_id'];
+						$this->list_lastdateemploymentee[] = $rwRcrd['last_date_employment'];
+						$this->list_dateissuedee[] = $rwRcrd['date_issued'];
+						$this->list_monthsvalidityee[] = $rwRcrd['months_validity'];
+						$this->list_employmentstatusnoee[] = $rwRcrd['employment_status_no'];
+						$this->list_employmentstatusee[] = $rwRcrd['employment_status'];
+						$this->list_validuntilee[] = $rwRcrd['valid_until'];
+						$this->list_mphoneee[] = $rwRcrd['mphone'];
+						$this->list_empemailee[] = $rwRcrd['empemail'];
+						$this->list_xdelee[] = $rwRcrd['xdel'];
+						$this->list_createdbyee[] = $rwRcrd['createdby'];
+						$this->list_modifiedbyee[] = $rwRcrd['modifiedby'];
+						$this->list_modifiedatee[] = $rwRcrd['modified_at'];
+						$this->list_createdatee[] = $rwRcrd['created_at'];
+					}
+					return true;
+				} else {
+					return true;
+				}
+			}
+
 			// Create or insert new data on the Database Table
 			public function insert_Employee($agencycode,$agencyname,$nickname,$empnameforid,$officenameforid,$designationforid,$profileid,$uid,$empidcode,$pinword,$hrempid,$biolocation,$biono,$empname,$gender,$birthday,$officeid,$officecode,$officename,$officetitle,$officeabrv,$oldofficeabrv,$officegpslocation,$headofficer,$headtitle,$authhead,$authtitle,$authdescription,$yearemployed,$typeemployeeno,$typeemployeeabrv,$typeemployee,$verified,$activated,$worklocation,$shiftstatus,$timeeditable,$prioritydtr,$timeeditablevalue,$allowedot,$position,$designation,$mphone,$empemail,$designationat,$createdby,$modifiedby,$bioloclabel,$imgdataempl) {
 				$this->clearlist_employeeAcct();
@@ -697,8 +786,8 @@
 				$this->clearlist_employeeAcct();
 				$this->getConnection();
 
-				$empidcode = htmlspecialchars(trim($empidcodez));
-				$pinword = htmlspecialchars(md5(trim($pinwordz)));
+				$empidcode = trim($empidcodez);
+				$pinword = md5(trim($pinwordz));
 
 				$selectQuery = "SELECT * FROM employee_tbl WHERE emp_idcode=:empidcode AND pinword=:pinword LIMIT 1";
 				$stmt = $this->cnn->prepare($selectQuery);
@@ -905,9 +994,9 @@
 			public function Search_employeeAcct_EmployeeName($employeename) {
 				$this->clearlist_employeeAcct();
 				$this->getConnection();
-				$xemployeeName = trim(htmlspecialchars($employeename));
+				$xemployeeName = trim($employeename);
 
-				$selectQuery = "SELECT * FROM employee_tbl WHERE emp_name=:xemployeeName LIMIT 1";
+				$selectQuery = "SELECT * FROM employee_tbl WHERE emp_name=:xemployeeName OR emp_name_forid=:xemployeeName LIMIT 1";
 				$stmt = $this->cnn->prepare($selectQuery);
 				$stmt->bindParam(':xemployeeName', $xemployeeName);
 				$stmt->execute();

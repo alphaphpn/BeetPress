@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	<style>
+		img {-webkit-filter: grayscale(100%); filter: grayscale(100%);}
+	</style>
+</head>
+<body>
+	<img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Pink_flower.jpg" id="Image" alt="Pineapple" width="300" height="300">
+
+	<form>
+	Photo Filter:
+	<input type="range" id="Filter" name="points" min="0" max="10" onchange="ChangeFilter()" />
+	</form>
+
+	<!-- http://stackoverflow.com/questions/35340903/html-range-element-to-change-css-image-filter-with-javascript -->
+
+	<!-- http://stackoverflow.com/questions/31686604/how-to-add-image-filter-based-on-range-input-value -->
+
+	<script>
+		function ChangeFilter(event) {
+			Image = document.getElementById("Image");
+			Filter = document.getElementById("Filter").value;
+
+			Image.style.WebkitFilter = "grayscale(" + Filter * 10 + "%)"
+		}
+	</script>
+</body>
+</html>

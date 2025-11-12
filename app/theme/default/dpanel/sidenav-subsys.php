@@ -15,6 +15,16 @@
 								<div class="sb-nav-link-icon"><i class="far fa-folder-open"></i></div>
 								DocTrack
 							</a>
+
+							<a class="nav-link" href="employee-id-reg">
+								<div class="sb-nav-link-icon"><i class="far fa-address-card"></i></div>
+								Employee ID Registration
+							</a>
+
+							<a class="nav-link" href="employee-list">
+								<div class="sb-nav-link-icon"><i class="fas fa-user-tag"></i></div>
+								Employee List
+							</a>
 						<?php
 							}
 						?>

@@ -174,6 +174,51 @@
 					echo "Record not found.";
 				}
 			}
+
+			// Selected Office: Reading of data values Memory list variable base on Database Table Fieldnames
+			public function vwofficeSignatorySelected($officeid) {
+				$this->clearlist_officeSignatory();
+				$this->getConnection();
+				$xofficeid = trim($officeid);
+
+				$selectQuery = "SELECT * FROM office_signatory_tbl WHERE officeid=:xofficeid AND xdel=0";
+				$stmt = $this->cnn->prepare($selectQuery);
+				$stmt->bindParam(':xofficeid', $xofficeid);
+				$stmt->execute();
+
+				$cntRcrd = $stmt->rowCount();
+
+				if ($cntRcrd > 0) {
+					foreach ($stmt as $rwRcrd) {
+						$this->list_officesignatoryautoidjj[] = $rwRcrd['office_signatory_autoid'];
+						$this->list_agencycodejj[] = $rwRcrd['agency_code'];
+						$this->list_agencynamejj[] = $rwRcrd['agency_name'];
+						$this->list_officeidjj[] = $rwRcrd['officeid'];
+						$this->list_officecodejj[] = $rwRcrd['officecode'];
+						$this->list_officenamejj[] = $rwRcrd['officename'];
+						$this->list_officetitlejj[] = $rwRcrd['officetitle'];
+						$this->list_officeabrvjj[] = $rwRcrd['officeabrv'];
+						$this->list_oldofficeabrvjj[] = $rwRcrd['oldofficeabrv'];
+						$this->list_headofficerjj[] = $rwRcrd['headofficer'];
+						$this->list_headtitlejj[] = $rwRcrd['headtitle'];
+						$this->list_authheadjj[] = $rwRcrd['auth_head'];
+						$this->list_authtitlejj[] = $rwRcrd['auth_title'];
+						$this->list_authdescriptionjj[] = $rwRcrd['auth_description'];
+						$this->list_authimagewsignjj[] = $rwRcrd['auth_image_w_sign'];
+						$this->list_authimagewoutsignjj[] = $rwRcrd['auth_image_wout_sign'];
+						$this->list_effectivitydatejj[] = $rwRcrd['effectivity_date'];
+						$this->list_signatorystatusjj[] = $rwRcrd['signatory_status'];
+						$this->list_officegpslocationjj[] = $rwRcrd['office_gps_location'];
+						$this->list_xdeljj[] = $rwRcrd['xdel'];
+						$this->list_createdbyjj[] = $rwRcrd['createdby'];
+						$this->list_modifiedbyjj[] = $rwRcrd['modifiedby'];
+						$this->list_modifiedatjj[] = $rwRcrd['modified_at'];
+						$this->list_createdatjj[] = $rwRcrd['created_at'];
+					}
+				} else {
+					echo "Record not found.";
+				}
+			}
 		}
 
 	} catch (PDOException $error) {

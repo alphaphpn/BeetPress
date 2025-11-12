@@ -47,8 +47,26 @@
 							<a class="nav-link" href="<?php if ( $the_homepage == 1) { echo "#home"; } else { echo trim($domainhome).'/'; } ?>">Home</a>
 						</li>
 
-						<li class="nav-item">
-							<a class="nav-link" href="<?php if ( $the_homepage == 1) { } else { echo trim($domainhome).'/'; } ?>#services">Services</a>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="<?php if ( $the_homepage == 1) { } else { echo trim($domainhome).'/'; } ?>#services">Services</a>
+							<ul class="dropdown-menu">
+								<li class="nav-item dropend">
+									<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Apps</a>
+									<ul class="dropdown-menu">
+										<!-- JS -->
+										<li><a class="dropdown-item" href="run/js/qrcode" target="_blank">QR Code Reader</a></li>
+										<li><a class="dropdown-item" href="run/js/gps" target="_blank">GPS</a></li>
+										<li><a class="dropdown-item" href="run/js/sign" target="_blank">eSign</a></li>
+
+										<li><hr class="dropdown-divider"></li>
+
+										<!-- PHP -->
+										<li><a class="dropdown-item" href="run/php/date" target="_blank">Date</a></li>
+										<li><a class="dropdown-item" href="run/php/detect-device-info" target="_blank">Device info.</a></li>
+										<li><a class="dropdown-item" href="run/php/password" target="_blank">Data Encrypt</a></li>
+									</ul>
+								</li>
+							</ul>
 						</li>
 
 						<li class="nav-item dropdown">

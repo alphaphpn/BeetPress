@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width
+                                   ,initial-scale=1.0">
+    <title>Example 2</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        .bContainer {
+            width: 80%;
+            text-align: center;
+        }
+
+        .imgContainer {
+            margin-bottom: 20px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        input[type="range"] {
+            width: 50%;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bContainer">
+        <h1>Using SVG Filter Effects</h1>
+        <div class="imgContainer">
+            <svg width="100%" height="100%">
+                <defs>
+                    <filter id="brightnessFilter">
+                        <feColorMatrix type="matrix" 
+                                       values="1 0 0 0 0
+                                        0 1 0 0 0
+                                        0 0 1 0 0
+                                        0 0 0 1 0" />
+                    </filter>
+                </defs>
+                <image xlink:href="
+https://media.geeksforgeeks.org/wp-content/uploads/20240315172801/7-Best-AI-SEO-Writing-Tools-in-2024.webp"
+                    width="100%" height="100%"
+                       filter="url(#brightnessFilter)" />
+            </svg>
+        </div>
+        <input type="range" min="0" max="200"
+               value="100" class="slider" 
+               id="brightnessSlider">
+    </div>
+    <script>
+        const bSlider = document.getElementById('brightnessSlider');
+        const filter = document.getElementById('brightnessFilter');
+        bSlider.addEventListener('input',
+                                 function () {
+            const bVal = this.value / 100;
+            filter.children[0].setAttribute('values',
+                `${bVal} 0 0 0 0
+                            0 ${bVal} 0 0 0
+                            0 0 ${bVal} 0 0
+                            0 0 0 1 0`);
+        });
+    </script>
+</body>
+
+</html>

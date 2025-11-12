@@ -19,7 +19,10 @@
 		'signout' => 'lib/logout.php', 
 		'sign-out' => 'lib/logout.php', 
 		'pds' => 'routes/pds.php', 
-		'portfolio' => 'routes/portfolio.php',
+		'portfolio' => 'routes/portfolio.php', 
+		'employee-id-reg' => 'routes/empl-id-reg.php', 
 
-		'bp-mngr' => 'routes/bp-mngr.php'
+		'bp-mngr' => 'routes/bp-mngr.php', 
+		'employee' => 'routes/employee.php', 
+		'employee-list' => 'routes/employee-list.php'
 	];
