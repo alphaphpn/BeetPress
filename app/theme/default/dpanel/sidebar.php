@@ -85,7 +85,7 @@
 		</div>
 		
 		<div id="layoutSidenav_content">
-			<main class="pb-5">
+			<main style="padding-bottom: 5rem;">
 				<div class="container-fluid px-4 clearfix">
 				<?php
 					if ($page_title=="DashPanel") {

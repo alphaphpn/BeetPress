@@ -179,7 +179,7 @@
 				} else {
 					$this->clearlist_userAcct();
 					$this->getConnection();
-					$auth_userid = trim(htmlspecialchars(trim($userid)));
+					$auth_userid = trim($userid);
 					$auth_userpw = trim(md5(trim($userpw)));
 
 					$selectQuery = "SELECT * FROM user_tbl WHERE TRIM(uname)=:authuserid AND TRIM(pword)=:authuserpw LIMIT 1";
@@ -236,7 +236,7 @@
 			public function Search_userAcct_userid($userid) {
 				$this->clearlist_userAcct();
 				$this->getConnection();
-				$userid = trim(htmlspecialchars($userid));
+				$userid = trim($userid);
 
 				$selectQuery = "SELECT * FROM user_tbl WHERE uid=:userid";
 				$stmt = $this->cnn->prepare($selectQuery);
@@ -258,7 +258,7 @@
 			public function Search_userAcct_username($username) {
 				$this->clearlist_userAcct();
 				$this->getConnection();
-				$username = trim(htmlspecialchars($username));
+				$username = trim($username);
 
 				$selectQuery = "SELECT * FROM user_tbl WHERE uname=:username";
 				$stmt = $this->cnn->prepare($selectQuery);
@@ -280,7 +280,7 @@
 			public function Search_userAcct_phone($uphone) {
 				$this->clearlist_userAcct();
 				$this->getConnection();
-				$uphone = trim(htmlspecialchars($uphone));
+				$uphone = trim($uphone);
 
 				$selectQuery = "SELECT * FROM user_tbl WHERE phone=:uphone";
 				$stmt = $this->cnn->prepare($selectQuery);
@@ -302,7 +302,7 @@
 			public function Search_userAcct_uemail($uemail) {
 				$this->clearlist_userAcct();
 				$this->getConnection();
-				$uemail = trim(htmlspecialchars($uemail));
+				$uemail = trim($uemail);
 
 				$selectQuery = "SELECT * FROM user_tbl WHERE email=:uemail LIMIT 1";
 				$stmt = $this->cnn->prepare($selectQuery);
@@ -324,8 +324,8 @@
 			public function Search_userAcct_UserIDProfileID($userid,$profileid) {
 				$this->clearlist_userAcct();
 				$this->getConnection();
-				$userid = trim(htmlspecialchars($userid));
-				$profileid = trim(htmlspecialchars($profileid));
+				$userid = trim($userid);
+				$profileid = trim($profileid);
 
 				$selectQuery = "SELECT * FROM user_tbl WHERE uid=:userid AND profileid=:profileid";
 				$stmt = $this->cnn->prepare($selectQuery);
@@ -348,8 +348,8 @@
 			public function Search_userAcct_UserNameProfileID($uname,$profileid) {
 				$this->clearlist_userAcct();
 				$this->getConnection();
-				$uname = trim(htmlspecialchars($uname));
-				$profileid = trim(htmlspecialchars($profileid));
+				$uname = trim($uname);
+				$profileid = trim($profileid);
 
 				$selectQuery = "SELECT * FROM user_tbl WHERE uid=:uname AND profileid=:profileid";
 				$stmt = $this->cnn->prepare($selectQuery);
@@ -372,8 +372,8 @@
 			public function Search_userAcct_UserIDUserName($unameid,$uname) {
 				$this->clearlist_userAcct();
 				$this->getConnection();
-				$unameid = trim(htmlspecialchars($unameid));
-				$uname = trim(htmlspecialchars($uname));
+				$unameid = trim($unameid);
+				$uname = trim($uname);
 
 				$selectQuery = "SELECT * FROM user_tbl WHERE uid=:unameid AND uname=:uname";
 				$stmt = $this->cnn->prepare($selectQuery);
@@ -396,9 +396,9 @@
 			public function Search_userAcct_UIDNameProfID($unameid,$uname,$profileid) {
 				$this->clearlist_userAcct();
 				$this->getConnection();
-				$unameid = trim(htmlspecialchars($unameid));
-				$uname = trim(htmlspecialchars($uname));
-				$profileid = trim(htmlspecialchars($profileid));
+				$unameid = trim($unameid);
+				$uname = trim($uname);
+				$profileid = trim($profileid);
 
 				$selectQuery = "SELECT * FROM user_tbl WHERE uid=:unameid AND uname=:uname AND profileid=:profileid";
 				$stmt = $this->cnn->prepare($selectQuery);
@@ -423,26 +423,26 @@
 				$this->clearlist_userAcct();
 				$this->getConnection();
 
-				$agencycodegg = htmlspecialchars(trim($agencycodegg));
-				$agencynamegg = htmlspecialchars(trim($agencynamegg));
-				$uidgg = htmlspecialchars(trim($uidgg));
-				$profileidgg = htmlspecialchars(trim($profileidgg));
-				$unamegg = htmlspecialchars(trim($unamegg));
-				$nicknamegg = htmlspecialchars(trim($nicknamegg));
-				$pwordgg = trim(md5(htmlspecialchars(trim($pwordgg))));
-				$countrygg = htmlspecialchars(trim($countrygg));
-				$countrycodegg = htmlspecialchars(trim($countrycodegg));
-				$zipcodegg = htmlspecialchars(trim($zipcodegg));
-				$phonegg = htmlspecialchars(trim($phonegg));
-				$emailgg = htmlspecialchars(trim($emailgg));
+				$agencycodegg = trim($agencycodegg);
+				$agencynamegg = trim($agencynamegg);
+				$uidgg = trim($uidgg);
+				$profileidgg = trim($profileidgg);
+				$unamegg = trim($unamegg);
+				$nicknamegg = trim($nicknamegg);
+				$pwordgg = trim(md5(trim($pwordgg)));
+				$countrygg = trim($countrygg);
+				$countrycodegg = trim($countrycodegg);
+				$zipcodegg = trim($zipcodegg);
+				$phonegg = trim($phonegg);
+				$emailgg = trim($emailgg);
 				$birthdategg = date('Y-m-d', $birthdategg);
-				$verifiedgg = htmlspecialchars(trim($verifiedgg));
-				$ustatgg = htmlspecialchars(trim($ustatgg));
-				$ulevelgg = htmlspecialchars(trim($ulevelgg));
-				$upositiongg = htmlspecialchars(trim($upositiongg));
-				$imgdatagg = htmlspecialchars(trim($imgdata));
-				$createdby = htmlspecialchars(trim($createdby));
-				$modifiedby = htmlspecialchars(trim($modifiedby));
+				$verifiedgg = trim($verifiedgg);
+				$ustatgg = trim($ustatgg);
+				$ulevelgg = trim($ulevelgg);
+				$upositiongg = trim($upositiongg);
+				$imgdatagg = trim($imgdata);
+				$createdby = trim($createdby);
+				$modifiedby = trim($modifiedby);
 
 				if ( empty(trim($uidgg)) ) {
 					echo '<div class="alert alert-danger alert-dismissible fade show m-1">';
@@ -553,7 +553,7 @@
 										echo '</div>';
 
 										$useridfinale = trim($uidgg);
-										$imgdata = trim(htmlspecialchars(trim($imgdatagg)));
+										$imgdata = trim($imgdatagg);
 										if (file_exists("lib/user-img-saved.php")) {
 											require_once "lib/user-img-saved.php";
 										} elseif (file_exists("../../lib/user-img-saved.php")) {
@@ -626,7 +626,7 @@
 										echo '</div>';
 
 										$useridfinale = trim($uidgg);
-										$imgdata = trim(htmlspecialchars(trim($imgdatagg)));
+										$imgdata = trim($imgdatagg);
 										if (file_exists("lib/user-img-saved.php")) {
 											require_once "lib/user-img-saved.php";
 										} elseif (file_exists("../../lib/user-img-saved.php")) {
@@ -691,7 +691,7 @@
 								echo '</div>';
 
 								$useridfinale = trim($uidgg);
-								$imgdata = trim(htmlspecialchars(trim($imgdatagg)));
+								$imgdata = trim($imgdatagg);
 								if (file_exists("lib/user-img-saved.php")) {
 									require_once "lib/user-img-saved.php";
 								} elseif (file_exists("../../lib/user-img-saved.php")) {

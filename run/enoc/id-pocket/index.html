@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Plain HTML Table</title>
+	<style>
+		/* Reset margins to utilize the full page area */
+		html, body {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			font-family: Arial, sans-serif;
+			box-sizing: border-box;
+			/* Forces background colors and images to print */
+			-webkit-print-color-adjust: exact;
+			print-color-adjust: exact;
+		}
+
+		/* Table spans the full width and full height of the viewport/page */
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin: 0 auto;
+			max-width: 700px;
+		}
+		
+		tr {
+			height: 20vh; /* Divides the screen viewport exactly into 5 rows */
+		}
+
+		td {
+			border: 1px dashed #999; /* Dashed for easy cutting reference */
+			text-align: center;
+			vertical-align: middle;
+			width: 50%;
+			padding: 5px;
+		}
+
+		/* THE ID CARD WRAPPER 
+		   Locks the exact proportions of a standard ID so the background NEVER stretches.
+		*/
+		.id-card {
+			position: relative;
+			width: 100%;
+			max-width: 400px; /* Limits size on large screens */
+			aspect-ratio: 85.6 / 54; /* Standard CR80 ID aspect ratio */
+			margin: 0 auto;
+			background-size: 100% 100%; 
+			background-position: center;
+			background-repeat: no-repeat;
+			overflow: hidden;
+			text-align: left; 
+		}
+
+		/* Classes to assign the specific background images */
+		.front-bg {
+			background-image: url('pocket-front.png');
+		}
+
+		.back-bg {
+			background-image: url('pocket-back.png');
+		}
+
+		/* =========================================
+		   FRONT ID CSS STYLES
+		   ========================================= */
+		/* Passport Photo and Signature Containers */
+		.f-photo { position: absolute; top: 31.5%; left: 4.5%; width: 23%; height: 42%; background-color: #fff; }
+		.f-photo img { width: 100%; height: 100%; object-fit: cover; } 
+		
+		.f-sig { position: absolute; bottom: 15%; left: 4.5%; width: 23%; height: 7%; background-color: #fff; }
+		.f-sig img { width: 100%; height: 120%; object-fit: contain; } 
+		
+		/* Ann K. Hofer Signature Container - Removed white background */
+		.f-gov-sig { position: absolute; bottom: 12%; right: 4.5%; width: 28%; height: 12%; }
+		.f-gov-sig img { width: 100%; height: 100%; object-fit: contain; }
+		
+		/* ADJUST HEIGHT HERE: Lower percentage = higher up on the card */
+		.f-emp { position: absolute; top: 68px; right: 12px; font-family: monospace; font-size: 8px; font-weight: bold; letter-spacing: 0.5px; white-space: nowrap; }
+		.f-barcode { position: absolute; top: 30%; right: 4.5%; width: 38%; height: 8%; }
+		.f-pos { position: absolute; top: 38%; right: 12px; width: 38%; text-align: right; font-family: monospace; font-size: 10px; font-weight: bold; letter-spacing: 0.5px; white-space: nowrap; color: #000; }
+		
+		.f-names { position: absolute; top: 47%; left: 31%; }
+		.val-main { font-size: 16px; font-weight: 900; line-height: 1; margin-top: 4px; white-space: nowrap; font-family: monospace;}
+		.lbl { font-size: 7px; font-weight: normal; margin-bottom: 2px; color: #333; white-space: nowrap; }
+
+		/* =========================================
+		   BACK ID CSS STYLES
+		   ========================================= */
+		.b-top-left { position: absolute; top: 4%; left: 4%; }
+		.val-b { font-size: 10px; font-weight: bold; line-height: 1.2; margin-top: 3px; color: #000; white-space: nowrap; }
+		
+		/* 1x1 Square QR Code */
+		.b-qr { position: absolute; top: 4%; right: 4%; width: 20%; aspect-ratio: 1 / 1; background-color: #fff; }
+		.b-qr img { width: 100%; height: 100%; object-fit: contain; }
+		
+		.b-grid { position: absolute; top: 36.5%; left: 4%; width: 92%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px 6px; }
+		.b-grid .val-b { font-size: 9px; white-space: nowrap; }
+		
+		.b-emergency { position: absolute; bottom: 1%; right: 4%; text-align: left; font-size: 7.5px; font-weight: bold; line-height: 1.6; color: #000; white-space: nowrap; }
+		.b-emergency span { font-weight: normal; }
+
+		/* Print-specific CSS to strictly fit 5x2 on any paper size without layout compression */
+		@media print {
+			@page {
+				margin: 10mm; /* Clean standard margin for all printers */
+			}
+			html, body {
+				height: 100%;
+				margin: 0;
+				padding: 0;
+				overflow: hidden; /* Prevents an extra blank page */
+			}
+			table {
+				width: 100%;
+				height: 100vh; /* Locks table to exactly one page height */
+				table-layout: fixed; /* Ensures exactly even column distribution */
+				page-break-inside: avoid;
+			}
+			tr {
+				height: 20vh !important; /* Divides height evenly for exactly 5 rows */
+				page-break-inside: avoid;
+				page-break-after: avoid;
+			}
+			td {
+				height: 20vh;
+				border: 1px dashed #999; 
+				padding: 5px;
+				box-sizing: border-box;
+				overflow: hidden; 
+			}
+		}
+	</style>
+</head>
+<body>
+
+	<table>
+		<tr>
+			<td>
+				<div class="id-card front-bg">
+					<div class="f-photo">
+						<img src="id-sample.jpeg" alt="Passport Photo">
+					</div>
+					<div class="f-sig">
+						<img src="signature.png" alt="Signature">
+					</div>
+					<div class="f-emp">EMPLOYEE NUMBER: 000000</div>
+					<div class="f-barcode"></div>
+					<div class="f-pos">EMPLOYEE POSITION</div>
+					<div class="f-names">
+						<div class="val-main">DELA CRUZ</div>
+						<div class="lbl">LAST NAME</div>
+						<div class="val-main">JUAN</div>
+						<div class="lbl">FIRST NAME</div>
+						<div class="val-main">LOPEZ</div>
+						<div class="lbl">MIDDLE NAME</div>
+					</div>
+					<div class="f-gov-sig">
+						<img src="ann-k-hofer-sign.png" alt="Gov Signature">
+					</div>
+				</div>
+			</td>
+			<td>
+				<div class="id-card back-bg">
+					<div class="b-top-left">
+						<div class="val-b">KITABOG, TITAY, ZAMBOANGA SIBUGAY</div>
+						<div class="lbl">Address</div>
+						<div class="val-b">SEPTEMBER 3, 1984</div>
+						<div class="lbl">Date of Birth</div>
+						<div class="val-b">MALE</div>
+						<div class="lbl">Gender</div>
+					</div>
+					<div class="b-qr">
+						<img src="uploads/QR.png" alt="QR Code">
+					</div>
+					<div class="b-grid">
+						<div><div class="val-b">0000000000</div><div class="lbl">National ID.</div></div>
+						<div><div class="val-b">00-000000000-0</div><div class="lbl">PhilHealth</div></div>
+						<div><div class="val-b">000-0000-0000</div><div class="lbl">Pag-Ibig</div></div>
+						<div><div class="val-b">000-000-000</div><div class="lbl">Tax Identification</div></div>
+						<div><div class="val-b">0000000000</div><div class="lbl">SSS</div></div>
+						<div><div class="val-b">0000000000</div><div class="lbl">GSIS</div></div>
+						<div><div class="val-b">0000000000</div><div class="lbl">HUMID</div></div>
+						<div><div class="val-b">000-000-000</div><div class="lbl">Tax Identification</div></div>
+						<div><div class="val-b">000-000-000</div><div class="lbl">Tax Identification</div></div>
+					</div>
+					<div class="b-emergency">
+						<div>CONTACT PERSON: <span>JOHN DOE</span></div>
+						<div>CONTACT NUMBER: <span>09090985446</span></div>
+						<div>RELATIONSHIP: <span>BROTHER</span></div>
+					</div>
+				</div>
+			</td>
+		</tr>
+
+		<tr>
+			<td>
+				<div class="id-card front-bg">
+					<div class="f-photo">
+						<img src="id-sample.jpeg" alt="Passport Photo">
+					</div>
+					<div class="f-sig">
+						<img src="signature.png" alt="Signature">
+					</div>
+					<div class="f-emp">EMPLOYEE NUMBER: 000000</div>
+					<div class="f-barcode"></div>
+					<div class="f-pos">EMPLOYEE POSITION</div>
+					<div class="f-names">
+						<div class="val-main">DELA CRUZ</div>
+						<div class="lbl">LAST NAME</div>
+						<div class="val-main">JUAN</div>
+						<div class="lbl">FIRST NAME</div>
+						<div class="val-main">LOPEZ</div>
+						<div class="lbl">MIDDLE NAME</div>
+					</div>
+					<div class="f-gov-sig">
+						<img src="ann-k-hofer-sign.png" alt="Gov Signature">
+					</div>
+				</div>
+			</td>
+			<td>
+				<div class="id-card back-bg">
+					<div class="b-top-left">
+						<div class="val-b">KITABOG, TITAY, ZAMBOANGA SIBUGAY</div>
+						<div class="lbl">Address</div>
+						<div class="val-b">SEPTEMBER 3, 1984</div>
+						<div class="lbl">Date of Birth</div>
+						<div class="val-b">MALE</div>
+						<div class="lbl">Gender</div>
+					</div>
+					<div class="b-qr">
+						<img src="uploads/your-qrcode.png" alt="QR Code">
+					</div>
+					<div class="b-grid">
+						<div><div class="val-b">0000000000</div><div class="lbl">National ID.</div></div>
+						<div><div class="val-b">00-000000000-0</div><div class="lbl">PhilHealth</div></div>
+						<div><div class="val-b">000-0000-0000</div><div class="lbl">Pag-Ibig</div></div>
+						<div><div class="val-b">000-000-000</div><div class="lbl">Tax Identification</div></div>
+						<div><div class="val-b">0000000000</div><div class="lbl">SSS</div></div>
+						<div><div class="val-b">0000000000</div><div class="lbl">GSIS</div></div>
+						<div><div class="val-b">0000000000</div><div class="lbl">HUMID</div></div>
+						<div><div class="val-b">000-000-000</div><div class="lbl">Tax Identification</div></div>
+						<div><div class="val-b">000-000-000</div><div class="lbl">Tax Identification</div></div>
+					</div>
+					<div class="b-emergency">
+						<div>CONTACT PERSON: <span>JOHN DOE</span></div>
+						<div>CONTACT NUMBER: <span>09090985446</span></div>
+						<div>RELATIONSHIP: <span>BROTHER</span></div>
+					</div>
+				</div>
+			</td>
+		</tr>
+
+		<tr>
+			<td>
+				<div class="id-card front-bg">
+					<div class="f-photo">
+						<img src="id-sample.jpeg" alt="Passport Photo">
+					</div>
+					<div class="f-sig">
+						<img src="signature.png" alt="Signature">
+					</div>
+					<div class="f-emp">EMPLOYEE NUMBER: 000000</div>
+					<div class="f-barcode"></div>
+					<div class="f-pos">EMPLOYEE POSITION</div>
+					<div class="f-names">
+						<div class="val-main">DELA CRUZ</div>
+						<div class="lbl">LAST NAME</div>
+						<div class="val-main">JUAN</div>
+						<div class="lbl">FIRST NAME</div>
+						<div class="val-main">LOPEZ</div>
+						<div class="lbl">MIDDLE NAME</div>
+					</div>
+					<div class="f-gov-sig">
+						<img src="ann-k-hofer-sign.png" alt="Gov Signature">
+					</div>
+				</div>
+			</td>
+			<td>
+				<div class="id-card back-bg">
+					<div class="b-top-left">
+						<div class="val-b">KITABOG, TITAY, ZAMBOANGA SIBUGAY</div>
+						<div class="lbl">Address</div>
+						<div class="val-b">SEPTEMBER 3, 1984</div>
+						<div class="lbl">Date of Birth</div>
+						<div class="val-b">MALE</div>
+						<div class="lbl">Gender</div>
+					</div>
+					<div class="b-qr">
+						<img src="uploads/your-qrcode.png" alt="QR Code">
+					</div>
+					<div class="b-grid">
+						<div><div class="val-b">0000000000</div><div class="lbl">National ID.</div></div>
+						<div><div class="val-b">00-000000000-0</div><div class="lbl">PhilHealth</div></div>
+						<div><div class="val-b">000-0000-0000</div><div class="lbl">Pag-Ibig</div></div>
+						<div><div class="val-b">000-000-000</div><div class="lbl">Tax Identification</div></div>
+						<div><div class="val-b">0000000000</div><div class="lbl">SSS</div></div>
+						<div><div class="val-b">0000000000</div><div class="lbl">GSIS</div></div>
+						<div><div class="val-b">0000000000</div><div class="lbl">HUMID</div></div>
+						<div><div class="val-b">000-000-000</div><div class="lbl">Tax Identification</div></div>
+						<div><div class="val-b">000-000-000</div><div class="lbl">Tax Identification</div></div>
+					</div>
+					<div class="b-emergency">
+						<div>CONTACT PERSON: <span>JOHN DOE</span></div>
+						<div>CONTACT NUMBER: <span>09090985446</span></div>
+						<div>RELATIONSHIP: <span>BROTHER</span></div>
+					</div>
+				</div>
+			</td>
+		</tr>
+
+		<tr>
+			<td>
+				<div class="id-card front-bg">
+					<div class="f-photo">
+						<img src="id-sample.jpeg" alt="Passport Photo">
+					</div>
+					<div class="f-sig">
+						<img src="signature.png" alt="Signature">
+					</div>
+					<div class="f-emp">EMPLOYEE NUMBER: 000000</div>
+					<div class="f-barcode"></div>
+					<div class="f-pos">EMPLOYEE POSITION</div>
+					<div class="f-names">
+						<div class="val-main">DELA CRUZ</div>
+						<div class="lbl">LAST NAME</div>
+						<div class="val-main">JUAN</div>
+						<div class="lbl">FIRST NAME</div>
+						<div class="val-main">LOPEZ</div>
+						<div class="lbl">MIDDLE NAME</div>
+					</div>
+					<div class="f-gov-sig">
+						<img src="ann-k-hofer-sign.png" alt="Gov Signature">
+					</div>
+				</div>
+			</td>
+			<td>
+				<div class="id-card back-bg">
+					<div class="b-top-left">
+						<div class="val-b">KITABOG, TITAY, ZAMBOANGA SIBUGAY</div>
+						<div class="lbl">Address</div>
+						<div class="val-b">SEPTEMBER 3, 1984</div>
+						<div class="lbl">Date of Birth</div>
+						<div class="val-b">MALE</div>
+						<div class="lbl">Gender</div>
+					</div>
+					<div class="b-qr">
+						<img src="uploads/your-qrcode.png" alt="QR Code">
+					</div>
+					<div class="b-grid">
+						<div><div class="val-b">0000000000</div><div class="lbl">National ID.</div></div>
+						<div><div class="val-b">00-000000000-0</div><div class="lbl">PhilHealth</div></div>
+						<div><div class="val-b">000-0000-0000</div><div class="lbl">Pag-Ibig</div></div>
+						<div><div class="val-b">000-000-000</div><div class="lbl">Tax Identification</div></div>
+						<div><div class="val-b">0000000000</div><div class="lbl">SSS</div></div>
+						<div><div class="val-b">0000000000</div><div class="lbl">GSIS</div></div>
+						<div><div class="val-b">0000000000</div><div class="lbl">HUMID</div></div>
+						<div><div class="val-b">000-000-000</div><div class="lbl">Tax Identification</div></div>
+						<div><div class="val-b">000-000-000</div><div class="lbl">Tax Identification</div></div>
+					</div>
+					<div class="b-emergency">
+						<div>CONTACT PERSON: <span>JOHN DOE</span></div>
+						<div>CONTACT NUMBER: <span>09090985446</span></div>
+						<div>RELATIONSHIP: <span>BROTHER</span></div>
+					</div>
+				</div>
+			</td>
+		</tr>
+
+		<tr>
+			<td>
+				<div class="id-card front-bg">
+					<div class="f-photo">
+						<img src="id-sample.jpeg" alt="Passport Photo">
+					</div>
+					<div class="f-sig">
+						<img src="signature.png" alt="Signature">
+					</div>
+					<div class="f-emp">EMPLOYEE NUMBER: 000000</div>
+					<div class="f-barcode"></div>
+					<div class="f-pos">EMPLOYEE POSITION</div>
+					<div class="f-names">
+						<div class="val-main">DELA CRUZ</div>
+						<div class="lbl">LAST NAME</div>
+						<div class="val-main">JUAN</div>
+						<div class="lbl">FIRST NAME</div>
+						<div class="val-main">LOPEZ</div>
+						<div class="lbl">MIDDLE NAME</div>
+					</div>
+					<div class="f-gov-sig">
+						<img src="ann-k-hofer-sign.png" alt="Gov Signature">
+					</div>
+				</div>
+			</td>
+			<td>
+				<div class="id-card back-bg">
+					<div class="b-top-left">
+						<div class="val-b">KITABOG, TITAY, ZAMBOANGA SIBUGAY</div>
+						<div class="lbl">Address</div>
+						<div class="val-b">SEPTEMBER 3, 1984</div>
+						<div class="lbl">Date of Birth</div>
+						<div class="val-b">MALE</div>
+						<div class="lbl">Gender</div>
+					</div>
+					<div class="b-qr">
+						<img src="uploads/your-qrcode.png" alt="QR Code">
+					</div>
+					<div class="b-grid">
+						<div><div class="val-b">0000000000</div><div class="lbl">National ID.</div></div>
+						<div><div class="val-b">00-000000000-0</div><div class="lbl">PhilHealth</div></div>
+						<div><div class="val-b">000-0000-0000</div><div class="lbl">Pag-Ibig</div></div>
+						<div><div class="val-b">000-000-000</div><div class="lbl">Tax Identification</div></div>
+						<div><div class="val-b">0000000000</div><div class="lbl">SSS</div></div>
+						<div><div class="val-b">0000000000</div><div class="lbl">GSIS</div></div>
+						<div><div class="val-b">0000000000</div><div class="lbl">HUMID</div></div>
+						<div><div class="val-b">000-000-000</div><div class="lbl">Tax Identification</div></div>
+						<div><div class="val-b">000-000-000</div><div class="lbl">Tax Identification</div></div>
+					</div>
+					<div class="b-emergency">
+						<div>CONTACT PERSON: <span>JOHN DOE</span></div>
+						<div>CONTACT NUMBER: <span>09090985446</span></div>
+						<div>RELATIONSHIP: <span>BROTHER</span></div>
+					</div>
+				</div>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

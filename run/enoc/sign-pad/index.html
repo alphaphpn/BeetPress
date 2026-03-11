@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Signature Pad Modal</title>
+	<style>
+		:root {
+			--primary-color: #2563eb;
+			--secondary-color: #64748b;
+			--bg-overlay: rgba(0, 0, 0, 0.5);
+		}
+
+		body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+
+		/* Modal Styles */
+		.modal-overlay {
+			position: fixed;
+			top: 0; left: 0; width: 100%; height: 100%;
+			background: var(--bg-overlay);
+			display: none; /* Hidden by default */
+			justify-content: center;
+			align-items: center;
+			z-index: 1000;
+		}
+
+		.modal-content {
+			background: white;
+			padding: 20px;
+			border-radius: 8px;
+			width: 90%;
+			max-width: 500px;
+			box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+		}
+
+		.modal-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 15px;
+		}
+
+		/* Canvas Styles */
+		#signature-pad {
+			border: 2px dashed #ccc;
+			border-radius: 4px;
+			cursor: crosshair;
+			background-color: #fafafa;
+			touch-action: none; /* Prevents scrolling while drawing */
+		}
+
+		.controls {
+			margin-top: 15px;
+			display: flex;
+			gap: 10px;
+			justify-content: flex-end;
+		}
+
+		button {
+			padding: 8px 16px;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			font-weight: 600;
+		}
+
+		.btn-open { background: var(--primary-color); color: white; }
+		.btn-clear { background: var(--secondary-color); color: white; }
+		.btn-save { background: var(--primary-color); color: white; }
+		.btn-close { background: transparent; font-size: 1.5rem; }
+	</style>
+</head>
+<body>
+
+	<button class="btn-open" onclick="toggleModal(true)">Open Signature Pad</button>
+
+	<div class="modal-overlay" id="modalOverlay">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Sign Here</h3>
+				<button class="btn-close" onclick="toggleModal(false)">&times;</button>
+			</div>
+			
+			<canvas id="signature-pad" width="450" height="200"></canvas>
+
+			<div class="controls">
+				<button class="btn-clear" onclick="clearCanvas()">Clear</button>
+				<button class="btn-save" onclick="saveSignature()">Save Signature</button>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const canvas = document.getElementById('signature-pad');
+		const ctx = canvas.getContext('2d');
+		const modal = document.getElementById('modalOverlay');
+		let drawing = false;
+
+		// Initialize Canvas Styles
+		ctx.lineWidth = 2;
+		ctx.lineJoin = 'round';
+		ctx.lineCap = 'round';
+		ctx.strokeStyle = '#000';
+
+		// Toggle Modal
+		function toggleModal(show) {
+			modal.style.display = show ? 'flex' : 'none';
+		}
+
+		// Drawing Logic
+		function getCoords(e) {
+			const rect = canvas.getBoundingClientRect();
+			// Support both mouse and touch events
+			const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+			const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+			return {
+				x: clientX - rect.left,
+				y: clientY - rect.top
+			};
+		}
+
+		function startDrawing(e) {
+			drawing = true;
+			const { x, y } = getCoords(e);
+			ctx.beginPath();
+			ctx.moveTo(x, y);
+		}
+
+		function draw(e) {
+			if (!drawing) return;
+			e.preventDefault(); // Prevent scrolling on touch
+			const { x, y } = getCoords(e);
+			ctx.lineTo(x, y);
+			ctx.stroke();
+		}
+
+		function stopDrawing() {
+			drawing = false;
+		}
+
+		// Event Listeners
+		canvas.addEventListener('mousedown', startDrawing);
+		canvas.addEventListener('mousemove', draw);
+		window.addEventListener('mouseup', stopDrawing);
+
+		canvas.addEventListener('touchstart', startDrawing);
+		canvas.addEventListener('touchmove', draw);
+		canvas.addEventListener('touchend', stopDrawing);
+
+		function clearCanvas() {
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+		}
+
+		function saveSignature() {
+			// 1. Check if canvas is empty (optional but recommended)
+			const blank = document.createElement('canvas');
+			blank.width = canvas.width;
+			blank.height = canvas.height;
+			if (canvas.toDataURL() === blank.toDataURL()) {
+				alert("Please provide a signature first.");
+				return;
+			}
+
+			// 2. Export the canvas as a Data URL (Base64 PNG)
+			const dataURL = canvas.toDataURL('image/png');
+
+			// 3. OPTION A: Download the image to the user's computer
+			const link = document.createElement('a');
+			link.download = 'signature.png';
+			link.href = dataURL;
+			link.click();
+
+			// 4. OPTION B: Logging for your Database
+			console.log('Base64 String for Server:', dataURL);
+
+			alert('Signature saved and downloaded!');
+			clearCanvas();
+			toggleModal(false);
+		}
+	</script>
+</body>
+</html>

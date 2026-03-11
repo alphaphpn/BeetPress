@@ -7,13 +7,16 @@
 		'dtr' => 'routes/dtr.php', 
 		'attendance-auth' => 'routes/attendance-auth.php', 
 		'employee-info' => 'routes/employee-info.php', 
+		'employee-info-update' => 'routes/employee-info-update', 
 		'employee-id' => 'routes/employee-id.php', 
 		'employee-id-sling-group' => 'routes/employee-id-sling-group.php', 
+		'employee-id-pocket-group' => 'routes/employee-id-pocket-group.php', 
 		'register' => 'routes/register.php', 
 		'login' => 'routes/login.php', 
 		'signin' => 'routes/login.php', 
 		'sign-in' => 'routes/login.php', 
 		'signup' => 'routes/signup.php', 
+		'e134cb97748b055a6299001f7e8c9857' => 'routes/e134cb97748b055a6299001f7e8c9857.php', 
 		'sign-up' => 'routes/register.php', 
 		'logout' => 'lib/logout.php', 
 		'signout' => 'lib/logout.php', 
@@ -22,7 +25,11 @@
 		'portfolio' => 'routes/portfolio.php', 
 		'employee-id-reg' => 'routes/empl-id-reg.php', 
 
+		'post' => 'routes/post.php', 
+
 		'bp-mngr' => 'routes/bp-mngr.php', 
 		'employee' => 'routes/employee.php', 
+		'signup-employee-print' => 'routes/signup-employee-print.php', 
+		'list-employee' => 'routes/list-employee.php', 
 		'employee-list' => 'routes/employee-list.php'
 	];

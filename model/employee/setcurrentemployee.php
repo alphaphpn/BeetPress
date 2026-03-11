@@ -94,6 +94,12 @@
 			$modifiedbycc = $emmplAcctInfo->list_modifiedbyee[$i];
 			$modifiedatcc = $emmplAcctInfo->list_modifiedatee[$i];
 			$createdatcc = $emmplAcctInfo->list_createdatee[$i];
+
+			$incaseofemergencynamecc = $emmplAcctInfo->list_incaseofemergencynameee[$i];
+			$incaseofemergencycontactcc = $emmplAcctInfo->list_incaseofemergencycontactee[$i];
+			$incaseofemergencyelationcc = $emmplAcctInfo->list_incaseofemergencyelationee[$i];
+
+			$addresscc = $emmplAcctInfo->list_addressee[$i];
 		}
 	}
 

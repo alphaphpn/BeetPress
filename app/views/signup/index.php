@@ -1,9 +1,9 @@
 <?php 
 
-	// ?isemployee=5516d1757217456f94e72185e4e92c20  - for DGTHMC
-	// ?isemployee=be6ae20d5b085de3223d5cb17e8fb820  - for Capitol
+	// ?isemployee=fe86d6d4e69b5821c74e4816f981b4f8  - for DGTHMC
+	// ?isemployee=535ad200e13bd0556a843d992efa9e00  - for Capitol
 
-	$array_key = ["5516d1757217456f94e72185e4e92c20", "be6ae20d5b085de3223d5cb17e8fb820"];
+	$array_key = ["fe86d6d4e69b5821c74e4816f981b4f8", "535ad200e13bd0556a843d992efa9e00"];
 	$emplyornot = isset($_GET['isemployee']) ? $_GET['isemployee'] : null;
 	$settedsec = array_search($emplyornot, $array_key);
 
@@ -176,7 +176,21 @@
 					<!-- Tab panes -->
 					<form id="empreg" method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
 						<div class="w-100 d-flex flex-wrap justify-content-center">
-							<?php include_once "addrecord.php"; ?>
+							<?php 
+
+								include_once "addrecord.php"; 
+
+								if ( empty($reg_bionumber) || $reg_bionumber == null ) {
+
+								} else {
+									echo '<div class="alert alert-success alert-dismissible fade show m-1">';
+										echo '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+										echo '<p>You have successfully registered as an Employee. Do you want to print the Employee Information?</p>';
+										echo '<a class="btn btn-light m-2" href="">Yes</a>';
+										echo '<button class="btn btn-secondary m-2">No</button>';
+									echo '</div>';
+								}
+							?>
 						</div>
 						<hr>
 

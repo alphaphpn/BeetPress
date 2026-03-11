@@ -1,0 +1,343 @@
+designationforid
+Accountant - I
+Accountant - III
+Accounting Aide
+Accounting Assistant
+Acting Chief Nutritionist - Dietitian
+Acting Chief of Hospital
+Acting PPDAO
+Acting Provincial Security Unit Head
+Admin Aide
+Admin Aide - Blood Bank
+Admin Aide - I
+Admin Aide - II
+Admin Aide - III
+Admin Aide - IV
+Admin Aide - I
+Admin Aide - II
+Admin Aide - III
+Admin Aide - III / Driver - I
+Admin Aide - IV
+Admin Aide - VI
+Admin Aide - Payroll
+Admin Assistant - II
+Admin Assistant - IV
+Admin Asst. II / Acting Head Billing & Claims
+Administrative Officer - I
+Admin Support Staff
+Admin Aide - IV / Bookbinder - II
+Admin Assistant
+Admin Assistant - I
+Administrative Officer - IV
+Administrative Aide
+Administrative Aide - II
+Administrative Aide - III
+Administrative Aide - IV
+Administrative Aide - I
+Administrative Aide - III
+Administrative Aide - III / AMBULANCE DRIVER
+Administrative Aide - VI
+Administrative Assistant - IV
+Administrative Assistant - I
+Administrative Assistant - II
+Administrative Assistant - III
+Administrative Assistant - IV
+Administrative Assistant - I
+Administrative Assistant - II
+Administrative Assistant - III
+Administrative Assistant - IV
+Administrative Assistant - V
+Administrative Assistant - VI
+Administrative Officer - I
+Administrative Officer - II
+Administrative Officer - III
+Administrative Officer - IV
+Administrative Officer - V
+Administrative Officer - II
+Administrative Officer - III
+Administrative Officer - V
+Administrative Support Staff
+Administrative Support Staff / IT
+Agricultural Extension Worker
+Agricultural Technologist
+Agriculturist - I
+Agriculturist - II
+Agriculturist I
+Agriculturist II
+Alternate Instrument Man
+Ambulance Driver
+Ambulance Nurse
+Architech
+Architech II
+Architechturak Draftsman
+Assessment Clerk - II
+Assistant Engineer
+Assistant PHRMO
+Assistant Provincial Agriculturist
+Assistant Provincial Assessor
+Assistant Provincial General Services Officer
+Assistant Provincial Tourism Officer
+Assistant Provincial Treasurer - Operations
+Assistant Provincial Treasurer -Administration
+AUDIO VISUAL OPERATOR - VI
+BARANGAY COORDINATOR
+BILLING AIDE
+BOARD MEMBER 2ND DISTRICT
+BOAT OPERATOR / Admin Aide
+BUDGETING AIDE
+BUILDING CONSTRUCTION MAINTENANCE MAN
+CASHIERING AIDE
+CASHIERING ASSISTANT
+CHAIRMAN- PEDIATRICS
+CHECKPOINT GUARD
+Chief Engineering and Maintenance
+Chief Medical Technologist
+CHIEF OF CLINICS / SECRETARY
+CHIEF OF HOSPITAL SECRETARY/HUMAN RESOURCE
+CLERK - III
+CM CAPATAZ
+COMMUNITY AFFAIRS OFFICER I
+Community Affairs Officer II
+Community Development Assistant
+COMMUNITY DEVELOPMENT ASSISTANT I
+Computer Operator
+CONSIGNMENT AIDE
+CONSIGNMENT ASSISTANT
+Construction & Maintenance CAPATAZ
+CONSTRUCTION &amp; MAINTENANCE GENERAL FOREMAN
+COOK I
+CSR Aide
+DATA ANALYST
+DENTAL AIDE
+Dental Aide II
+Dialysis Nurse
+DIALYSIS TECHNICIAN
+DIETARY AIDE
+DIETARY SECTION
+Document Controller
+DR NURSE
+Driver
+Electrical Engineer
+ELECTRICAL ENGINEERING AIDE
+Electrician
+Engineer - III
+Engineer 1
+ENGINEER I
+ENGINEER II
+ENGINEERING AIDE
+ENUMARATOR
+ENVIRONMENTAL MANAGEMENT RESEARCHER
+ENVIRONMENTAL MANAGEMENT SPECIALIST II
+ER - Head Nurse
+ER Nurse Supervisor
+ER RUNNER
+ER- NURSE
+EXECUTIVE ASSISTANT I
+EXECUTIVE ASSISTANT II
+EXECUTIVE ASSISTANT III
+FARM SUPERVISOR
+FARM WORKER
+FARMER WORKER
+FARMER WORKER - I
+FINANCE DEVISION
+Fiscal Examiner - I
+Fiscal Examiner - II
+Forest Guard
+Forest Ranger
+FORESTER
+GENERAL PRACTITIONER
+Graphic Artist
+Head Nurse
+Head Nurse / NURSE
+Head Nurse / NURSE I
+HEAD TECHNICIAN
+HEALTH INFORMATION TECHNICIAN
+Health Record Specialist
+Heavy Equipment Operator
+HELPER MECHANIC
+HEMODIALYSIS AIDE
+Hemodialysis Nurse
+HEMODIALYSIS SUPPORT STAFF
+HEMODIALYSIS TECHNICIAN
+House Keeping
+HOUSE KEEPING SUPPORT STAFF- HEMODIALYSIS
+Human Resource Officer
+INFORMATION AIDE
+INFORMATION SYSTEM ANALYST III
+INSTITUTIONAL WORKER
+INSTITUTIONAL WORKER-HEMODIALYSIS
+Instrument Man
+INTERNAL AUDITOR - I
+IT Specialist
+Laboratory Aide
+Laboratory Aide - II
+Laundry
+LAUNDRY AIDE
+Laundry Worker I
+LEGISLATIVE COMMUNITY FACILITATOR
+LEGISLATIVE COORDINATOR
+LEGISLATIVE FACILITATOR
+LEGISLATIVE RESEARCHER
+LEGISLATIVE SUPPORT STAFF
+Licensing Officer
+LICENSING OFFICER II
+LICENSING OFFICER IV
+Local Assessment Operation <br>Officer - II
+Local Assessment Operations <br> Officer - III
+LOCAL LEGISLATIVE OFFICER V
+LOCAL LEGISLATIVE STAFF OFFICER - I
+LOCAL LEGISLATIVE STAFF OFFICER II
+LOCAL REVENUE COLLECTION CLERK - II
+LOCAL REVENUE COLLECTION OFFICER - II
+Local Revenue Collection Officer III
+local revenue collection officer IV
+Local Treasury Operation Officer - III
+Local Treasury Operations <br>Officer - IV
+MAINTENANCE
+MECHANIC
+MECHANIC II
+MEDICAL OFFICER - V
+Medical Officer III
+MEDICAL SPECIALIST I
+Medical Specialist II
+Medical Specialist III
+MEDICAL TECHNOLOGIST
+Medical Technologist - II
+Medical Technologist - III
+MEDICAL TECHNOLOGIST I
+MET II- RADTECH
+Midwife
+MIDWIFE II
+MLT
+MONITORING
+MUNICIPAL COORDINATOR
+NURSE
+NURSE - I
+Nurse - II / Acting Chief Nurse
+NURSE ATTENDANT
+NURSE I
+NURSE II
+NURSE III
+Nurse Supervisor
+NURSE- OPD
+NURSE- TRIAGE
+NURSING AIDE
+NURSING AIDE- OPD
+NURSING ATTENDANT
+NURSING ATTENDANT - I
+NURSING ATTENDANT- OPD
+NURSING SERVICE
+NUTRITIONIST
+Nutritionist - Dietitian I
+NUTRITIONIST- DIETITIAN
+O.R / D.R ORDERLY
+OB WARD
+OFFICE COLLECTOR
+OPD AIDE
+OPD NURSE
+OPERATING ROOM NURSE
+OR Nurse
+OR Nurse II
+OR NURSE SUPERVISOR
+ORDERLY
+OVER ALL CHECKPOINT HEAD
+PEDIA WARD
+PENRO CHECKPOINT GUARD
+PEO / Admin Aide
+PESO STAFF
+PHARMACIST
+PHARMACIST - I
+PHARMACY AIDE
+PHARMACY ASSISTANT
+Pharmacy Head
+PHIC CLAIMS PROCESSOR
+PHIC PORTAL VERIFIER
+PHIC PORTAL VERIFIER / INFORMATION
+PHIC PORTAL VERIFIER / PROCESSOR
+PHILHEALTH CLERK
+PHLEBOTOMIST
+Physician
+PLUMBING &amp; TINNING INSPECTOR II
+PORTAL / ER. PROCESSOR
+PORTAL VERIFIER
+PPDAO - Support Staff
+PRDP-RROW/SES
+PRECY - SOCIAL WORKER
+PRIVATE SECRETARY 1
+PRIVATE SECRETARY II
+PROCESS SERVER
+PROGRAM MONITORING SPECIALIST
+PROJECT EVALUATION OFFICER II
+Project In-charge
+PROJECT INCHARGE
+PROJECT MONITORING STAFF
+Provincial Assessor
+PROVINCIAL ENVIRONMENT AND NATURAL RESOURCES OFFICER
+PROVINCIAL HUMAN RESOURCE MANAGEMENT OFFICER
+PROVINCIAL MINNING TASKFORCE
+Provincial Social Welfare and Development Officer
+PROVINCIAL TOURISM OFFICER
+PROVINCIAL TREASURER
+PSG
+PSG - I
+Public Relation Officer
+Quarantine Aide
+RADIOGRAPHER
+RADIOLOGIC TECHNICIAN
+RADIOLOGIC TECHNOLOGIST
+RADIOLOGIC TECHNOLOGIST II
+RADIOLOGIC TECHNOLOGIST- HEAD
+RADIOLOGIC TECHNOLOGIST- I
+RADIOLOGY DEPARTMENT
+RADTECH I
+RECORDS AIDE
+RECORDS ASSISTANT
+RESPIRATORY THERAPIST
+REVENUE COLLECTION CLERK I
+ROTATING HEAD NURSE
+Rotating Supervising Nurse
+Security
+Security Agent
+Security Agent - I
+SECURITY AGENT II
+Security Guard
+SECURITY GUARD - I
+Security Guard I
+SECURITY GUARD- III
+senior Administrative Assistant II
+SI - II / PCO
+SOCIAL WEFARE AIDE
+SOCIAL WELFARE AIDE
+SOCIAL WELFARE ASSISTANT
+Social Welfare Officer - I
+Social Welfare Officer - III
+Social Welfare Officer I
+SOCIAL WELFARE STAFF
+SOUNDS OPERATOR
+SPD - Support Staff
+STAFF NURSE
+Store Keeper
+SUPERVICING Administrative Officer
+SUPERVISING Administrative Officer
+SUPPLY AIDE
+SUPPLY ASSISTANT
+Support Staff
+Support Staff CBSD
+SUPPORTING STAFF
+SURGICAL WARD
+SWA / Head, MSS
+Tax Mapper II
+TOURISM OPERATION OFFICER
+Tourism Staff
+TVE - Trainer
+UTILITY
+UTILITY AIDE
+Veterinary Aide
+WASTE SEGREGATION AND DISPOSAL AIDE
+WASTE SEGREGATION AND DISPOSAL ASSISTANT
+WASTE SEGREGATION DISPOSAL AIDE
+WASTE SEGRERATION DISPOSAL
+Watchman
+WELL DRILLER II
+X-Ray TECHNOLOGIST
+X-Ray ENCODER

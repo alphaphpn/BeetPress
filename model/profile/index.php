@@ -311,47 +311,47 @@
 				$this->clearlist_clssProfile();
 				$this->getConnection();
 
-				$profileid = htmlspecialchars(trim($profileidii));
-				$nickname = htmlspecialchars(trim($nicknameii));
-				$ptitle = htmlspecialchars(trim($ptitleii));
-				$firstname = htmlspecialchars(trim($firstnameii));
-				$middlename = htmlspecialchars(trim($middlenameii));
-				$lastname = htmlspecialchars(trim($lastnameii));
-				$suffix = htmlspecialchars(trim($suffixii));
-				$gender = htmlspecialchars(trim($genderii));
+				$profileid = trim($profileidii);
+				$nickname = trim($nicknameii);
+				$ptitle = trim($ptitleii);
+				$firstname = trim($firstnameii);
+				$middlename = trim($middlenameii);
+				$lastname = trim($lastnameii);
+				$suffix = trim($suffixii);
+				$gender = trim($genderii);
 				$birthdate = date('Y-m-d', $birthdateii);
-				$birthplace = htmlspecialchars(trim($birthplaceii));
-				$nationality = htmlspecialchars(trim($nationalityii));
-				$civilstatus = htmlspecialchars(trim($civilstatusii));
-				$bloodtype = htmlspecialchars(trim($bloodtypeii));
-				$email = htmlspecialchars(trim($emailii));
-				$photo = htmlspecialchars(trim($photoii));
-				$mobile = htmlspecialchars(trim($mobileii));
-				$mobile2 = htmlspecialchars(trim($mobile2ii));
-				$fbid = htmlspecialchars(trim($fbidii));
-				$address = htmlspecialchars(trim($addressii));
-				$addressline2 = htmlspecialchars(trim($addressline2ii));
-				$street = htmlspecialchars(trim($streetii));
-				$barangaycode = htmlspecialchars(trim($barangaycodeii));
-				$barangay = htmlspecialchars(trim($barangayii));
-				$municipalitycode = htmlspecialchars(trim($municipalitycodeii));
-				$municipality = htmlspecialchars(trim($municipalityii));
-				$zipcode = htmlspecialchars(trim($zipcodeii));
-				$districtno = htmlspecialchars(trim($districtnoii));
-				$districtsign = htmlspecialchars(trim($districtsignii));
-				$provincecode = htmlspecialchars(trim($provincecodeii));
-				$province = htmlspecialchars(trim($provinceii));
-				$regioncode = htmlspecialchars(trim($regioncodeii));
-				$regionno = htmlspecialchars(trim($regionnoii));
-				$regionsign = htmlspecialchars(trim($regionsignii));
-				$region = htmlspecialchars(trim($regionii));
-				$countryid = htmlspecialchars(trim($countryidii));
-				$countrycode = htmlspecialchars(trim($countrycodeii));
-				$country = htmlspecialchars(trim($countryii));
-				$postal = htmlspecialchars(trim($postalii));
-				$foreignaddress = htmlspecialchars(trim($foreignaddressii));
-				$createdby = htmlspecialchars(trim($createdbyii));
-				$modifiedby = htmlspecialchars(trim($modifiedbyii));
+				$birthplace = trim($birthplaceii);
+				$nationality = trim($nationalityii);
+				$civilstatus = trim($civilstatusii);
+				$bloodtype = trim($bloodtypeii);
+				$email = trim($emailii);
+				$photo = trim($photoii);
+				$mobile = trim($mobileii);
+				$mobile2 = trim($mobile2ii);
+				$fbid = trim($fbidii);
+				$address = trim($addressii);
+				$addressline2 = trim($addressline2ii);
+				$street = trim($streetii);
+				$barangaycode = trim($barangaycodeii);
+				$barangay = trim($barangayii);
+				$municipalitycode = trim($municipalitycodeii);
+				$municipality = trim($municipalityii);
+				$zipcode = trim($zipcodeii);
+				$districtno = trim($districtnoii);
+				$districtsign = trim($districtsignii);
+				$provincecode = trim($provincecodeii);
+				$province = trim($provinceii);
+				$regioncode = trim($regioncodeii);
+				$regionno = trim($regionnoii);
+				$regionsign = trim($regionsignii);
+				$region = trim($regionii);
+				$countryid = trim($countryidii);
+				$countrycode = trim($countrycodeii);
+				$country = trim($countryii);
+				$postal = trim($postalii);
+				$foreignaddress = trim($foreignaddressii);
+				$createdby = trim($createdbyii);
+				$modifiedby = trim($modifiedbyii);
 
 				$insertQuery = "INSERT INTO profile_tbl SET 
 					profileid=:profileid, 
@@ -447,7 +447,7 @@
 				echo '</div>';
 
 				$profileidfinale = trim($profileid);
-				$imgdata = trim(htmlspecialchars(trim($photo)));
+				$imgdata = trim($photo);
 				if (file_exists("lib/profile-img-saved.php")) {
 					require_once "lib/profile-img-saved.php";
 				} elseif (file_exists("../../lib/profile-img-saved.php")) {
@@ -526,7 +526,7 @@
 				$this->clearlist_clssProfile();
 				$this->getConnection();
 
-				$profileid = htmlspecialchars(trim($profileid));
+				$profileid = trim($profileid);
 
 				$selectQuery = "SELECT * FROM profile_tbl WHERE profileid=:profileid";
 				$stmt = $this->cnn->prepare($selectQuery);
@@ -594,11 +594,11 @@
 				$this->clearlist_clssProfile();
 				$this->getConnection();
 
-				$firstnameii = htmlspecialchars(trim($firstname));
-				$lastnameii = htmlspecialchars(trim($lastname));
-				$genderii = htmlspecialchars(trim($gender));
+				$firstnameii = trim($firstname);
+				$lastnameii = trim($lastname);
+				$genderii = trim($gender);
 				$birthdateii = date('Y-m-d', $birthday);
-				$birthplaceii = htmlspecialchars(trim($birthplace));
+				$birthplaceii = trim($birthplace);
 
 				$selectQuery = "SELECT * FROM profile_tbl WHERE 
 					first_name=:firstname AND 
@@ -631,8 +631,8 @@
 				$this->clearlist_clssProfile();
 				$this->getConnection();
 
-				$firstname = '%'.htmlspecialchars(trim($firstnameii)).'%';
-				$lastname = '%'.htmlspecialchars(trim($lastnameii)).'%';
+				$firstname = '%'.trim($firstnameii).'%';
+				$lastname = '%'.trim($lastnameii).'%';
 
 				$selectQuery = "SELECT * FROM profile_tbl WHERE first_name LIKE :firstname AND last_name LIKE :lastname";
 				$stmt = $this->cnn->prepare($selectQuery);
@@ -701,45 +701,45 @@
 				$this->clearlist_clssProfile();
 				$this->getConnection();
 
-				$nickname = htmlspecialchars(trim($nicknameii));
-				$ptitle = htmlspecialchars(trim($ptitleii));
-				$firstname = htmlspecialchars(trim($firstnameii));
-				$middlename = htmlspecialchars(trim($middlenameii));
-				$lastname = htmlspecialchars(trim($lastnameii));
-				$suffix = htmlspecialchars(trim($suffixii));
-				$gender = htmlspecialchars(trim($genderii));
-				$birthdate = htmlspecialchars(trim($birthdateii));
-				$birthplace = htmlspecialchars(trim($birthplaceii));
-				$nationality = htmlspecialchars(trim($nationalityii));
-				$civilstatus = htmlspecialchars(trim($civilstatusii));
-				$bloodtype = htmlspecialchars(trim($bloodtypeii));
-				$email = htmlspecialchars(trim($emailii));
-				$photo = htmlspecialchars(trim($photoii));
-				$mobile = htmlspecialchars(trim($mobileii));
-				$mobile2 = htmlspecialchars(trim($mobile2ii));
-				$fbid = htmlspecialchars(trim($fbidii));
-				$address = htmlspecialchars(trim($addressii));
-				$addressline2 = htmlspecialchars(trim($addressline2ii));
-				$street = htmlspecialchars(trim($streetii));
-				$barangaycode = htmlspecialchars(trim($barangaycodeii));
-				$barangay = htmlspecialchars(trim($barangayii));
-				$municipalitycode = htmlspecialchars(trim($municipalitycodeii));
-				$municipality = htmlspecialchars(trim($municipalityii));
-				$zipcode = htmlspecialchars(trim($zipcodeii));
-				$districtno = htmlspecialchars(trim($districtnoii));
-				$districtsign = htmlspecialchars(trim($districtsignii));
-				$provincecode = htmlspecialchars(trim($provincecodeii));
-				$province = htmlspecialchars(trim($provinceii));
-				$regioncode = htmlspecialchars(trim($regioncodeii));
-				$regionno = htmlspecialchars(trim($regionnoii));
-				$regionsign = htmlspecialchars(trim($regionsignii));
-				$region = htmlspecialchars(trim($regionii));
-				$countryid = htmlspecialchars(trim($countryidii));
-				$countrycode = htmlspecialchars(trim($countrycodeii));
-				$country = htmlspecialchars(trim($countryii));
-				$postal = htmlspecialchars(trim($postalii));
-				$foreignaddress = htmlspecialchars(trim($foreignaddressii));
-				$modifiedby = htmlspecialchars(trim($modifiedbyii));
+				$nickname = trim($nicknameii);
+				$ptitle = trim($ptitleii);
+				$firstname = trim($firstnameii);
+				$middlename = trim($middlenameii);
+				$lastname = trim($lastnameii);
+				$suffix = trim($suffixii);
+				$gender = trim($genderii);
+				$birthdate = trim($birthdateii);
+				$birthplace = trim($birthplaceii);
+				$nationality = trim($nationalityii);
+				$civilstatus = trim($civilstatusii);
+				$bloodtype = trim($bloodtypeii);
+				$email = trim($emailii);
+				$photo = trim($photoii);
+				$mobile = trim($mobileii);
+				$mobile2 = trim($mobile2ii);
+				$fbid = trim($fbidii);
+				$address = trim($addressii);
+				$addressline2 = trim($addressline2ii);
+				$street = trim($streetii);
+				$barangaycode = trim($barangaycodeii);
+				$barangay = trim($barangayii);
+				$municipalitycode = trim($municipalitycodeii);
+				$municipality = trim($municipalityii);
+				$zipcode = trim($zipcodeii);
+				$districtno = trim($districtnoii);
+				$districtsign = trim($districtsignii);
+				$provincecode = trim($provincecodeii);
+				$province = trim($provinceii);
+				$regioncode = trim($regioncodeii);
+				$regionno = trim($regionnoii);
+				$regionsign = trim($regionsignii);
+				$region = trim($regionii);
+				$countryid = trim($countryidii);
+				$countrycode = trim($countrycodeii);
+				$country = trim($countryii);
+				$postal = trim($postalii);
+				$foreignaddress = trim($foreignaddressii);
+				$modifiedby = trim($modifiedbyii);
 
 				$updateQuery = "UPDATE profile_tbl SET 
 					nickname=:nickname, 
@@ -834,8 +834,8 @@
 				$this->clearlist_clssProfile();
 				$this->getConnection();
 
-				$delete = htmlspecialchars(trim($delete));
-				$modifiedby = htmlspecialchars(trim($modifiedbyii));
+				$delete = trim($delete);
+				$modifiedby = trim($modifiedbyii);
 
 				$selectQuery = "SELECT * FROM profile_tbl WHERE profile_autoid=:profileautoid";
 				$stmt = $this->cnn->prepare($selectQuery);
@@ -861,8 +861,8 @@
 				$this->clearlist_clssProfile();
 				$this->getConnection();
 
-				$delete = htmlspecialchars(trim($delete));
-				$modifiedby = htmlspecialchars(trim($modifiedbyii));
+				$delete = trim($delete);
+				$modifiedby = trim($modifiedbyii);
 
 				$selectQuery = "SELECT * FROM profile_tbl WHERE profile_autoid=:profileautoid";
 				$stmt = $this->cnn->prepare($selectQuery);
@@ -888,7 +888,7 @@
 				$this->clearlist_clssProfile();
 				$this->getConnection();
 
-				$delete = htmlspecialchars(trim($delete));
+				$delete = trim($delete);
 
 				$selectQuery = "SELECT * FROM profile_tbl WHERE profile_autoid=:profileautoid";
 				$stmt = $this->cnn->prepare($selectQuery);

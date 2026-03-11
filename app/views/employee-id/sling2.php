@@ -27,7 +27,7 @@
 			<tr>
 				<td colspan="3" style="margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; width: 100%;">
 					<div style="margin-top: 0; margin-bottom: -16px; padding-top: 0; padding-bottom: 0; width: 100%;"><svg id="barcode2"></svg></div>
-					<p style="font-weight: bolder; font-size: xxx-large; margin-top: 0; margin-bottom: 0px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;"><?php echo trim(mb_strtoupper($nicknamecc1)); ?></p>
+					<p style="font-weight: bolder; font-size: 46px; margin-top: 0; margin-bottom: 0px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;"><?php echo trim(mb_strtoupper($nicknamecc1)); ?></p>
 					<p style="font-weight: bolder; font-size: large; margin-top: 0; margin-bottom: 0px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;"><?php echo trim(mb_strtoupper($empnameforidcc1)); ?></p>
 					<!-- Fullname max-size 28char only -->
 					<p style="font-weight: bold; font-size: medium; margin-top: 0; margin-bottom: 2px; padding-top: 0; padding-bottom: 0; word-wrap: break-word; width: 100%; max-width: 290px; margin-right: auto; margin-left: auto; line-height: 1;"><?php echo trim($designationforidcc1); ?></p>

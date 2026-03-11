@@ -29,6 +29,7 @@
 				$empnameee,
 				$genderee,
 				$birthdayee,
+				$addressee,
 				$empageee,
 				$officeidee,
 				$officecodeee,
@@ -91,7 +92,12 @@
 				$mphoneee,
 				$empemailee,
 				$designationatee,
+				$incaseofemergencynameee,
+				$incaseofemergencycontactee,
+				$incaseofemergencyelationee,
 				$xdelee,
+				$slingid,
+				$pocketid,
 				$createdbyee,
 				$modifiedbyee,
 				$modifiedatee,
@@ -116,6 +122,7 @@
 				$list_empnameee,
 				$list_genderee,
 				$list_birthdayee,
+				$list_addressee,
 				$list_empageee,
 				$list_officeidee,
 				$list_officecodeee,
@@ -178,7 +185,12 @@
 				$list_mphoneee,
 				$list_empemailee,
 				$list_designationatee,
+				$list_incaseofemergencynameee,
+				$list_incaseofemergencycontactee,
+				$list_incaseofemergencyelationee,
 				$list_xdelee,
+				$list_slingidee,
+				$list_pocketidee,
 				$list_createdbyee,
 				$list_modifiedbyee,
 				$list_modifiedatee,
@@ -204,6 +216,7 @@
 				$this->list_empnameee = array();
 				$this->list_genderee = array();
 				$this->list_birthdayee = array();
+				$this->list_addressee = array();
 				$this->list_empageee = array();
 				$this->list_officeidee = array();
 				$this->list_officecodeee = array();
@@ -266,7 +279,12 @@
 				$this->list_mphoneee = array();
 				$this->list_empemailee = array();
 				$this->list_designationatee = array();
+				$this->list_incaseofemergencynameee = array();
+				$this->list_incaseofemergencycontactee = array();
+				$this->list_incaseofemergencyelationee = array();
 				$this->list_xdelee = array();
+				$this->list_slingidee = array();
+				$this->list_pocketidee = array();
 				$this->list_createdbyee = array();
 				$this->list_modifiedbyee = array();
 				$this->list_modifiedatee = array();
@@ -293,6 +311,7 @@
 				$this->list_empnameee = array();
 				$this->list_genderee = array();
 				$this->list_birthdayee = array();
+				$this->list_addressee = array();
 				$this->list_empageee = array();
 				$this->list_officeidee = array();
 				$this->list_officecodeee = array();
@@ -355,7 +374,12 @@
 				$this->list_mphoneee = array();
 				$this->list_empemailee = array();
 				$this->list_designationatee = array();
+				$this->list_incaseofemergencynameee = array();
+				$this->list_incaseofemergencycontactee = array();
+				$this->list_incaseofemergencyelationee = array();
 				$this->list_xdelee = array();
+				$this->list_slingidee = array();
+				$this->list_pocketidee = array();
 				$this->list_createdbyee = array();
 				$this->list_modifiedbyee = array();
 				$this->list_modifiedatee = array();
@@ -369,10 +393,10 @@
 
 				$officeidme = $officeid;
 				if ( empty($officeidme) || $officeidme == 0 || $officeidme = null ) {
-					$selectQuery = "SELECT * FROM employee_tbl WHERE xdel=0 ORDER BY modified_at DESC";
+					$selectQuery = "SELECT * FROM employee_tbl WHERE xdel=0 ORDER BY created_at DESC";
 					$stmt = $this->cnn->prepare($selectQuery);
 				} else {
-					$selectQuery = "SELECT * FROM employee_tbl WHERE officeid=:officeidme AND xdel=0 ORDER BY modified_at DESC";
+					$selectQuery = "SELECT * FROM employee_tbl WHERE officeid=:officeidme AND xdel=0 ORDER BY created_at DESC";
 					$stmt = $this->cnn->prepare($selectQuery);
 					$stmt->bindParam(':officeidme', $officeidme);
 				}
@@ -394,6 +418,7 @@
 						$this->list_officenameforidee[] = $rwRcrd['officename_forid'];
 						$this->list_designationforidee[] = $rwRcrd['designationforid'];
 						$this->list_birthdayee[] = $rwRcrd['birthday'];
+						$this->list_addressee = $rwRcrd['address'];
 						$this->list_empageee[] = $rwRcrd['emp_age'];
 						$this->list_officeidee[] = $rwRcrd['officeid'];
 						$this->list_officegpslocationee[] = $rwRcrd['office_gps_location'];
@@ -439,11 +464,19 @@
 						$this->list_validuntilee[] = $rwRcrd['valid_until'];
 						$this->list_mphoneee[] = $rwRcrd['mphone'];
 						$this->list_empemailee[] = $rwRcrd['empemail'];
+						$this->list_incaseofemergencynameee[] = $rwRcrd['incaseofemergency_name'];
+						$this->list_incaseofemergencycontactee[] = $rwRcrd['incaseofemergency_contact'];
+						$this->list_incaseofemergencyelationee[] = $rwRcrd['incaseofemergency_relation'];
 						$this->list_xdelee[] = $rwRcrd['xdel'];
+						$this->list_slingidee[] = $rwRcrd['slingid'];
+						$this->list_pocketidee[] = $rwRcrd['pocketid'];
 						$this->list_createdbyee[] = $rwRcrd['createdby'];
 						$this->list_modifiedbyee[] = $rwRcrd['modifiedby'];
 						$this->list_modifiedatee[] = $rwRcrd['modified_at'];
 						$this->list_createdatee[] = $rwRcrd['created_at'];
+						$this->list_typeemployeeabrvee[] = $rwRcrd['type_employee_abrv'];
+						$this->list_typeemployeeee[] = $rwRcrd['type_employee'];
+						$this->list_officenameee[] = $rwRcrd['officename'];
 					}
 					return true;
 				} else {
@@ -452,61 +485,68 @@
 			}
 
 			// Create or insert new data on the Database Table
-			public function insert_Employee($agencycode,$agencyname,$nickname,$empnameforid,$officenameforid,$designationforid,$profileid,$uid,$empidcode,$pinword,$hrempid,$biolocation,$biono,$empname,$gender,$birthday,$officeid,$officecode,$officename,$officetitle,$officeabrv,$oldofficeabrv,$officegpslocation,$headofficer,$headtitle,$authhead,$authtitle,$authdescription,$yearemployed,$typeemployeeno,$typeemployeeabrv,$typeemployee,$verified,$activated,$worklocation,$shiftstatus,$timeeditable,$prioritydtr,$timeeditablevalue,$allowedot,$position,$designation,$mphone,$empemail,$designationat,$createdby,$modifiedby,$bioloclabel,$imgdataempl) {
+			public function insert_Employee($agencycode,$agencyname,$nickname,$empnameforid,$officenameforid,$designationforid,$profileid,$uid,$empidcode,$pinword,$hrempid,$biolocation,$biono,$empname,$gender,$birthday,$officeid,$officecode,$officename,$officetitle,$officeabrv,$oldofficeabrv,$officegpslocation,$headofficer,$headtitle,$authhead,$authtitle,$authdescription,$yearemployed,$typeemployeeno,$typeemployeeabrv,$typeemployee,$verified,$activated,$worklocation,$shiftstatus,$timeeditable,$prioritydtr,$timeeditablevalue,$allowedot,$position,$designation,$mphone,$empemail,$designationat,$slingid,
+				$pocketid,$createdby,$modifiedby,$bioloclabel,$imgdataempl,$incaseofemergencyname,$incaseofemergencycontact,$incaseofemergencyrelation,$address) {
 				$this->clearlist_employeeAcct();
 				$this->getConnection();
 
-				$agencycode = trim(htmlspecialchars(trim($agencycode)));
-				$agencyname = trim(htmlspecialchars(trim($agencyname)));
-				$nickname = trim(htmlspecialchars(trim($nickname)));
-				$empnameforid = trim(htmlspecialchars(trim($empnameforid)));
-				$officenameforid = trim(htmlspecialchars(trim($officenameforid)));
-				$designationforid = trim(htmlspecialchars(trim($designationforid)));
-				$profileid = trim(htmlspecialchars(trim($profileid)));
-				$uid = trim(htmlspecialchars(trim($uid)));
-				$empidcode = trim(htmlspecialchars(trim($empidcode)));
+				$agencycode = trim($agencycode);
+				$agencyname = trim($agencyname);
+				$nickname = trim($nickname);
+				$empnameforid = trim($empnameforid);
+				$officenameforid = trim($officenameforid);
+				$designationforid = trim($designationforid);
+				$profileid = trim($profileid);
+				$uid = trim($uid);
+				$empidcode = trim($empidcode);
 				$pinword = trim(md5(trim($pinword)));
-				$hrempid = trim(htmlspecialchars(trim($hrempid)));
-				$bioloclabel = trim(htmlspecialchars(trim($bioloclabel)));
-				$biolocation = trim(htmlspecialchars(trim($biolocation)));
-				$biono = trim(htmlspecialchars(trim($biono)));
-				$empname = trim(htmlspecialchars(trim($empname)));
-				$gender = trim(htmlspecialchars(trim($gender)));
+				$hrempid = trim($hrempid);
+				$bioloclabel = trim($bioloclabel);
+				$biolocation = trim($biolocation);
+				$biono = trim($biono);
+				$empname = trim($empname);
+				$gender = trim($gender);
 				$birthday = date('Y-m-d', $birthday);
-				$officeid = trim(htmlspecialchars(trim($officeid)));
-				$officecode = trim(htmlspecialchars(trim($officecode)));
-				$officename = trim(htmlspecialchars(trim($officename)));
-				$officetitle = trim(htmlspecialchars(trim($officetitle)));
-				$officeabrv = trim(htmlspecialchars(trim($officeabrv)));
-				$oldofficeabrv = trim(htmlspecialchars(trim($oldofficeabrv)));
-				$officegpslocation = trim(htmlspecialchars(trim($officegpslocation)));
-				$headofficer = trim(htmlspecialchars(trim($headofficer)));
-				$headtitle = trim(htmlspecialchars(trim($headtitle)));
-				$authhead = trim(htmlspecialchars(trim($authhead)));
-				$authtitle = trim(htmlspecialchars(trim($authtitle)));
-				$authdescription = trim(htmlspecialchars(trim($authdescription)));
-				$yearemployed = trim(htmlspecialchars(trim($yearemployed)));
+				$address = trim($address);
+				$officeid = trim($officeid);
+				$officecode = trim($officecode);
+				$officename = trim($officename);
+				$officetitle = trim($officetitle);
+				$officeabrv = trim($officeabrv);
+				$oldofficeabrv = trim($oldofficeabrv);
+				$officegpslocation = trim($officegpslocation);
+				$headofficer = trim($headofficer);
+				$headtitle = trim($headtitle);
+				$authhead = trim($authhead);
+				$authtitle = trim($authtitle);
+				$authdescription = trim($authdescription);
+				$yearemployed = trim($yearemployed);
 				$yearcalc = date("Y") - $yearemployed;
-				$typeemployeeno = trim(htmlspecialchars(trim($typeemployeeno)));
-				$typeemployeeabrv = trim(htmlspecialchars(trim($typeemployeeabrv)));
-				$typeemployee = trim(htmlspecialchars(trim($typeemployee)));
-				$verified = trim(htmlspecialchars(trim($verified)));
-				$activated = trim(htmlspecialchars(trim($activated)));
-				$worklocation = trim(htmlspecialchars(trim($worklocation)));
-				$shiftstatus = trim(htmlspecialchars(trim($shiftstatus)));
-				$timeeditable = trim(htmlspecialchars(trim($timeeditable)));
-				$prioritydtr = trim(htmlspecialchars(trim($prioritydtr)));
-				$timeeditablevalue = trim(htmlspecialchars(trim($timeeditablevalue)));
-				$allowedot = trim(htmlspecialchars(trim($allowedot)));
-				$position = trim(htmlspecialchars(trim($position)));
-				$designation = trim(htmlspecialchars(trim($designation)));
-				$mphone = trim(htmlspecialchars(trim($mphone)));
-				$empemail = trim(htmlspecialchars(trim($empemail)));
-				$designationat = trim(htmlspecialchars(trim($designationat)));
-				$createdby = trim(htmlspecialchars(trim($createdby)));
-				$modifiedby = trim(htmlspecialchars(trim($modifiedby)));
+				$typeemployeeno = trim($typeemployeeno);
+				$typeemployeeabrv = trim($typeemployeeabrv);
+				$typeemployee = trim($typeemployee);
+				$verified = trim($verified);
+				$activated = trim($activated);
+				$worklocation = trim($worklocation);
+				$shiftstatus = trim($shiftstatus);
+				$timeeditable = trim($timeeditable);
+				$prioritydtr = trim($prioritydtr);
+				$timeeditablevalue = trim($timeeditablevalue);
+				$allowedot = trim($allowedot);
+				$position = trim($position);
+				$designation = trim($designation);
+				$mphone = trim($mphone);
+				$empemail = trim($empemail);
+				$designationat = trim($designationat);
+				$slingid = trim($slingid);
+				$pocketid = trim($pocketid);
+				$createdby = trim($createdby);
+				$modifiedby = trim($modifiedby);
+				$incaseofemergencyname = trim($incaseofemergencyname);
+				$incaseofemergencycontact = trim($incaseofemergencycontact);
+				$incaseofemergencyrelation = trim($incaseofemergencyrelation);
 
-				$imgdataemplx = trim(htmlspecialchars(trim($imgdataempl)));
+				$imgdataemplx = trim($imgdataempl);
 
 				$insertQuery = "INSERT INTO employee_tbl SET 
 					agency_code=:xagencycode, 
@@ -526,6 +566,7 @@
 					emp_name=:xempname, 
 					gender=:xgender, 
 					birthday=:xbirthday, 
+					address=:xaddress, 
 					officeid=:xofficeid, 
 					officecode=:xofficecode, 
 					officename=:xofficename, 
@@ -557,8 +598,13 @@
 					empemail=:xempemail, 
 					designation_at=:xdesignationat, 
 					xdel=0, 
+					slingid=:xslingid, 
+					pocketid=:xpocketid, 
 					createdby=:xcreatedby, 
-					modifiedby=:xmodifiedby
+					modifiedby=:xmodifiedby, 
+					incaseofemergency_name=:xincaseofemergencyname, 
+					incaseofemergency_contact=:xincaseofemergencycontact, 
+					incaseofemergency_relation=:xincaseofemergencyrelation
 					";
 				$stmt = $this->cnn->prepare($insertQuery);
 				$stmt->bindParam(':xagencycode', $agencycode);
@@ -578,6 +624,7 @@
 				$stmt->bindParam(':xempname', $empname);
 				$stmt->bindParam(':xgender', $gender);
 				$stmt->bindParam(':xbirthday', $birthday);
+				$stmt->bindParam(':xaddress', $address);
 				$stmt->bindParam(':xofficeid', $officeid);
 				$stmt->bindParam(':xofficecode', $officecode);
 				$stmt->bindParam(':xofficename', $officename);
@@ -608,8 +655,13 @@
 				$stmt->bindParam(':xmphone', $mphone);
 				$stmt->bindParam(':xempemail', $empemail);
 				$stmt->bindParam(':xdesignationat', $designationat);
+				$stmt->bindParam(':xslingid', $slingid);
+				$stmt->bindParam(':xpocketid', $pocketid);
 				$stmt->bindParam(':xcreatedby', $createdby);
 				$stmt->bindParam(':xmodifiedby', $modifiedby);
+				$stmt->bindParam(':xincaseofemergencyname', $incaseofemergencyname);
+				$stmt->bindParam(':xincaseofemergencycontact', $incaseofemergencycontact);
+				$stmt->bindParam(':xincaseofemergencyrelation', $incaseofemergencyrelation);
 				$stmt->execute();
 
 				echo '<div class="alert alert-info alert-dismissible fade show m-1">';
@@ -618,7 +670,7 @@
 				echo '</div>';
 
 				$employeeidfinale = trim($empidcode);
-				$imgdata = trim(htmlspecialchars(trim($imgdataemplx)));
+				$imgdata = trim($imgdataemplx);
 				if (file_exists("lib/employee-img-saved.php")) {
 					require_once "lib/employee-img-saved.php";
 				} elseif (file_exists("../../lib/employee-img-saved.php")) {
@@ -712,10 +764,15 @@
 						$this->list_mphoneee[] = $rwRcrd['mphone'];
 						$this->list_empemailee[] = $rwRcrd['empemail'];
 						$this->list_xdelee[] = $rwRcrd['xdel'];
+						$this->list_slingidee[] = $rwRcrd['slingid'];
+						$this->list_pocketidee[] = $rwRcrd['pocketid'];
 						$this->list_createdbyee[] = $rwRcrd['createdby'];
 						$this->list_modifiedbyee[] = $rwRcrd['modifiedby'];
 						$this->list_modifiedatee[] = $rwRcrd['modified_at'];
 						$this->list_createdatee[] = $rwRcrd['created_at'];
+						$this->list_incaseofemergencycontactee[] = $rwRcrd['incaseofemergency_contact'];
+						$this->list_incaseofemergencyelationee[] = $rwRcrd['incaseofemergency_relation'];
+
 
 						include "lib/onoffline.php";
 						if ( $onlineornot == 1 ) {
@@ -728,6 +785,7 @@
 							$this->list_biolocationee[] = utf8_encode($rwRcrd['bio_location']);
 							$this->list_empnameee[] = utf8_encode($rwRcrd['emp_name']);
 							$this->list_genderee[] = utf8_encode($rwRcrd['gender']);
+							$this->list_addressee[] = utf8_encode($rwRcrd['address']);
 							$this->list_officecodeee[] = utf8_encode($rwRcrd['officecode']);
 							$this->list_officenameee[] = utf8_encode($rwRcrd['officename']);
 							$this->list_officetitleee[] = utf8_encode($rwRcrd['officetitle']);
@@ -745,6 +803,7 @@
 							$this->list_designationee[] = utf8_encode($rwRcrd['designation']);
 							$this->list_employmentstatusabvree[] = utf8_encode($rwRcrd['employment_status_abvr']);
 							$this->list_designationatee[] = utf8_encode($rwRcrd['designation_at']);
+							$this->list_incaseofemergencynameee[] = utf8_encode($rwRcrd['incaseofemergency_name']);
 						} else {
 							$this->list_agencycodeee[] = $rwRcrd['agency_code'];
 							$this->list_agencynameee[] = $rwRcrd['agency_name'];
@@ -755,6 +814,7 @@
 							$this->list_biolocationee[] = $rwRcrd['bio_location'];
 							$this->list_empnameee[] = $rwRcrd['emp_name'];
 							$this->list_genderee[] = $rwRcrd['gender'];
+							$this->list_addressee[] = $rwRcrd['address'];
 							$this->list_officecodeee[] = $rwRcrd['officecode'];
 							$this->list_officenameee[] = $rwRcrd['officename'];
 							$this->list_officetitleee[] = $rwRcrd['officetitle'];
@@ -772,6 +832,7 @@
 							$this->list_designationee[] = $rwRcrd['designation'];
 							$this->list_employmentstatusabvree[] = $rwRcrd['employment_status_abvr'];
 							$this->list_designationatee[] = $rwRcrd['designation_at'];
+							$this->list_incaseofemergencynameee[] = $rwRcrd['incaseofemergency_name'];
 						}
 					}
 
@@ -852,11 +913,15 @@
 						$this->list_validuntilee[] = $rwRcrd['valid_until'];
 						$this->list_mphoneee[] = $rwRcrd['mphone'];
 						$this->list_empemailee[] = $rwRcrd['empemail'];
+						$this->list_slingidee[] = $rwRcrd['slingid'];
+						$this->list_pocketidee[] = $rwRcrd['pocketid'];
 						$this->list_xdelee[] = $rwRcrd['xdel'];
 						$this->list_createdbyee[] = $rwRcrd['createdby'];
 						$this->list_modifiedbyee[] = $rwRcrd['modifiedby'];
 						$this->list_modifiedatee[] = $rwRcrd['modified_at'];
 						$this->list_createdatee[] = $rwRcrd['created_at'];
+						$this->list_incaseofemergencycontactee[] = $rwRcrd['incaseofemergency_contact'];
+						$this->list_incaseofemergencyelationee[] = $rwRcrd['incaseofemergency_relation'];
 
 						include "lib/onoffline.php";
 						if ( $onlineornot == 1 ) {
@@ -869,6 +934,7 @@
 							$this->list_biolocationee[] = utf8_encode($rwRcrd['bio_location']);
 							$this->list_empnameee[] = utf8_encode($rwRcrd['emp_name']);
 							$this->list_genderee[] = utf8_encode($rwRcrd['gender']);
+							$this->list_addressee[] = utf8_encode($rwRcrd['address']);
 							$this->list_officecodeee[] = utf8_encode($rwRcrd['officecode']);
 							$this->list_officenameee[] = utf8_encode($rwRcrd['officename']);
 							$this->list_officetitleee[] = utf8_encode($rwRcrd['officetitle']);
@@ -886,6 +952,7 @@
 							$this->list_designationee[] = utf8_encode($rwRcrd['designation']);
 							$this->list_employmentstatusabvree[] = utf8_encode($rwRcrd['employment_status_abvr']);
 							$this->list_designationatee[] = utf8_encode($rwRcrd['designation_at']);
+							$this->list_incaseofemergencynameee[] = utf8_encode($rwRcrd['incaseofemergency_name']);
 						} else {
 							$this->list_agencycodeee[] = $rwRcrd['agency_code'];
 							$this->list_agencynameee[] = $rwRcrd['agency_name'];
@@ -896,6 +963,7 @@
 							$this->list_biolocationee[] = $rwRcrd['bio_location'];
 							$this->list_empnameee[] = $rwRcrd['emp_name'];
 							$this->list_genderee[] = $rwRcrd['gender'];
+							$this->list_addressee[] = $rwRcrd['address'];
 							$this->list_officecodeee[] = $rwRcrd['officecode'];
 							$this->list_officenameee[] = $rwRcrd['officename'];
 							$this->list_officetitleee[] = $rwRcrd['officetitle'];
@@ -913,6 +981,7 @@
 							$this->list_designationee[] = $rwRcrd['designation'];
 							$this->list_employmentstatusabvree[] = $rwRcrd['employment_status_abvr'];
 							$this->list_designationatee[] = $rwRcrd['designation_at'];
+							$this->list_incaseofemergencynameee[] = $rwRcrd['incaseofemergency_name'];
 						}
 					}
 
@@ -1080,6 +1149,10 @@
 						$this->list_validuntilee[] = $rwRcrd['valid_until'];
 						$this->list_mphoneee[] = $rwRcrd['mphone'];
 						$this->list_empemailee[] = $rwRcrd['empemail'];
+						$this->list_slingidee[] = $rwRcrd['slingid'];
+						$this->list_pocketidee[] = $rwRcrd['pocketid'];
+						$this->list_incaseofemergencycontactee[] = $rwRcrd['incaseofemergency_contact'];
+						$this->list_incaseofemergencyelationee[] = $rwRcrd['incaseofemergency_relation'];
 						$this->list_xdelee[] = $rwRcrd['xdel'];
 						$this->list_createdbyee[] = $rwRcrd['createdby'];
 						$this->list_modifiedbyee[] = $rwRcrd['modifiedby'];
@@ -1097,6 +1170,7 @@
 							$this->list_biolocationee[] = utf8_encode($rwRcrd['bio_location']);
 							$this->list_empnameee[] = utf8_encode($rwRcrd['emp_name']);
 							$this->list_genderee[] = utf8_encode($rwRcrd['gender']);
+							$this->list_addressee[] = utf8_encode($rwRcrd['address']);
 							$this->list_officecodeee[] = utf8_encode($rwRcrd['officecode']);
 							$this->list_officenameee[] = utf8_encode($rwRcrd['officename']);
 							$this->list_officetitleee[] = utf8_encode($rwRcrd['officetitle']);
@@ -1114,6 +1188,7 @@
 							$this->list_designationee[] = utf8_encode($rwRcrd['designation']);
 							$this->list_employmentstatusabvree[] = utf8_encode($rwRcrd['employment_status_abvr']);
 							$this->list_designationatee[] = utf8_encode($rwRcrd['designation_at']);
+							$this->list_incaseofemergencynameee[] = utf8_encode($rwRcrd['incaseofemergency_name']);
 						} else {
 							$this->list_agencycodeee[] = $rwRcrd['agency_code'];
 							$this->list_agencynameee[] = $rwRcrd['agency_name'];
@@ -1124,6 +1199,7 @@
 							$this->list_biolocationee[] = $rwRcrd['bio_location'];
 							$this->list_empnameee[] = $rwRcrd['emp_name'];
 							$this->list_genderee[] = $rwRcrd['gender'];
+							$this->list_addressee[] = $rwRcrd['address'];
 							$this->list_officecodeee[] = $rwRcrd['officecode'];
 							$this->list_officenameee[] = $rwRcrd['officename'];
 							$this->list_officetitleee[] = $rwRcrd['officetitle'];
@@ -1141,6 +1217,7 @@
 							$this->list_designationee[] = $rwRcrd['designation'];
 							$this->list_employmentstatusabvree[] = $rwRcrd['employment_status_abvr'];
 							$this->list_designationatee[] = $rwRcrd['designation_at'];
+							$this->list_incaseofemergencynameee[] = $rwRcrd['incaseofemergency_name'];
 						}
 					}
 

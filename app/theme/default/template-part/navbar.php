@@ -81,7 +81,12 @@
 
 										<li><hr class="dropdown-divider"></li>
 
-										<li><a class="dropdown-item" href="#">Human Resource</a></li>
+										<li class="nav-item dropend">
+											<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Human Resource</a>
+											<ul class="dropdown-menu">
+												<li><a class="dropdown-item" href="<?php echo trim($domainhome) ?>/list-employee">List of Employee</a></li>
+											</ul>
+										</li>
 										<li><a class="dropdown-item" href="#">Budget</a></li>
 										<li><a class="dropdown-item" href="#">Accounting</a></li>
 										<li><a class="dropdown-item" href="#">Treasury</a></li>

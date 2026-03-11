@@ -96,6 +96,9 @@
 			} elseif ( empty(trim($reg_ntitle)) && empty(trim($reg_profession)) ) {
 				$fullname = trim(strtoupper($reg_fname))." ".trim(strtoupper($reg_mname))." ".trim(strtoupper($reg_lname)).", ".trim(strtoupper($reg_suffix));
 				$fullname_mi = trim(strtoupper($reg_fname))." ".trim(substr(strtoupper($reg_mname),0,1)).". ".trim(strtoupper($reg_lname)).", ".trim(strtoupper($reg_suffix));
+			} elseif ( empty(trim($reg_ntitle)) && empty(trim($reg_suffix)) ) {
+				$fullname = trim(strtoupper($reg_fname))." ".trim(strtoupper($reg_mname))." ".trim(strtoupper($reg_lname)).", ".trim(strtoupper($reg_profession));
+				$fullname_mi = trim(strtoupper($reg_fname))." ".trim(substr(strtoupper($reg_mname),0,1)).". ".trim(strtoupper($reg_lname)).", ".trim(strtoupper($reg_profession));
 			} elseif ( empty(trim($reg_profession)) ) {
 				$fullname = trim(strtoupper($reg_ntitle))." ".trim(strtoupper($reg_fname))." ".trim(strtoupper($reg_mname))." ".trim(strtoupper($reg_lname)).", ".trim(strtoupper($reg_suffix));
 				$fullname_mi = trim(strtoupper($reg_ntitle))." ".trim(strtoupper($reg_fname))." ".trim(substr(strtoupper($reg_mname),0,1)).". ".trim(strtoupper($reg_lname)).", ".trim(strtoupper($reg_suffix));

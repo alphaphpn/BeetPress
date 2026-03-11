@@ -60,7 +60,7 @@
 					$mphonecc1 = $mphonecc;
 				?>
 				<td class="myselectd" style="padding-right: 6px; padding-bottom: 6px;"><?php include "app/views/employee-id/sling1.php" ?></td>
-				<td class="myselectd" style="padding-left: 6px; padding-bottom: 6px;"><?php include "app/views/employee-id/sling2.php" ?></td>
+				<td class="myselectd" style="padding-left: 6px; padding-bottom: 6px; border-left: 1px solid black;"><?php include "app/views/employee-id/sling2.php" ?></td>
 			</tr>
 
 			<tr class="hidebuttonprint">
@@ -80,8 +80,8 @@
 					$officenameforidcc2 = $officenameforidcc;
 					$mphonecc2 = $mphonecc;
 				?>
-				<td class="myselectd" style="padding-right: 6px; padding-top: 6px;"><?php include "app/views/employee-id/sling3.php" ?></td>
-				<td class="myselectd" style="padding-left: 6px; padding-top: 6px;"><?php include "app/views/employee-id/sling4.php" ?></td>
+				<td class="myselectd" style="padding-right: 6px; padding-top: 6px; border-top: 1px solid black;"><?php include "app/views/employee-id/sling3.php" ?></td>
+				<td class="myselectd" style="padding-left: 6px; padding-top: 6px; border-top: 1px solid black; border-left: 1px solid black;"><?php include "app/views/employee-id/sling4.php" ?></td>
 			</tr>
 		</tbody>
 	</table>

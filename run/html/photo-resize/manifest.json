@@ -1,0 +1,17 @@
+{
+  "name": "ID Print Studio Pro",
+  "short_name": "IDStudio",
+  "description": "Professional ID Layout and Printing Tool",
+  "start_url": "size.php",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0d6efd",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1042/1042339.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
