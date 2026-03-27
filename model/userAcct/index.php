@@ -702,6 +702,33 @@
 					}
 				}
 			}
+
+			// List of User and their Names
+			public function list_userAccts() {
+				$this->clearlist_userAcct();
+				$this->getConnection();
+				$selectQuery = "SELECT `user_tbl`.`authid` AS `authid`,
+						`user_tbl`.`uid` AS `uid`,
+						`user_tbl`.`profileid` AS `profileid`,
+						`user_tbl`.`uname` AS `uname`,
+						`user_tbl`.`pword` AS `pword`,
+						`user_tbl`.`verified` AS `verified`,
+						`user_tbl`.`ustat` AS `ustat`,
+						`user_tbl`.`ulevel` AS `ulevel`,
+						`user_tbl`.`uposition` AS `uposition`,
+						`user_tbl`.`officeabrv` AS `officeabrv`,
+						`profile_tbl`.`first_name` AS `first_name`,
+						`profile_tbl`.`middle_name` AS `middle_name`,
+						`profile_tbl`.`last_name` AS `last_name`,
+						`profile_tbl`.`suffix` AS `suffix` 
+					FROM `user_tbl` 
+					JOIN `profile_tbl` ON `user_tbl`.`profileid` = `profile_tbl`.`profileid`";
+				$stmt = $this->cnn->prepare($selectQuery);
+				$stmt->execute();
+				$cntRcrd = $stmt->rowCount();
+
+				return $cntRcrd;
+			}
 			
 		}
 	} catch (PDOException $error) {

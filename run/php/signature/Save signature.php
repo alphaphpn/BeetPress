@@ -4,7 +4,6 @@ header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
 
-// Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
     exit;
@@ -15,24 +14,30 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Get the POST data sent by jQuery AJAX
-$employee_id = isset($_POST['employee_id']) ? trim($_POST['employee_id']) : '';
-$signatureData = isset($_POST['signature']) ? $_POST['signature'] : '';
+$body = json_decode(file_get_contents('php://input'), true);
 
-if (empty($employee_id) || empty($signatureData)) {
-    echo json_encode(['success' => false, 'error' => 'Missing employee ID or signature data']);
+if (!$body || empty($body['imageData'])) {
+    echo json_encode(['success' => false, 'error' => 'No image data received']);
     exit;
 }
 
-// FOOLPROOF PATH: This steps out of the 'lib' folder and directly into the '/public/employee_sign/' folder
-$uploadDir = dirname(__DIR__) . '/public/employee_sign/';
+$imageData = $body['imageData'];
+$filename  = isset($body['filename']) ? basename($body['filename']) : 'signature_' . time() . '.png';
+
+// Force .png extension
+if (pathinfo($filename, PATHINFO_EXTENSION) !== 'png') {
+    $filename = pathinfo($filename, PATHINFO_FILENAME) . '.png';
+}
+
+// Save folder
+$uploadDir = __DIR__ . '/uploads/signatures/';
 
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
 
 // Strip base64 header and decode
-$base64Data = preg_replace('/^data:image\/(png|jpeg|jpg);base64,/', '', $signatureData);
+$base64Data = preg_replace('/^data:image\/png;base64,/', '', $imageData);
 $decoded    = base64_decode($base64Data);
 
 if ($decoded === false) {
@@ -40,11 +45,8 @@ if ($decoded === false) {
     exit;
 }
 
-// Set the filename exactly as the employee ID
-$filename = $employee_id . '.png';
 $filePath = $uploadDir . $filename;
 
-// Save the file
 if (file_put_contents($filePath, $decoded) !== false) {
     echo json_encode([
         'success'  => true,

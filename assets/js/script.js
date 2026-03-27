@@ -160,6 +160,32 @@ function PinHideShow() {
 	}
 }
 
+function PinHideShow3() {
+	var x = document.getElementById("newpinInput");
+	if (x.type === "password") {
+		x.type = "text";
+		$('#show_hide_pin_new i').removeClass( "fa-eye-slash" );
+		$('#show_hide_pin_new i').addClass( "fa-eye" );
+	} else {
+		x.type = "password";
+		$('#show_hide_pin_new i').addClass( "fa-eye-slash" );
+		$('#show_hide_pin_new i').removeClass( "fa-eye" );
+	}
+}
+
+function PinHideShow4() {
+	var x = document.getElementById("retypepinInput");
+	if (x.type === "password") {
+		x.type = "text";
+		$('#show_hide_pin_retype i').removeClass( "fa-eye-slash" );
+		$('#show_hide_pin_retype i').addClass( "fa-eye" );
+	} else {
+		x.type = "password";
+		$('#show_hide_pin_retype i').addClass( "fa-eye-slash" );
+		$('#show_hide_pin_retype i').removeClass( "fa-eye" );
+	}
+}
+
 function fnUpDateTime() {
 	let currentTime = new Date();
 	// let currentTime = currentTimeX.toLocaleString('en-US', { timeZone: 'Asia/Manila' });

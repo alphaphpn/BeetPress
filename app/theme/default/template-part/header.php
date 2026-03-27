@@ -3,8 +3,9 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="">
-	<meta name="author" content="">
+	<meta name="description" content="BeetPress is a web application framework with simple and native syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. BeetPress takes the pain out of development by easing common tasks used in many web projects.">
+	<meta name="author" content="Ludwig Bethnicer C. Napigkit">
+	<meta name="generator" content="BeetPress">
 	<meta http-equiv="Pragma" content="no-cache">
 	<meta http-equiv="Expires" content="<?php echo trim(isset($the_expires) ? $the_expires : null); ?>">
 	<meta http-equiv="refresh" content="<?php echo trim(isset($the_refresh) ? $the_refresh : null); ?>">

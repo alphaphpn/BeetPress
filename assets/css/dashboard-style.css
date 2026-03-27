@@ -44,6 +44,10 @@
 	padding: 0 0.75rem 0 0.75rem!important;
 }
 
+table.dataTable.table-striped>tbody>tr.odd>* {
+	color: #00ff00;
+}
+
 ::-webkit-scrollbar {
 	width: 5px;
 }

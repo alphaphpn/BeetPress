@@ -161,7 +161,7 @@
 								echo '</div>';
 								echo '<div><span>Go to My <a href="attendance" class="text-decoration-none">Attendance</a></span></div>';
 							} else {
-								$_SESSION["gpsinlocation"] = $gpsinlocation;
+								$_SESSION["gpsinlocation"] = $gpsinlocationgg;
 
 								$_SESSION["agencycode"] = $emmplAcctInfo->list_agencycodeee[$i];
 								$_SESSION["agencyname"] = $emmplAcctInfo->list_agencynameee[$i];

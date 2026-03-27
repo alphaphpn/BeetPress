@@ -101,6 +101,7 @@
 				$createdbyee,
 				$modifiedbyee,
 				$modifiedatee,
+				$foridee,
 				$createdatee;
 
 			// Memory list variable base on Database Table Fieldnames
@@ -194,6 +195,7 @@
 				$list_createdbyee,
 				$list_modifiedbyee,
 				$list_modifiedatee,
+				$list_foridee,
 				$list_createdatee;
 
 			// Constructer Memory list variable base on Database Table Fieldnames
@@ -289,6 +291,7 @@
 				$this->list_modifiedbyee = array();
 				$this->list_modifiedatee = array();
 				$this->list_createdatee = array();
+				$this->list_foridee = array();
 			}
 
 			// Clearing of data values Memory list variable base on Database Table Fieldnames
@@ -384,6 +387,7 @@
 				$this->list_modifiedbyee = array();
 				$this->list_modifiedatee = array();
 				$this->list_createdatee = array();
+				$this->list_foridee = array();
 			}
 
 			// List of Employee
@@ -392,7 +396,7 @@
 				$this->getConnection();
 
 				$officeidme = $officeid;
-				if ( empty($officeidme) || $officeidme == 0 || $officeidme = null ) {
+				if ( empty($officeidme) || $officeidme == 0 || $officeidme == null ) {
 					$selectQuery = "SELECT * FROM employee_tbl WHERE xdel=0 ORDER BY created_at DESC";
 					$stmt = $this->cnn->prepare($selectQuery);
 				} else {
@@ -401,7 +405,6 @@
 					$stmt->bindParam(':officeidme', $officeidme);
 				}
 				$stmt->execute();
-
 				$cntRcrd = $stmt->rowCount();
 
 				if ($cntRcrd > 0) {
@@ -418,7 +421,7 @@
 						$this->list_officenameforidee[] = $rwRcrd['officename_forid'];
 						$this->list_designationforidee[] = $rwRcrd['designationforid'];
 						$this->list_birthdayee[] = $rwRcrd['birthday'];
-						$this->list_addressee = $rwRcrd['address'];
+						$this->list_addressee[] = $rwRcrd['address'];
 						$this->list_empageee[] = $rwRcrd['emp_age'];
 						$this->list_officeidee[] = $rwRcrd['officeid'];
 						$this->list_officegpslocationee[] = $rwRcrd['office_gps_location'];
@@ -477,6 +480,7 @@
 						$this->list_typeemployeeabrvee[] = $rwRcrd['type_employee_abrv'];
 						$this->list_typeemployeeee[] = $rwRcrd['type_employee'];
 						$this->list_officenameee[] = $rwRcrd['officename'];
+						$this->list_foridee[] = $rwRcrd['for_id'];
 					}
 					return true;
 				} else {
@@ -486,7 +490,7 @@
 
 			// Create or insert new data on the Database Table
 			public function insert_Employee($agencycode,$agencyname,$nickname,$empnameforid,$officenameforid,$designationforid,$profileid,$uid,$empidcode,$pinword,$hrempid,$biolocation,$biono,$empname,$gender,$birthday,$officeid,$officecode,$officename,$officetitle,$officeabrv,$oldofficeabrv,$officegpslocation,$headofficer,$headtitle,$authhead,$authtitle,$authdescription,$yearemployed,$typeemployeeno,$typeemployeeabrv,$typeemployee,$verified,$activated,$worklocation,$shiftstatus,$timeeditable,$prioritydtr,$timeeditablevalue,$allowedot,$position,$designation,$mphone,$empemail,$designationat,$slingid,
-				$pocketid,$createdby,$modifiedby,$bioloclabel,$imgdataempl,$incaseofemergencyname,$incaseofemergencycontact,$incaseofemergencyrelation,$address) {
+				$pocketid,$createdby,$modifiedby,$bioloclabel,$imgdataempl,$incaseofemergencyname,$incaseofemergencycontact,$incaseofemergencyrelation,$address,$forid) {
 				$this->clearlist_employeeAcct();
 				$this->getConnection();
 
@@ -542,6 +546,7 @@
 				$pocketid = trim($pocketid);
 				$createdby = trim($createdby);
 				$modifiedby = trim($modifiedby);
+				$forid = trim($forid);
 				$incaseofemergencyname = trim($incaseofemergencyname);
 				$incaseofemergencycontact = trim($incaseofemergencycontact);
 				$incaseofemergencyrelation = trim($incaseofemergencyrelation);
@@ -604,6 +609,7 @@
 					modifiedby=:xmodifiedby, 
 					incaseofemergency_name=:xincaseofemergencyname, 
 					incaseofemergency_contact=:xincaseofemergencycontact, 
+					for_id=:xforid, 
 					incaseofemergency_relation=:xincaseofemergencyrelation
 					";
 				$stmt = $this->cnn->prepare($insertQuery);
@@ -659,6 +665,7 @@
 				$stmt->bindParam(':xpocketid', $pocketid);
 				$stmt->bindParam(':xcreatedby', $createdby);
 				$stmt->bindParam(':xmodifiedby', $modifiedby);
+				$stmt->bindParam(':xforid', $forid);
 				$stmt->bindParam(':xincaseofemergencyname', $incaseofemergencyname);
 				$stmt->bindParam(':xincaseofemergencycontact', $incaseofemergencycontact);
 				$stmt->bindParam(':xincaseofemergencyrelation', $incaseofemergencyrelation);
@@ -770,6 +777,7 @@
 						$this->list_modifiedbyee[] = $rwRcrd['modifiedby'];
 						$this->list_modifiedatee[] = $rwRcrd['modified_at'];
 						$this->list_createdatee[] = $rwRcrd['created_at'];
+						$this->list_foridee[] = $rwRcrd['for_id'];
 						$this->list_incaseofemergencycontactee[] = $rwRcrd['incaseofemergency_contact'];
 						$this->list_incaseofemergencyelationee[] = $rwRcrd['incaseofemergency_relation'];
 
@@ -920,6 +928,7 @@
 						$this->list_modifiedbyee[] = $rwRcrd['modifiedby'];
 						$this->list_modifiedatee[] = $rwRcrd['modified_at'];
 						$this->list_createdatee[] = $rwRcrd['created_at'];
+						$this->list_foridee[] = $rwRcrd['for_id'];
 						$this->list_incaseofemergencycontactee[] = $rwRcrd['incaseofemergency_contact'];
 						$this->list_incaseofemergencyelationee[] = $rwRcrd['incaseofemergency_relation'];
 
@@ -1011,6 +1020,30 @@
 					return false;
 					// Record Not Found
 				}
+			}
+
+			// Update PIN on the Database Table
+			public function update_employeePIN($emploid,$pin) {
+				$this->clearlist_employeeAcct();
+				$this->getConnection();
+
+				$empidcode = trim($emploid);
+				$pinword = md5(trim($pin));
+
+				$updateQuery = "UPDATE employee_tbl SET  
+					pinword=:pinword 
+					WHERE 
+					emp_idcode=:empidcode
+					";
+				$stmt = $this->cnn->prepare($updateQuery);
+				$stmt->bindParam(':empidcode', $empidcode);
+				$stmt->bindParam(':pinword', $pinword);
+				$stmt->execute();
+
+				echo '<div class="alert alert-success alert-dismissible fade show m-1">';
+					echo '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+					echo '<strong>Success!</strong> Password Change.';
+				echo '</div>';
 			}
 
 			// Searching for Duplicate Employee ID True/False
@@ -1158,6 +1191,7 @@
 						$this->list_modifiedbyee[] = $rwRcrd['modifiedby'];
 						$this->list_modifiedatee[] = $rwRcrd['modified_at'];
 						$this->list_createdatee[] = $rwRcrd['created_at'];
+						$this->list_foridee[] = $rwRcrd['for_id'];
 
 						include "lib/onoffline.php";
 						if ( $onlineornot == 1 ) {
@@ -1225,6 +1259,13 @@
 				} else {
 					return false;
 				}
+			}
+
+			// Update Employee on Admin Dashboard
+
+			// Update Employee on its Account
+			public function updateEmployee_EAccount($emploid,$address,$icename,$icerelationship,$icecnumber) {
+				// code...
 			}
 		}
 

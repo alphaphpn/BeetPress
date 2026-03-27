@@ -17,7 +17,7 @@
 		<div id="layoutSidenav_nav">
 			<nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
 				<div class="sb-sidenav-header d-flex">
-					<div title="<?php echo trim($disp_uname); ?>" class="img-responsive rounded-2 w-100" style="min-height: 72px; max-width: 70px; background-color: #393633;background-image: url('public/userID/<?php echo trim($disp_uid); ?>.jpeg'); background-position: center top; background-repeat: no-repeat; background-size: cover;"></div>
+					<div title="<?php echo trim($disp_uname); ?>" class="img-responsive rounded-2 w-100" style="min-height: 72px; max-width: 70px; background-color: #393633;background-image: url('<?php echo trim($pixloc); ?>public/userID/<?php echo trim($disp_uid); ?>.jpeg'); background-position: center top; background-repeat: no-repeat; background-size: cover;"></div>
 
 					<div class="d-flex flex-column ms-2">
 						<span class="user-name font-size-14">

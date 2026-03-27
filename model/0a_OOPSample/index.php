@@ -140,7 +140,7 @@
 			}
 
 			// Update new data on the Database Table
-			public function insert_myCRUD($id,$xxxx,$xxxx2) {
+			public function update_myCRUD($id,$xxxx,$xxxx2) {
 				$this->clearlist_myCRUD();
 				$this->getConnection();
 

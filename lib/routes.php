@@ -11,6 +11,7 @@
 		'employee-id' => 'routes/employee-id.php', 
 		'employee-id-sling-group' => 'routes/employee-id-sling-group.php', 
 		'employee-id-pocket-group' => 'routes/employee-id-pocket-group.php', 
+		'employee-change-pin' => 'routes/employee-change-pin.php', 
 		'register' => 'routes/register.php', 
 		'login' => 'routes/login.php', 
 		'signin' => 'routes/login.php', 
@@ -24,6 +25,9 @@
 		'pds' => 'routes/pds.php', 
 		'portfolio' => 'routes/portfolio.php', 
 		'employee-id-reg' => 'routes/empl-id-reg.php', 
+		'employee-signature' => 'routes/employee-signature.php', 
+
+		'users-list' => 'routes/users-list.php', 
 
 		'post' => 'routes/post.php', 
 

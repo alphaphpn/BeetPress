@@ -59,8 +59,8 @@
 					$officenameforidcc1 = $officenameforidcc;
 					$mphonecc1 = $mphonecc;
 				?>
-				<td class="myselectd" style="padding-right: 6px; padding-bottom: 6px;"><?php include "app/views/employee-id/sling1.php" ?></td>
-				<td class="myselectd" style="padding-left: 6px; padding-bottom: 6px; border-left: 1px solid black;"><?php include "app/views/employee-id/sling2.php" ?></td>
+				<td class="myselectd" style="padding-right: 6px; padding-bottom: 30px;"><?php include "app/views/employee-id/sling1.php" ?></td>
+				<td class="myselectd" style="padding-left: 6px; padding-bottom: 30px; border-left: 1px solid black;"><?php include "app/views/employee-id/sling2.php" ?></td>
 			</tr>
 
 			<tr class="hidebuttonprint">

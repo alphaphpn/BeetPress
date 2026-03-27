@@ -6,7 +6,7 @@
 								Settings
 							</a>
 
-							<a class="nav-link" href="#">
+							<a class="nav-link" href="<?php echo trim($domainhome); ?>/users-list">
 								<div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
 								User(s)
 							</a>
