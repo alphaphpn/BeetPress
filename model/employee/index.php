@@ -489,8 +489,7 @@
 			}
 
 			// Create or insert new data on the Database Table
-			public function insert_Employee($agencycode,$agencyname,$nickname,$empnameforid,$officenameforid,$designationforid,$profileid,$uid,$empidcode,$pinword,$hrempid,$biolocation,$biono,$empname,$gender,$birthday,$officeid,$officecode,$officename,$officetitle,$officeabrv,$oldofficeabrv,$officegpslocation,$headofficer,$headtitle,$authhead,$authtitle,$authdescription,$yearemployed,$typeemployeeno,$typeemployeeabrv,$typeemployee,$verified,$activated,$worklocation,$shiftstatus,$timeeditable,$prioritydtr,$timeeditablevalue,$allowedot,$position,$designation,$mphone,$empemail,$designationat,$slingid,
-				$pocketid,$createdby,$modifiedby,$bioloclabel,$imgdataempl,$incaseofemergencyname,$incaseofemergencycontact,$incaseofemergencyrelation,$address,$forid) {
+			public function insert_Employee($agencycode,$agencyname,$nickname,$empnameforid,$officenameforid,$designationforid,$profileid,$uid,$empidcode,$pinword,$hrempid,$biolocation,$biono,$empname,$gender,$birthday,$officeid,$officecode,$officename,$officetitle,$officeabrv,$oldofficeabrv,$officegpslocation,$headofficer,$headtitle,$authhead,$authtitle,$authdescription,$yearemployed,$typeemployeeno,$typeemployeeabrv,$typeemployee,$verified,$activated,$worklocation,$shiftstatus,$timeeditable,$prioritydtr,$timeeditablevalue,$allowedot,$position,$designation,$mphone,$empemail,$designationat,$createdby,$modifiedby,$bioloclabel,$imgdataempl) {
 				$this->clearlist_employeeAcct();
 				$this->getConnection();
 
@@ -511,7 +510,6 @@
 				$empname = trim($empname);
 				$gender = trim($gender);
 				$birthday = date('Y-m-d', $birthday);
-				$address = trim($address);
 				$officeid = trim($officeid);
 				$officecode = trim($officecode);
 				$officename = trim($officename);
@@ -542,14 +540,8 @@
 				$mphone = trim($mphone);
 				$empemail = trim($empemail);
 				$designationat = trim($designationat);
-				$slingid = trim($slingid);
-				$pocketid = trim($pocketid);
 				$createdby = trim($createdby);
 				$modifiedby = trim($modifiedby);
-				$forid = trim($forid);
-				$incaseofemergencyname = trim($incaseofemergencyname);
-				$incaseofemergencycontact = trim($incaseofemergencycontact);
-				$incaseofemergencyrelation = trim($incaseofemergencyrelation);
 
 				$imgdataemplx = trim($imgdataempl);
 
@@ -571,7 +563,6 @@
 					emp_name=:xempname, 
 					gender=:xgender, 
 					birthday=:xbirthday, 
-					address=:xaddress, 
 					officeid=:xofficeid, 
 					officecode=:xofficecode, 
 					officename=:xofficename, 
@@ -603,14 +594,8 @@
 					empemail=:xempemail, 
 					designation_at=:xdesignationat, 
 					xdel=0, 
-					slingid=:xslingid, 
-					pocketid=:xpocketid, 
 					createdby=:xcreatedby, 
-					modifiedby=:xmodifiedby, 
-					incaseofemergency_name=:xincaseofemergencyname, 
-					incaseofemergency_contact=:xincaseofemergencycontact, 
-					for_id=:xforid, 
-					incaseofemergency_relation=:xincaseofemergencyrelation
+					modifiedby=:xmodifiedby
 					";
 				$stmt = $this->cnn->prepare($insertQuery);
 				$stmt->bindParam(':xagencycode', $agencycode);
@@ -630,7 +615,6 @@
 				$stmt->bindParam(':xempname', $empname);
 				$stmt->bindParam(':xgender', $gender);
 				$stmt->bindParam(':xbirthday', $birthday);
-				$stmt->bindParam(':xaddress', $address);
 				$stmt->bindParam(':xofficeid', $officeid);
 				$stmt->bindParam(':xofficecode', $officecode);
 				$stmt->bindParam(':xofficename', $officename);
@@ -661,14 +645,8 @@
 				$stmt->bindParam(':xmphone', $mphone);
 				$stmt->bindParam(':xempemail', $empemail);
 				$stmt->bindParam(':xdesignationat', $designationat);
-				$stmt->bindParam(':xslingid', $slingid);
-				$stmt->bindParam(':xpocketid', $pocketid);
 				$stmt->bindParam(':xcreatedby', $createdby);
 				$stmt->bindParam(':xmodifiedby', $modifiedby);
-				$stmt->bindParam(':xforid', $forid);
-				$stmt->bindParam(':xincaseofemergencyname', $incaseofemergencyname);
-				$stmt->bindParam(':xincaseofemergencycontact', $incaseofemergencycontact);
-				$stmt->bindParam(':xincaseofemergencyrelation', $incaseofemergencyrelation);
 				$stmt->execute();
 
 				echo '<div class="alert alert-info alert-dismissible fade show m-1">';
