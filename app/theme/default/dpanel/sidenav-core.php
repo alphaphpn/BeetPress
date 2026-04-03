@@ -16,7 +16,7 @@
 								Appearance
 							</a>
 
-							<a class="nav-link" href="#">
+							<a class="nav-link" href="<?php echo trim($domainhome); ?>">
 								<div class="sb-nav-link-icon"><i class="fas fa-sticky-note"></i></div>
 								Site
 							</a>
