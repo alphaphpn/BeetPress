@@ -11,16 +11,14 @@
 		$db = new myDatabase();
 		$conn = $db->getConnection();
 
-		// 1. Fetching user data for the table
 		$query = "SELECT `user_tbl`.`authid` AS `authid`,`user_tbl`.`uid` AS `uid`,`user_tbl`.`profileid` AS `profileid`,`user_tbl`.`uname` AS `uname`,`user_tbl`.`pword` AS `pword`,`user_tbl`.`verified` AS `verified`,`user_tbl`.`ustat` AS `ustat`,`user_tbl`.`ulevel` AS `ulevel`,`user_tbl`.`uposition` AS `uposition`,`user_tbl`.`officeabrv` AS `officeabrv`,`profile_tbl`.`first_name` AS `first_name`,`profile_tbl`.`middle_name` AS `middle_name`,`profile_tbl`.`last_name` AS `last_name`,`profile_tbl`.`suffix` AS `suffix` FROM (`user_tbl` LEFT JOIN `profile_tbl` ON(`user_tbl`.`profileid` = `profile_tbl`.`profileid`))";
 
 		$stmt = $conn->prepare($query);
 		$stmt->execute();
 		$userRecords = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-		// 2. Fetching distinct positions and levels using your exact query
 		$posQuery = "SELECT `user_tbl`.`ulevel` AS `ulevel`,`user_tbl`.`uposition` AS `uposition` FROM `user_tbl` GROUP BY `user_tbl`.`uposition`";
-					 
+				 
 		$posStmt = $conn->prepare($posQuery);
 		$posStmt->execute();
 		$positionList = $posStmt->fetchAll(PDO::FETCH_ASSOC);
@@ -40,8 +38,8 @@
 		position: -webkit-sticky;
 		position: sticky;
 		left: 0;
-		background-color: #212529 !important; /* matches table-dark */
-		z-index: 2; /* Increased z-index so it stays above scrolling content */
+		background-color: #212529 !important;
+		z-index: 2;
 	}
 
 	.filter-container {
@@ -52,7 +50,6 @@
 		margin-bottom: 20px;
 	}
 	
-	/* Fixes for DataTables Frozen Header Alignment */
 	table.dataTable thead th {
 		border-bottom: 1px solid #495057;
 	}
@@ -125,18 +122,15 @@
 									$verified = $row['verified'];
 									$status = $row['ustat'];
 									
-									// Separate Name Columns
 									$firstName = htmlspecialchars(trim($row['first_name']));
 									$middleName = htmlspecialchars(trim($row['middle_name']));
 									$lastName = htmlspecialchars(trim($row['last_name']));
 									$suffix = htmlspecialchars(trim($row['suffix']));
 									
-									// Verified Badge
 									$verifiedBadge = ($verified == 1) 
 										? '<span class="badge bg-success">Activated</span>' 
 										: '<span class="badge bg-danger">Disabled</span>';
 										
-									// Status Badge
 									$statusBadge = ($status == 1) 
 										? '<span class="badge bg-primary">Active</span>' 
 										: '<span class="badge bg-secondary">Inactive</span>';
@@ -211,7 +205,7 @@
 
 					<hr class="mb-4">
 
-					<div class="row g-4">
+					<div class="row g-4 mb-4">
 						<div class="col-md-6">
 							<label class="form-label fw-bold small text-muted text-uppercase mb-2 d-block">Verification Status</label>
 							<div class="btn-group w-100" role="group">
@@ -235,6 +229,29 @@
 						</div>
 					</div>
 
+					<hr class="mb-4">
+
+					<!-- CHANGE PASSWORD SECTION -->
+					<div class="mb-2">
+						<label class="form-label fw-bold small text-muted text-uppercase mb-2 d-block">
+							<i class="bi bi-key me-1"></i> Change Password (MD5)
+						</label>
+						<div class="row g-2">
+							<div class="col-md-6">
+					    <input type="password" class="form-control" id="upd_newpass" placeholder="New Password" maxlength="50" oninput="clearPassError()">
+					</div>
+					<div class="col-md-6">
+					    <input type="password" class="form-control" id="upd_confirmpass" placeholder="Confirm Password" maxlength="50" oninput="checkPassMatch()">
+                    </div>
+						</div>
+						<small id="passErrorText" class="text-danger fw-bold mt-1" style="display:none; font-size: 0.75rem;">
+							<i class="bi bi-exclamation-circle me-1"></i><span id="passErrorMsg"></span>
+						</small>
+						<small class="text-muted mt-1 d-block" style="font-size: 0.75rem;">
+							<i class="bi bi-info-circle me-1"></i> Leave blank to keep the current password.
+						</small>
+					</div>
+
 				</div>
 				<div class="modal-footer bg-light">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -248,7 +265,6 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
@@ -259,19 +275,17 @@
 	let userTable;
 
 	$(document).ready(function() {
-		// Initialize DataTable with Sticky Header & Scroll Configuration
 		userTable = $('#userTable').DataTable({
 			"pageLength": 10,
 			"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-			"scrollY": "50vh",       // Locks the table body height to 50% of the screen
-			"scrollX": true,         // Allows horizontal scrolling
-			"scrollCollapse": true,  // Table shrinks if there are only a few rows
+			"scrollY": "50vh",
+			"scrollX": true,
+			"scrollCollapse": true,
 			"language": {
 				"search": "Search Table:"
 			}
 		});
 
-		// Custom Filtering logic via DataTables API
 		$('#filterVerified').on('change', function() {
 			let val = $(this).val();
 			userTable.column(10).search(val ? '^' + val + '$' : '', true, false).draw();
@@ -286,8 +300,28 @@
 	function resetFilters() {
 		$('#filterVerified').val('').trigger('change');
 		$('#filterStatus').val('').trigger('change');
-		userTable.search('').draw(); // Clear main search box too
+		userTable.search('').draw();
 	}
+
+	function checkPassMatch() {
+    const newpass  = document.getElementById('upd_newpass').value;
+    const confpass = document.getElementById('upd_confirmpass').value;
+
+    if (confpass === '') {
+        clearPassError();
+        return;
+    }
+
+    if (newpass !== confpass) {
+        showPassError('Passwords do not match.');
+        document.getElementById('upd_confirmpass').classList.add('is-invalid');
+        document.getElementById('upd_newpass').classList.remove('is-invalid');
+    } else {
+        clearPassError();
+        document.getElementById('upd_confirmpass').classList.add('is-valid');
+        document.getElementById('upd_newpass').classList.add('is-valid');
+    }
+}
 
 	// ==========================================
 	// MODAL LOGIC
@@ -308,6 +342,11 @@
 	function openUpdateModal(authid, position, level, verified, status) {
 		document.getElementById('upd_authid').value = authid;
 		
+		// Clear password fields every time modal opens
+		document.getElementById('upd_newpass').value = '';
+		document.getElementById('upd_confirmpass').value = '';
+		clearPassError();
+
 		const posSelect = document.getElementById('upd_position');
 		let positionFound = false;
 		
@@ -344,22 +383,58 @@
 		updateModal.show();
 	}
 
+	function clearPassError() {
+    document.getElementById('passErrorText').style.display = 'none';
+    document.getElementById('passErrorMsg').textContent = '';
+    document.getElementById('upd_newpass').classList.remove('is-invalid', 'is-valid');
+    document.getElementById('upd_confirmpass').classList.remove('is-invalid', 'is-valid');
+	}
+
+	function showPassError(msg) {
+		document.getElementById('passErrorMsg').textContent = msg;
+		document.getElementById('passErrorText').style.display = 'block';
+		document.getElementById('upd_newpass').classList.add('is-invalid');
+		document.getElementById('upd_confirmpass').classList.add('is-invalid');
+	}
+
 	function saveUserUpdate(event) {
 		event.preventDefault();
 
-		const authid = document.getElementById('upd_authid').value;
+		const authid   = document.getElementById('upd_authid').value;
 		const position = document.getElementById('upd_position').value;
-		const level = document.getElementById('upd_level').value; 
-		
+		const level    = document.getElementById('upd_level').value; 
 		const verified = document.querySelector('input[name="upd_verified"]:checked').value;
-		const status = document.querySelector('input[name="upd_status"]:checked').value;
+		const status   = document.querySelector('input[name="upd_status"]:checked').value;
+		const newpass  = document.getElementById('upd_newpass').value;
+		const confpass = document.getElementById('upd_confirmpass').value;
+
+		// Password validation — only if user typed something
+		if (newpass !== '' || confpass !== '') {
+			if (newpass === '') {
+				showPassError('Please enter the new password.');
+				return;
+			}
+			if (confpass === '') {
+				showPassError('Please confirm the new password.');
+				return;
+			}
+			if (newpass !== confpass) {
+				showPassError('Passwords do not match.');
+				return;
+			}
+			if (newpass.length < 4) {
+				showPassError('Password must be at least 4 characters.');
+				return;
+			}
+		}
 
 		const formData = new FormData();
-		formData.append('authid', authid);
-		formData.append('position', position);
-		formData.append('level', level); 
-		formData.append('verified', verified);
-		formData.append('status', status);
+		formData.append('authid',    authid);
+		formData.append('position',  position);
+		formData.append('level',     level); 
+		formData.append('verified',  verified);
+		formData.append('status',    status);
+		formData.append('newpass',   newpass); // empty string = no change
 
 		const saveBtn = document.getElementById('btnSaveUser');
 		const originalText = saveBtn.innerHTML;
@@ -370,42 +445,39 @@
 			method: 'POST',
 			body: formData
 		})
-		.then(response => response.text())
+		.then(response => response.json())
 		.then(data => {
-			alert('User account updated successfully!');
-			
-			// 1. Generate HTML for updated badges
-			const verifiedBadge = (verified == 1) 
-				? '<span class="badge bg-success">Activated</span>' 
-				: '<span class="badge bg-danger">Disabled</span>';
+			if (data.status === 'success') {
+				alert('User account updated successfully!');
 				
-			const statusBadge = (status == 1) 
-				? '<span class="badge bg-primary">Active</span>' 
-				: '<span class="badge bg-secondary">Inactive</span>';
+				const verifiedBadge = (verified == 1) 
+					? '<span class="badge bg-success">Activated</span>' 
+					: '<span class="badge bg-danger">Disabled</span>';
+					
+				const statusBadge = (status == 1) 
+					? '<span class="badge bg-primary">Active</span>' 
+					: '<span class="badge bg-secondary">Inactive</span>';
+					
+				const actionBtn = `<button type="button" class="btn btn-warning btn-sm fw-bold" 
+									onclick="openUpdateModal('${authid}', '${position}', '${level}', '${verified}', '${status}')">
+									<i class="bi bi-pencil-square"></i> Update
+								  </button>`;
 				
-			// 2. Generate updated HTML for the action button so it opens with the new values next time
-			const actionBtn = `<button type="button" class="btn btn-warning btn-sm fw-bold" 
-								onclick="openUpdateModal('${authid}', '${position}', '${level}', '${verified}', '${status}')">
-								<i class="bi bi-pencil-square"></i> Update
-							  </button>`;
-			
-			// 3. Update the specific row cells in DataTables without refreshing
-			const rowIndex = '#row-' + authid;
-			userTable.cell(rowIndex, 8).data(position);         // Update Position
-			userTable.cell(rowIndex, 9).data(level);            // Update Level
-			userTable.cell(rowIndex, 10).data(verifiedBadge);   // Update Verified
-			userTable.cell(rowIndex, 11).data(statusBadge);     // Update Status
-			userTable.cell(rowIndex, 12).data(actionBtn);       // Update Action Button
-			
-			// 4. Redraw the table while keeping the current page/pagination
-			userTable.draw(false);
-			
-			// 5. Hide the modal
-			var updateModalEl = document.getElementById('myModalUpdateUser');
-			var updateModal = bootstrap.Modal.getInstance(updateModalEl);
-			updateModal.hide();
-			
-			// Restore button state
+				const rowIndex = '#row-' + authid;
+				userTable.cell(rowIndex, 8).data(position);
+				userTable.cell(rowIndex, 9).data(level);
+				userTable.cell(rowIndex, 10).data(verifiedBadge);
+				userTable.cell(rowIndex, 11).data(statusBadge);
+				userTable.cell(rowIndex, 12).data(actionBtn);
+				userTable.draw(false);
+				
+				var updateModalEl = document.getElementById('myModalUpdateUser');
+				var updateModal = bootstrap.Modal.getInstance(updateModalEl);
+				updateModal.hide();
+			} else {
+				alert('Error: ' + (data.message || 'Failed to update.'));
+			}
+
 			saveBtn.innerHTML = originalText;
 			saveBtn.disabled = false;
 		})
