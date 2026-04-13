@@ -554,6 +554,8 @@ input, select, textarea { font-family: inherit; font-size: 13px; }
   flex: 1; display: grid; gap: 3px;
   background: #000; padding: 3px; overflow: hidden;
   min-height: 0;
+  max-width: 1480px;
+  margin: auto;
 }
 .grid-hint { text-align: center; font-size: 11px; color: var(--text3); padding: 6px; flex-shrink: 0; }
 
