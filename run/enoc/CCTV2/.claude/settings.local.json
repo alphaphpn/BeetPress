@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xxd \"C:/XAMPP/htdocs/CCTV javascript/api/frames/cam-1776060428057.jpg\")"
+    ]
+  }
+}

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CCTV Live Viewer</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #010409;
+      color: #e6edf3;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    /* ── Topbar ─────────────────────────────────────────────── */
+    #topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 18px;
+      background: #161b22;
+      border-bottom: 1px solid #30363d;
+      flex-shrink: 0;
+    }
+    .logo { font-weight: 700; font-size: 15px; color: #58a6ff; letter-spacing: .01em; }
+    #status-dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: #f0883e; flex-shrink: 0;
+      transition: background .4s;
+    }
+    #status-dot.live { background: #3fb950; animation: blink 1.2s ease infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+    #cam-label { font-size: 13px; color: #8b949e; }
+    .sep { color: #30363d; margin: 0 4px; }
+    #conn-label { font-size: 12px; color: #8b949e; }
+
+    .topbar-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+    button {
+      background: transparent; color: #8b949e;
+      border: 1px solid #30363d; border-radius: 6px;
+      padding: 5px 12px; font-size: 12px; cursor: pointer;
+    }
+    button:hover { color: #e6edf3; border-color: #8b949e; }
+
+    /* ── Camera picker (when no ?cam= given) ────────────────── */
+    #picker {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 16px;
+      padding: 24px;
+    }
+    #picker h2 { font-size: 16px; color: #8b949e; }
+    #cam-list {
+      display: flex; flex-direction: column; gap: 8px;
+      width: 100%; max-width: 420px;
+    }
+    .cam-pick-btn {
+      display: flex; align-items: center; gap: 10px;
+      background: #161b22; border: 1px solid #30363d; border-radius: 8px;
+      padding: 12px 16px; cursor: pointer; transition: border-color .15s;
+      font-size: 14px; color: #e6edf3; width: 100%; text-align: left;
+    }
+    .cam-pick-btn:hover { border-color: #58a6ff; background: #1c2128; }
+    .cam-pick-icon { font-size: 20px; }
+    .cam-pick-name { font-weight: 600; }
+    .cam-pick-sub { font-size: 11px; color: #8b949e; }
+
+    #no-cams {
+      color: #8b949e; font-size: 14px; text-align: center; line-height: 1.7;
+    }
+
+    /* ── Video screen ───────────────────────────────────────── */
+    #screen {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      background: #010409; position: relative; overflow: hidden;
+    }
+    #remote-video {
+      width: 100%; height: 100%; object-fit: contain;
+      display: none;
+    }
+    #overlay {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 12px;
+    }
+    .spinner {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 3px solid #30363d; border-top-color: #58a6ff;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #overlay-msg { font-size: 14px; color: #8b949e; }
+    #overlay-detail { font-size: 12px; color: #484f58; }
+    #retry-btn {
+      margin-top: 8px; padding: 7px 18px; font-size: 13px;
+      background: #1f6feb; color: #fff; border: none; border-radius: 6px;
+      cursor: pointer; display: none;
+    }
+    #retry-btn:hover { background: #388bfd; }
+
+    /* ── Camera list bar (multiple cams) ────────────────────── */
+    #cam-bar {
+      display: none; gap: 6px; padding: 8px 14px;
+      background: #161b22; border-top: 1px solid #30363d;
+      flex-wrap: wrap; flex-shrink: 0;
+    }
+    .cam-bar-btn {
+      padding: 4px 12px; border-radius: 20px; font-size: 12px;
+      background: #21262d; border: 1px solid #30363d; color: #8b949e; cursor: pointer;
+    }
+    .cam-bar-btn.active { background: #1f6feb; color: #fff; border-color: #1f6feb; }
+    .cam-bar-btn:hover:not(.active) { border-color: #58a6ff; color: #58a6ff; }
+  </style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div id="topbar">
+  <div class="logo">📡 CCTV Viewer</div>
+  <div id="status-dot"></div>
+  <span id="cam-label" style="color:#8b949e">—</span>
+  <span class="topbar-right">
+    <span id="conn-label"></span>
+    <button onclick="location.href=location.pathname">↩ All Cameras</button>
+  </span>
+</div>
+
+<!-- Camera picker (shown when no ?cam param) -->
+<div id="picker" class="hidden">
+  <h2>Select a Camera to Watch</h2>
+  <div id="cam-list"></div>
+  <div id="no-cams" class="hidden">
+    No cameras are broadcasting right now.<br>
+    Ask the host to click <strong>📡 Broadcast</strong> on a USB camera.
+  </div>
+</div>
+
+<!-- Live video screen -->
+<div id="screen" class="hidden">
+  <video id="remote-video" autoplay playsinline></video>
+  <div id="overlay">
+    <div class="spinner" id="spinner"></div>
+    <div id="overlay-msg">Connecting…</div>
+    <div id="overlay-detail"></div>
+    <button id="retry-btn" onclick="retryConnection()">Retry</button>
+  </div>
+</div>
+
+<!-- Camera bar (shown after connecting, if multiple cams available) -->
+<div id="cam-bar"></div>
+
+<script>
+// ── Helpers ──────────────────────────────────────────────────────────────────
+const params = new URLSearchParams(location.search);
+let currentCamId = params.get("cam");
+let currentPC    = null;
+let retryTimeout = null;
+
+function setStatus(dot, label, detail) {
+  const d = document.getElementById("status-dot");
+  d.className = dot === "live" ? "live" : "";
+  if (dot === "live") d.style.background = "#3fb950";
+  else if (dot === "warn") d.style.background = "#f0883e";
+  else d.style.background = "#484f58";
+
+  document.getElementById("overlay-msg").textContent    = label  || "";
+  document.getElementById("overlay-detail").textContent = detail || "";
+}
+
+function showOverlay(msg, detail, showRetry) {
+  document.getElementById("overlay").style.display = "flex";
+  document.getElementById("spinner").style.display = showRetry ? "none" : "block";
+  document.getElementById("remote-video").style.display = "none";
+  document.getElementById("retry-btn").style.display = showRetry ? "block" : "none";
+  setStatus(showRetry ? "warn" : "spin", msg, detail);
+}
+
+function showVideo() {
+  document.getElementById("overlay").style.display = "none";
+  document.getElementById("remote-video").style.display = "block";
+  document.getElementById("status-dot").className = "live";
+}
+
+// ── Camera List (for picker and bar) ─────────────────────────────────────────
+async function loadCameraList() {
+  // We can't read localStorage from a remote device, but we can probe signal.php
+  // to see which camIds have pending request support. Instead we rely on the
+  // parent dashboard's share URL, which embeds ?cam=. If no ?cam is given we
+  // show a manual input and a list of any camIds we know about.
+  showPicker([]);
+}
+
+function showPicker(cams) {
+  document.getElementById("picker").classList.remove("hidden");
+  document.getElementById("screen").classList.add("hidden");
+  document.getElementById("cam-label").textContent = "Pick a camera";
+
+  const list = document.getElementById("cam-list");
+  if (cams.length === 0) {
+    document.getElementById("no-cams").classList.remove("hidden");
+
+    // Fallback: manual cam ID input
+    list.innerHTML = `
+      <div style="color:#8b949e;font-size:13px;margin-bottom:6px">
+        Or enter a Camera ID from the dashboard:
+      </div>
+      <div style="display:flex;gap:8px">
+        <input id="manual-cam-id" type="text" placeholder="e.g. cam-001"
+          style="flex:1;background:#21262d;border:1px solid #30363d;border-radius:6px;
+                 padding:8px 12px;color:#e6edf3;font-size:13px;outline:none" />
+        <button onclick="connectToCam(document.getElementById('manual-cam-id').value.trim())"
+          style="background:#1f6feb;color:#fff;border:none;border-radius:6px;
+                 padding:8px 16px;font-size:13px;cursor:pointer">Connect</button>
+      </div>`;
+  } else {
+    list.innerHTML = cams.map(c => `
+      <button class="cam-pick-btn" onclick="connectToCam('${c.id}')">
+        <span class="cam-pick-icon">💻</span>
+        <div>
+          <div class="cam-pick-name">${c.name}</div>
+          <div class="cam-pick-sub">${c.id}</div>
+        </div>
+      </button>`).join("");
+  }
+}
+
+// ── Connect to a specific camera via WebRTC ───────────────────────────────────
+async function connectToCam(camId) {
+  if (!camId) return;
+  currentCamId = camId;
+
+  // Update URL without reload
+  const u = new URL(location.href);
+  u.searchParams.set("cam", camId);
+  history.replaceState({}, "", u);
+
+  document.getElementById("picker").classList.add("hidden");
+  document.getElementById("screen").classList.remove("hidden");
+  document.getElementById("cam-label").textContent = camId;
+
+  showOverlay("Announcing to host…", "Waiting for the broadcaster to respond.");
+
+  if (currentPC) { currentPC.close(); currentPC = null; }
+
+  const viewerId = Math.random().toString(36).slice(2, 10);
+
+  // 1. Register as a viewer
+  try {
+    await fetch(`api/signal.php?action=request&camId=${camId}&viewerId=${viewerId}`, { method: "POST" });
+  } catch (e) {
+    showOverlay("Could not reach the server.", "Make sure XAMPP is running.", true);
+    return;
+  }
+
+  showOverlay("Waiting for offer…", "Host is creating a secure connection…");
+
+  // 2. Poll for offer from host (up to 30s)
+  let offer = null;
+  for (let i = 0; i < 30; i++) {
+    try {
+      const r = await fetch(`api/signal.php?action=offer&camId=${camId}&viewerId=${viewerId}`);
+      offer = await r.json();
+      if (offer && offer.type === "offer") break;
+    } catch (_) {}
+    await sleep(1000);
+    setStatus("spin", "Waiting for offer…", `Attempt ${i + 2}/30`);
+  }
+
+  if (!offer || offer.type !== "offer") {
+    showOverlay("Host not responding.", "The camera may not be broadcasting.", true);
+    return;
+  }
+
+  showOverlay("Establishing connection…", "Setting up peer-to-peer video stream.");
+
+  // 3. Create RTCPeerConnection and set remote description
+  const pc = new RTCPeerConnection({ iceServers: [] });
+  currentPC = pc;
+
+  pc.ontrack = e => {
+    const video = document.getElementById("remote-video");
+    video.srcObject = e.streams[0];
+    video.onplaying = () => showVideo();
+  };
+
+  pc.onconnectionstatechange = () => {
+    const s = pc.connectionState;
+    if (s === "disconnected" || s === "failed") {
+      showOverlay("Connection lost.", "The host may have stopped broadcasting.", true);
+    }
+  };
+
+  try {
+    await pc.setRemoteDescription(new RTCSessionDescription(offer));
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+
+    // Wait for full ICE gathering so the answer SDP is complete
+    await waitForICE(pc);
+
+    // 4. Send answer to host
+    await fetch(`api/signal.php?action=answer&camId=${camId}&viewerId=${viewerId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sdp: pc.localDescription.sdp, type: pc.localDescription.type }),
+    });
+
+    document.getElementById("cam-label").textContent = camId;
+    showOverlay("Waiting for stream…", "Connection established. Video starting…");
+  } catch (e) {
+    showOverlay("WebRTC error.", e.message, true);
+  }
+}
+
+function retryConnection() {
+  if (currentCamId) connectToCam(currentCamId);
+}
+
+// ── Utilities ─────────────────────────────────────────────────────────────────
+function waitForICE(pc) {
+  return new Promise(resolve => {
+    if (pc.iceGatheringState === "complete") { resolve(); return; }
+    pc.addEventListener("icegatheringstatechange", function h() {
+      if (pc.iceGatheringState === "complete") {
+        pc.removeEventListener("icegatheringstatechange", h);
+        resolve();
+      }
+    });
+    setTimeout(resolve, 3000);
+  });
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+if (currentCamId) {
+  document.getElementById("screen").classList.remove("hidden");
+  connectToCam(currentCamId);
+} else {
+  loadCameraList();
+}
+</script>
+</body>
+</html>

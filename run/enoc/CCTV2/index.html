@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CCTV Management Dashboard</title>
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+<div id="app">
+
+  <!-- ── Topbar ─────────────────────────────────────────────────────────── -->
+  <header id="topbar">
+    <button id="btn-toggle-sidebar" onclick="toggleSidebar()" title="Toggle sidebar">☰</button>
+    <div class="logo">
+      <div class="logo-icon">📡</div>
+      CCTV Dashboard
+    </div>
+
+    <nav class="breadcrumb">
+      <span class="bc-link" onclick="renderDashboard()">Dashboard</span>
+      <span id="breadcrumb-server" class="hidden">
+        <span class="bc-sep">/</span>
+        <span id="breadcrumb-server-name"></span>
+      </span>
+      <span id="breadcrumb-room" class="hidden">
+        <span class="bc-sep">/</span>
+        <span class="bc-link" onclick="navigateToRooms()">Rooms</span>
+        <span id="breadcrumb-room-name-wrap" class="hidden">
+          <span class="bc-sep">/</span>
+          <span id="breadcrumb-room-name"></span>
+        </span>
+      </span>
+    </nav>
+
+    <div class="topbar-sep"></div>
+
+    <div id="search-bar-wrap">
+      <span class="search-icon">🔍</span>
+      <input id="search-cameras" type="text" placeholder="Search cameras…" />
+    </div>
+
+  </header>
+
+  <!-- ── Body ──────────────────────────────────────────────────────────── -->
+  <div id="body">
+
+    <!-- Mobile sidebar backdrop -->
+    <div id="sidebar-backdrop" onclick="closeMobileSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar">
+      <div class="sidebar-section-label">Overview</div>
+      <div class="sidebar-global-stats">
+        <div class="sg-stat">
+          <div class="sg-num" id="sidebar-total-cams">—</div>
+          <div class="sg-lbl">Total Cams</div>
+        </div>
+        <div class="sg-stat">
+          <div class="sg-num" id="sidebar-active-cams">—</div>
+          <div class="sg-lbl">Active</div>
+        </div>
+      </div>
+
+      <div class="sidebar-section-label">Servers</div>
+      <ul id="sidebar-server-list"></ul>
+
+      <div class="sidebar-section-label">Navigate</div>
+      <div class="sidebar-nav">
+        <button class="sidebar-nav-btn" onclick="renderDashboard()">🖥️ Servers</button>
+        <button class="sidebar-nav-btn" onclick="navigateToRooms()">🚪 Rooms</button>
+        <button class="sidebar-nav-btn" onclick="openNetworkScan()">🔍 Scan Network</button>
+      </div>
+
+      <div class="sidebar-bottom">
+        <button class="btn btn-primary" onclick="openAddServerModal()">➕ Add Server</button>
+        <button class="btn btn-outline" onclick="openAddRoomModal()">➕ Add Room</button>
+        <button class="btn btn-outline" onclick="openRoomsModal()">🗂 Manage Rooms</button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main id="main-content">
+      <h2 id="page-title" style="font-size:20px; font-weight:700;"></h2>
+
+      <!-- ── Dashboard View ──────────────────────────────────────────── -->
+      <div id="view-dashboard">
+        <!-- Global stats bar -->
+        <div class="stats-bar">
+          <div class="stat-card">
+            <span class="sc-num" id="stat-servers">—</span>
+            <span class="sc-lbl">Servers</span>
+          </div>
+          <div class="stat-card">
+            <span class="sc-num" id="stat-cameras">—</span>
+            <span class="sc-lbl">Total Cameras</span>
+          </div>
+          <div class="stat-card">
+            <span class="sc-num" id="stat-active">—</span>
+            <span class="sc-lbl">Active Cameras</span>
+          </div>
+          <div class="stat-card">
+            <span class="sc-num" id="stat-assigned">—</span>
+            <span class="sc-lbl">Assigned</span>
+          </div>
+          <div class="stat-card">
+            <span class="sc-num" id="stat-unassigned">—</span>
+            <span class="sc-lbl">Unassigned</span>
+          </div>
+          <div class="stat-card">
+            <span class="sc-num" id="stat-rooms">—</span>
+            <span class="sc-lbl">Rooms</span>
+          </div>
+        </div>
+
+        <!-- Server cards grid -->
+        <div id="server-cards"></div>
+        <!-- Dashboard action bar -->
+        <div style="display:flex;gap:10px;margin-top:4px;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="openAddServerModal()">➕ Add Server</button>
+          <button class="btn btn-outline" onclick="navigateToRooms()">🚪 View Rooms</button>
+          <button class="btn btn-view"    onclick="openNetworkScan()">🔍 Scan Network</button>
+        </div>
+      </div>
+
+      <!-- ── Rooms Grid View ────────────────────────────────────────────── -->
+      <div id="view-rooms" class="hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:4px;">
+          <span style="color:var(--text2);font-size:13px">All rooms across all buildings</span>
+          <button class="btn btn-primary" onclick="openAddRoomModal()">➕ Add Room</button>
+        </div>
+        <div id="rooms-grid"></div>
+      </div>
+
+      <!-- ── Room Detail View ───────────────────────────────────────────── -->
+      <div id="view-room-detail" class="hidden">
+        <div class="server-detail-header">
+          <div class="srv-detail-icon">🚪</div>
+          <div class="server-detail-meta">
+            <h2 id="room-detail-name"></h2>
+            <div class="srv-ip-loc">
+              Building: <span id="room-detail-building"></span>
+              &bull; Floor: <span id="room-detail-floor"></span>
+            </div>
+          </div>
+          <div class="sda-row">
+            <button class="btn btn-primary" onclick="openRoomCameraPicker()">➕ Add Camera to Room</button>
+          </div>
+        </div>
+        <div id="room-camera-list"></div>
+      </div>
+
+      <!-- ── Network View ──────────────────────────────────────────────── -->
+      <div id="view-network" class="hidden">
+        <div class="net-scan-toolbar">
+          <div style="flex:1">
+            <div id="net-scan-status" class="net-scan-status">No scan yet. Click Scan to discover devices.</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap">
+              <span style="font-size:12px;color:var(--text3)">Subnet:</span>
+              <input id="manual-subnet" class="form-input" style="width:160px;padding:5px 8px"
+                     placeholder="auto-detect  e.g. 192.168.1" title="Leave blank to auto-detect via WebRTC" />
+              <span style="font-size:11px;color:var(--text3)">Leave blank to auto-detect</span>
+            </div>
+          </div>
+          <button id="scan-btn" class="btn btn-primary" onclick="runNetworkScan()">🔍 Scan Network</button>
+        </div>
+        <div id="net-scan-results"></div>
+      </div>
+
+      <!-- ── Server Detail View ──────────────────────────────────────── -->
+      <div id="view-server" class="hidden">
+
+        <!-- Server info panel -->
+        <div class="server-detail-header">
+          <div class="srv-detail-icon">🖥️</div>
+          <div class="server-detail-meta">
+            <h2 id="server-info-name"></h2>
+            <div class="srv-ip-loc">
+              <span id="server-info-ip"></span>
+              &bull;
+              <span id="server-info-location"></span>
+            </div>
+            <div class="server-detail-props" style="margin-top:6px;">
+              <span>OS: <span id="server-info-os"></span></span>
+              <span>Uptime: <span id="server-info-uptime"></span></span>
+            </div>
+          </div>
+          <span id="server-info-status" class="badge"></span>
+          <div class="sda-row">
+            <button class="btn btn-view" onclick="openGridViewer()">⊞ Live Grid</button>
+          <button class="btn btn-primary" onclick="openAddCameraModal()">➕ Add Camera</button>
+          <button class="btn btn-danger-ghost btn-sm" onclick="confirmDeleteServer(State.selectedServerId)">🗑 Delete Server</button>
+          </div>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="filter-bar">
+          <div class="filter-tabs">
+            <div id="ftab-wrap-all" class="filter-tab active" onclick="setFilter('all')">
+              <button id="ftab-all" class="filter-tab active" style="padding:0;background:transparent;color:inherit">All</button>
+            </div>
+            <div id="ftab-wrap-active" class="filter-tab" onclick="setFilter('active')">
+              <button id="ftab-active" class="filter-tab" style="padding:0;background:transparent;color:inherit">Active</button>
+            </div>
+            <div id="ftab-wrap-inactive" class="filter-tab" onclick="setFilter('inactive')">
+              <button id="ftab-inactive" class="filter-tab" style="padding:0;background:transparent;color:inherit">Inactive</button>
+            </div>
+            <div id="ftab-wrap-assigned" class="filter-tab" onclick="setFilter('assigned')">
+              <button id="ftab-assigned" class="filter-tab" style="padding:0;background:transparent;color:inherit">Assigned</button>
+            </div>
+            <div id="ftab-wrap-unassigned" class="filter-tab" onclick="setFilter('unassigned')">
+              <button id="ftab-unassigned" class="filter-tab" style="padding:0;background:transparent;color:inherit">Unassigned</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Camera list -->
+        <div id="camera-list"></div>
+      </div>
+    </main>
+  </div><!-- /body -->
+</div><!-- /app -->
+
+<!-- ── Modal Overlay ──────────────────────────────────────────────────────── -->
+<div id="modal-overlay" class="hidden"></div>
+
+<!-- ── Assign Room Modal ──────────────────────────────────────────────────── -->
+<div id="assign-modal" class="modal hidden">
+  <div class="modal-header">
+    <h3>Assign Camera to Room</h3>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="modal-cam-info">
+      <div class="mci-name" id="modal-cam-name"></div>
+      <div class="mci-sub">
+        <span id="modal-cam-type"></span> camera &bull; <span id="modal-cam-model"></span>
+      </div>
+    </div>
+    <div class="room-list-label">Select a Room</div>
+    <div id="modal-room-list"></div>
+    <input type="hidden" id="modal-selected-room" />
+  </div>
+  <!-- Footer when camera is free → assign -->
+  <div id="modal-assign-footer" class="modal-footer">
+    <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-success" onclick="confirmAssign()">✔ Assign to Room</button>
+  </div>
+  <!-- Footer when camera is already in a room → unassign only -->
+  <div id="modal-unassign-footer" class="modal-footer hidden">
+    <button class="btn btn-outline" onclick="closeModal()">Close</button>
+    <button class="btn btn-danger" onclick="confirmUnassignFromModal()">🔓 Unassign Camera</button>
+  </div>
+</div>
+
+<!-- ── Add Camera Modal ───────────────────────────────────────────────────── -->
+<div id="add-camera-modal" class="modal hidden">
+  <div class="modal-header">
+    <h3>Add Camera</h3>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="modal-cam-info">
+      <div class="mci-sub">Adding camera to: <strong id="add-cam-server-name"></strong></div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label class="form-label">Camera Name *</label>
+        <input id="add-cam-name" class="form-input" type="text" placeholder="e.g. Lobby Entrance" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Type</label>
+        <select id="add-cam-type" class="form-select" onchange="toggleIpFields()">
+          <option value="IP">IP Camera</option>
+          <option value="USB">USB Camera</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Model</label>
+        <input id="add-cam-model" class="form-input" type="text" placeholder="e.g. Hikvision DS-2CD2143G2" />
+      </div>
+      <div id="ip-fields" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; grid-column:1/-1;">
+        <div class="form-group">
+          <label class="form-label">IP Address *</label>
+          <input id="add-cam-ip" class="form-input" type="text" placeholder="192.168.1.xxx" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Port</label>
+          <input id="add-cam-port" class="form-input" type="number" value="554" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Resolution</label>
+        <select id="add-cam-res" class="form-select">
+          <option value="4K">4K</option>
+          <option value="8MP">8MP</option>
+          <option value="4MP">4MP</option>
+          <option value="1080p" selected>1080p</option>
+          <option value="720p">720p</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">FPS</label>
+        <input id="add-cam-fps" class="form-input" type="number" value="25" min="1" max="60" />
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-primary" onclick="submitAddCamera()">➕ Add Camera</button>
+  </div>
+</div>
+
+<!-- ── Add Room Modal ─────────────────────────────────────────────────────── -->
+<div id="add-room-modal" class="modal hidden">
+  <div class="modal-header">
+    <h3>Add Room</h3>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="form-grid">
+      <div class="form-group full">
+        <label class="form-label">Room Name *</label>
+        <input id="add-room-name" class="form-input" type="text" placeholder="e.g. Conference Room A" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Building *</label>
+        <input id="add-room-building" class="form-input" type="text" placeholder="e.g. Main Building" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Floor</label>
+        <input id="add-room-floor" class="form-input" type="text" placeholder="e.g. G, 1, 2, B1" />
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-success" onclick="submitAddRoom()">✔ Add Room</button>
+  </div>
+</div>
+
+<!-- ── Single Camera Viewer ───────────────────────────────────────────────── -->
+<div id="camera-viewer" class="fullpage-viewer hidden">
+  <div class="viewer-topbar">
+    <div class="viewer-title-group">
+      <span id="viewer-status-badge" class="status-badge active">Active</span>
+      <span id="viewer-cam-name" class="viewer-cam-name"></span>
+      <span id="viewer-cam-meta" class="viewer-cam-meta"></span>
+    </div>
+    <div class="viewer-clock-wrap">
+      <span class="rec-dot"></span>
+      <span id="viewer-clock" class="viewer-clock"></span>
+    </div>
+    <div class="viewer-actions">
+      <button class="btn btn-sm btn-outline" onclick="toggleViewerFullscreen()" title="Fullscreen">⛶</button>
+      <button class="btn btn-sm btn-ghost" onclick="closeViewer()">✕ Close</button>
+    </div>
+  </div>
+
+  <div class="viewer-body">
+    <!-- Feed area -->
+    <div id="viewer-screen" class="viewer-screen">
+      <!-- populated by JS -->
+    </div>
+
+    <!-- Side panel -->
+    <div class="viewer-panel">
+
+      <!-- USB controls -->
+      <div id="viewer-usb-section" class="viewer-panel-section hidden">
+        <div class="vps-label">USB / Webcam Device</div>
+        <select id="viewer-device-select" class="form-select" onchange="changeUSBDevice()"></select>
+      </div>
+
+      <!-- IP stream URL -->
+      <div id="viewer-url-section" class="viewer-panel-section">
+        <div class="vps-label">MJPEG Stream URL</div>
+        <input id="viewer-stream-url" class="form-input" type="url"
+               placeholder="http://192.168.1.x/stream.mjpeg" />
+        <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="applyStreamUrl()">
+          ▶ Load Stream
+        </button>
+        <div class="vps-hint" id="viewer-ip-section">
+          Tip: Most IP cameras expose MJPEG at<br>
+          <code>/video</code>, <code>/stream.mjpeg</code>, or <code>/cgi-bin/mjpg/video.cgi</code>
+        </div>
+      </div>
+
+      <!-- Camera info -->
+      <div class="viewer-panel-section">
+        <div class="vps-label">Camera Info</div>
+        <div class="viewer-info-grid" id="viewer-info-grid"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── Grid Viewer ────────────────────────────────────────────────────────── -->
+<div id="grid-viewer" class="fullpage-viewer hidden">
+  <div class="viewer-topbar">
+    <div class="viewer-title-group">
+      <span class="viewer-cam-name">Live Grid View</span>
+    </div>
+    <div class="viewer-clock-wrap">
+      <span class="rec-dot"></span>
+      <span id="grid-clock" class="viewer-clock"></span>
+    </div>
+    <div class="viewer-actions">
+      <span style="font-size:12px;color:var(--text3);margin-right:6px;">Layout:</span>
+      <button class="btn btn-sm btn-outline" onclick="setGridLayout(4)" title="2×2">2×2</button>
+      <button class="btn btn-sm btn-outline" onclick="setGridLayout(9)" title="3×3">3×3</button>
+      <button class="btn btn-sm btn-outline" onclick="toggleGridFullscreen()" title="Fullscreen">⛶</button>
+      <button class="btn btn-sm btn-ghost" onclick="closeGridViewer()">✕ Close</button>
+    </div>
+  </div>
+  <div id="grid-screen" class="grid-screen"></div>
+
+  <!-- Camera detail panel — slides up on single click -->
+  <div id="grid-detail-panel" class="grid-detail-panel hidden">
+    <div class="gdp-header">
+      <div class="gdp-title-row">
+        <span id="gdp-icon" class="gdp-icon"></span>
+        <div>
+          <div id="gdp-name" class="gdp-name"></div>
+          <div id="gdp-sub"  class="gdp-sub"></div>
+        </div>
+        <span id="gdp-status" class="status-badge"></span>
+      </div>
+      <button class="modal-close" onclick="closeGridDetail()">✕</button>
+    </div>
+    <div class="gdp-body">
+      <div class="gdp-info-grid" id="gdp-info-grid"></div>
+      <div class="gdp-actions" id="gdp-actions"></div>
+    </div>
+  </div>
+
+  <div class="grid-hint">Click cell for details &nbsp;·&nbsp; Double-click to open full viewer</div>
+</div>
+
+<!-- ── Add Server Modal ───────────────────────────────────────────────────── -->
+<div id="add-server-modal" class="modal hidden">
+  <div class="modal-header">
+    <h3>➕ Add Server</h3>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="form-grid">
+      <div class="form-group full">
+        <label class="form-label">Server Name *</label>
+        <input id="add-srv-name" class="form-input" type="text" placeholder="e.g. Main Building Server" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">IP Address *</label>
+        <input id="add-srv-ip" class="form-input" type="text" placeholder="192.168.1.10" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Operating System</label>
+        <select id="add-srv-os" class="form-select">
+          <option>Ubuntu 22.04 LTS</option>
+          <option>Ubuntu 20.04 LTS</option>
+          <option>Windows Server 2022</option>
+          <option>Windows Server 2019</option>
+          <option>Debian 12</option>
+          <option>CentOS 7</option>
+          <option>Unknown</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Location</label>
+        <input id="add-srv-location" class="form-input" type="text" placeholder="e.g. Main Building – Server Room B1" />
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+    <button class="btn btn-primary" onclick="submitAddServer()">✔ Add Server</button>
+  </div>
+</div>
+
+<!-- ── Room Camera Picker Modal ───────────────────────────────────────────── -->
+<div id="room-camera-picker" class="modal hidden" style="width:560px">
+  <div class="modal-header">
+    <h3>Add Camera to: <span id="picker-room-name" style="color:var(--blue-l)"></span></h3>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+  </div>
+  <div class="modal-body" style="padding:0">
+    <div style="padding:10px 16px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:12px;color:var(--text3)">
+      🔒 Cameras already used in another room are locked. Use <strong>Reassign</strong> to move them here.
+    </div>
+    <div id="picker-camera-list" style="max-height:420px;overflow-y:auto;padding:8px 0"></div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline" onclick="closeModal()">Done</button>
+  </div>
+</div>
+
+
+<!-- ── Rooms Management Modal ─────────────────────────────────────────────── -->
+<div id="rooms-modal" class="modal hidden">
+  <div class="modal-header">
+    <h3>🚪 Manage Rooms</h3>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+  </div>
+  <div class="modal-body" style="padding:0;">
+    <div id="rooms-manage-list"></div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline" onclick="closeModal(); openAddRoomModal()">➕ Add Room</button>
+    <button class="btn btn-primary" onclick="closeModal()">Done</button>
+  </div>
+</div>
+
+<!-- ── Initial loading screen ────────────────────────────────────────────── -->
+<div id="app-loader">
+  <div class="app-loader-inner">
+    <div class="app-loader-spinner"></div>
+    <div class="app-loader-text">Loading dashboard…</div>
+  </div>
+</div>
+
+<!-- ── Toast container ───────────────────────────────────────────────────── -->
+<div id="toast-container"></div>
+
+<script src="js/data.js"></script>
+<script src="js/network-scan.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
