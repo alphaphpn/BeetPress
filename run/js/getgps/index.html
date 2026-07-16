@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>GPS Location & Map Viewer</title>
+	<style>
+		body {
+			font-family: system-ui, -apple-system, sans-serif;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-height: 100vh;
+			margin: 0;
+			background-color: #f5f5f7;
+			padding: 20px;
+			box-sizing: border-box;
+		}
+		.card {
+			background: white;
+			padding: 2rem;
+			border-radius: 12px;
+			box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+			text-align: center;
+			max-width: 500px;
+			width: 100%;
+		}
+		.btn-group {
+			display: flex;
+			gap: 10px;
+			justify-content: center;
+			margin-bottom: 1rem;
+			flex-wrap: wrap;
+		}
+		button, .map-link {
+			background-color: #0071e3;
+			color: white;
+			border: none;
+			padding: 10px 20px;
+			font-size: 1rem;
+			border-radius: 6px;
+			cursor: pointer;
+			transition: background 0.2s;
+			text-decoration: none;
+			display: inline-block;
+		}
+		button:hover, .map-link:hover {
+			background-color: #005bb5;
+		}
+		.map-link {
+			background-color: #34c759;
+		}
+		.map-link:hover {
+			background-color: #28a745;
+		}
+		.result {
+			margin-top: 1.5rem;
+			font-weight: 500;
+			line-height: 1.6;
+		}
+		.error {
+			color: #ff3b30;
+		}
+		.success {
+			color: #34c759;
+		}
+		.landmark-box {
+			margin-top: 10px;
+			padding: 8px;
+			background: #f0f0f5;
+			border-radius: 6px;
+			font-size: 0.95rem;
+		}
+		.iframe-container {
+			margin-top: 15px;
+			width: 100%;
+			height: 250px;
+			border-radius: 8px;
+			overflow: hidden;
+			border: 1px solid #ddd;
+			display: none; /* Hidden until location is found */
+		}
+		iframe {
+			width: 100%;
+			height: 100%;
+			border: none;
+		}
+	</style>
+</head>
+<body>
+
+<div class="card">
+	<h2>Device GPS & Map Locator</h2>
+	<p>Click the button below to find your coordinates, nearest landmark, and map placement.</p>
+	
+	<div class="btn-group">
+		<button onclick="getMyLocation()">Get My Location</button>
+		<a id="googleMapsBtn" class="map-link" href="#" target="_blank" style="display: none;">Open Google Maps</a>
+	</div>
+
+	<div id="output" class="result"></div>
+	
+	<div id="mapContainer" class="iframe-container">
+		<iframe id="mapIframe" src=""></iframe>
+	</div>
+</div>
+
+<script>
+function getMyLocation() {
+	const output = document.getElementById('output');
+	const gMapsBtn = document.getElementById('googleMapsBtn');
+	const mapContainer = document.getElementById('mapContainer');
+	
+	output.className = "result"; 
+	output.innerHTML = "Requesting permission...";
+	gMapsBtn.style.display = "none";
+	mapContainer.style.display = "none";
+
+	if (!navigator.geolocation) {
+		output.className = "result error";
+		output.innerHTML = "Geolocation is not supported by your browser.";
+		return;
+	}
+
+	const options = {
+		enableHighAccuracy: true,
+		timeout: 10000, 
+		maximumAge: 0
+	};
+
+	navigator.geolocation.getCurrentPosition(successCallback, errorCallback, options);
+}
+
+function successCallback(position) {
+	const output = document.getElementById('output');
+	const gMapsBtn = document.getElementById('googleMapsBtn');
+	const mapContainer = document.getElementById('mapContainer');
+	const mapIframe = document.getElementById('mapIframe');
+	
+	const lat = position.coords.latitude;
+	const lon = position.coords.longitude;
+	const accuracy = position.coords.accuracy;
+
+	output.className = "result success";
+	output.innerHTML = `
+		<strong>Location Found!</strong><br>
+		Latitude: ${lat.toFixed(6)}<br>
+		Longitude: ${lon.toFixed(6)}<br>
+		<span style="font-size: 0.85rem; color: #666;">Accurate within ${Math.round(accuracy)} meters</span><br>
+		<div id="landmark" style="margin-top: 10px; font-weight: normal; color: #333;">Searching for nearest landmark...</div>
+	`;
+
+	// 1. Configure the "Open New Tab" Google Maps Link
+	gMapsBtn.href = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+	gMapsBtn.style.display = "inline-block";
+
+	// 2. Configure and Show the Live Iframe Embed Map (Using OpenStreetMap Embed for seamless API-key-less usage)
+	// We add a bounding box around your coordinate to zoom into your position properly
+	const delta = 0.005; 
+	const minLon = lon - delta;
+	const minLat = lat - delta;
+	const maxLon = lon + delta;
+	const maxLat = lat + delta;
+	
+	mapIframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${minLon}%2C${minLat}%2C${maxLon}%2C${maxLat}&layer=mapnik&marker=${lat}%2C${lon}`;
+	mapContainer.style.display = "block";
+
+	// 3. Fetch the closest building/landmark info
+	fetchNearestLandmark(lat, lon);
+}
+
+function fetchNearestLandmark(lat, lon) {
+	const landmarkDiv = document.getElementById('landmark');
+	const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
+
+	fetch(url, {
+		headers: { 'User-Agent': 'GPS-Landmark-Map-Fetcher' }
+	})
+	.then(response => response.json())
+	.then(data => {
+		if (data && data.address) {
+			const landmarkName = data.name || 
+								 data.address.amenity || 
+								 data.address.building || 
+								 data.address.historic || 
+								 data.address.tourism ||
+								 data.address.road || 
+								 "Unknown Area";
+								 
+			landmarkDiv.innerHTML = `
+				<div class="landmark-box">
+					<strong>Nearest Landmark:</strong><br>
+					${landmarkName}<br>
+					<small style="color: #666;">${data.display_name}</small>
+				</div>
+			`;
+		} else {
+			landmarkDiv.innerHTML = "Could not identify a close landmark.";
+		}
+	})
+	.catch(err => {
+		console.error(err);
+		landmarkDiv.innerHTML = "Error fetching landmark details.";
+	});
+}
+
+function errorCallback(error) {
+	const output = document.getElementById('output');
+	output.className = "result error";
+	
+	switch(error.code) {
+		case error.PERMISSION_DENIED:
+			output.innerHTML = "Permission denied. Please allow location access in your browser settings.";
+			break;
+		case error.POSITION_UNAVAILABLE:
+			output.innerHTML = "Location info unavailable.";
+			break;
+		case error.TIMEOUT:
+			output.innerHTML = "The request timed out before getting a signal.";
+			break;
+		default:
+			output.innerHTML = "An unknown error occurred.";
+			break;
+	}
+}
+</script>
+
+</body>
+</html>

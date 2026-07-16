@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio - 25 Sample Projects</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    
+    <style>
+        /* Premium Project Hover Effect */
+        .project-card {
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15) !important;
+        }
+        .badge-tech {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        /* Smooth Read More Animation & Collapse Setup */
+        #more-projects {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+        #more-projects.show {
+            max-height: 5000px; /* High value to accommodate all rows */
+            opacity: 1;
+            transition: max-height 1.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease-in-out;
+        }
+
+        /* Pulsing Arrow Animation for the button */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-6px); }
+            60% { transform: translateY(-3px); }
+        }
+        .pulse-arrow {
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <section class="py-5">
+        <div class="container">
+            
+            <div class="text-center mb-5">
+                <h2 class="fw-bold text-dark display-5">My Projects</h2>
+                <p class="text-muted mx-auto" style="max-width: 600px;">
+                    A comprehensive gallery showcasing 25 of my selected applications, tools, and technical experiments.
+                </p>
+                <div class="mx-auto bg-primary" style="width: 60px; height: 3px; border-radius: 2px;"></div>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
+                
+                <div class="col">
+                    <div class="card h-100 shadow-sm project-card border-0">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&auto=format&fit=crop&q=60" class="card-img-top" alt="Project 1">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold">01. E-Commerce Engine</h5>
+                            <p class="card-text text-muted flex-grow-1">A production-ready e-commerce platform built with modern state handling, secure checkout integrations, and lightning-fast speed.</p>
+                            <div class="mb-3">
+                                <span class="badge bg-secondary-subtle text-secondary-emphasis badge-tech">Next.js</span>
+                                <span class="badge bg-secondary-subtle text-secondary-emphasis badge-tech">Stripe</span>
+                            </div>
+                            <div class="d-flex gap-2 mt-auto">
+                                <a href="#" class="btn btn-outline-primary btn-sm flex-grow-1"><i class="bi bi-eye"></i> Live Demo</a>
+                                <a href="#" class="btn btn-outline-dark btn-sm"><i class="bi bi-github"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm project-card border-0">
+                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=60" class="card-img-top" alt="Project 2">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold">02. DevOps Monitoring</h5>
+                            <p class="card-text text-muted flex-grow-1">Real-time infrastructure performance visualization tracking memory, network requests, and active server clusters.</p>
+                            <div class="mb-3">
+                                <span class="badge bg-secondary-subtle text-secondary-emphasis badge-tech">Go</span>
+                                <span class="badge bg-secondary-subtle text-secondary-emphasis badge-tech">Docker</span>
+                            </div>
+                            <div class="d-flex gap-2 mt-auto">
+                                <a href="#" class="btn btn-outline-primary btn-sm flex-grow-1"><i class="bi bi-eye"></i> Live Demo</a>
+                                <a href="#" class="btn btn-outline-dark btn-sm"><i class="bi bi-github"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm project-card border-0">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=60" class="card-img-top" alt="Project 3">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold">03. AI Analytics Tool</h5>
+                            <p class="card-text text-muted flex-grow-1">Machine learning web engine designed to parse massive arrays of data and forecast upcoming localized market dynamics.</p>
+                            <div class="mb-3">
+                                <span class="badge bg-secondary-subtle text-secondary-emphasis badge-tech">Python</span>
+                                <span class="badge bg-secondary-subtle text-secondary-emphasis badge-tech">FastAPI</span>
+                            </div>
+                            <div class="d-flex gap-2 mt-auto">
+                                <a href="#" class="btn btn-outline-primary btn-sm flex-grow-1"><i class="bi bi-eye"></i> Live Demo</a>
+                                <a href="#" class="btn btn-outline-dark btn-sm"><i class="bi bi-github"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="more-projects">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 pb-4">
+                    
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">04. Task Planner Pro</h5><p class="text-muted">Interactive task manager featuring cloud-based automated sync capabilities.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">Vue.js</span></div></div></div>
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">05. Cryptography App</h5><p class="text-muted">Localized, zero-knowledge encryption program safeguarding critical files.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">Rust</span></div></div></div>
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">06. Weather Tracker</h5><p class="text-muted">Geographical microclimate analysis widget drawing live metrics globally.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">Vanilla JS</span></div></div></div>
+                    
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">07. Chat UI Library</h5><p class="text-muted">A collection of custom component designs engineered for internal support messaging.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">CSS3</span></div></div></div>
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">08. Medical Portal</h5><p class="text-muted">HIPAA-compliant custom clinic dashboard dashboard managing secure client scheduling.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">PHP</span></div></div></div>
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">09. Real Estate Maps</h5><p class="text-muted">Spatial polygon dynamic searches tracking complex residential updates.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">Leaflet.js</span></div></div></div>
+
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">10. Recipe API</h5><p class="text-muted">Highly performant REST architecture loaded with precise dietary filter keys.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">Express</span></div></div></div>
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">11. Fitness Tracker</h5><p class="text-muted">Mobile-first progress utility that structures routine schedules automatically.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">Svelte</span></div></div></div>
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">12. Markdown Editor</h5><p class="text-muted">Live compiler offering instant rendering and cloud formatting assets.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">React</span></div></div></div>
+
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">13. Video Meet Platform</h5><p class="text-muted">WebRTC video rooms supporting synchronized direct multi-user workspace tools.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">WebRTC</span></div></div></div>
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">14. Form Validator</h5><p class="text-muted">Accessible schema verification logic running dynamic reactive errors.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">TypeScript</span></div></div></div>
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">15. SVG Icon Builder</h5><p class="text-muted">Browser-side automation that modifies custom vector maps instantly.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">HTML5 Canvas</span></div></div></div>
+
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">16. Event Finder</h5><p class="text-muted">Ticketing application filtering local performances using device location logs.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">GraphQL</span></div></div></div>
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">17. Password Vault</h5><p class="text-muted">Biometric responsive entry terminal securing credential storage files.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">WebAuthn</span></div></div></div>
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">18. IoT Controller</h5><p class="text-muted">Smart ambient home device tracking dashboard operating over micro protocols.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">MQTT</span></div></div></div>
+
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">19. Code Highlighter</h5><p class="text-muted">Lightweight styling micro-extension that instantly formats code tabs.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">Regex</span></div></div></div>
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">20. Budget Watcher</h5><p class="text-muted">Autonomous balance accounting spreadsheet converting banking ledger files.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">Ruby</span></div></div></div>
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">21. CSS Grid Studio</h5><p class="text-muted">Visual drag playground facilitating structural blueprint export controls.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">Bootstrap 5</span></div></div></div>
+
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">22. API Proxy Hub</h5><p class="text-muted">Traffic limiting gateway regulating incoming distributed cloud calls.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">Redis</span></div></div></div>
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">23. Audio Synth Studio</h5><p class="text-muted">Interactive frequency generator outputting customizable dynamic raw waves.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">Web Audio API</span></div></div></div>
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">24. Quiz Engine CLI</h5><p class="text-muted">Command terminal knowledge validation platform using asynchronous streams.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">Node.js</span></div></div></div>
+
+                    <div class="col"><div class="card h-100 shadow-sm project-card border-0"><div class="card-body"><h5 class="fw-bold">25. Portfolio Site V3</h5><p class="text-muted">The precise framework build file powering this current resume platform.</p><span class="badge bg-secondary-subtle text-secondary-emphasis">HTML / CSS</span></div></div></div>
+
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <button id="toggle-btn" class="btn btn-primary btn-lg px-4 py-2 shadow-sm rounded-pill">
+                    <span id="btn-text" class="me-2">View All Projects (22 More)</span>
+                    <i id="btn-icon" class="bi bi-chevron-down pulse-arrow"></i>
+                </button>
+            </div>
+
+        </div>
+    </section>
+    <script>
+        const toggleBtn = document.getElementById('toggle-btn');
+        const hiddenSection = document.getElementById('more-projects');
+        const btnText = document.getElementById('btn-text');
+        const btnIcon = document.getElementById('btn-icon');
+
+        toggleBtn.addEventListener('click', () => {
+            hiddenSection.classList.toggle('show');
+            
+            if (hiddenSection.classList.contains('show')) {
+                btnText.textContent = "Show Less";
+                btnIcon.className = "bi bi-chevron-up"; // Flips arrow up
+            } else {
+                btnText.textContent = "View All Projects (22 More)";
+                btnIcon.className = "bi bi-chevron-down pulse-arrow"; // Restores bounce animation
+                
+                // Optional: Smoothly scrolls visitor back up slightly so they don't lose perspective
+                hiddenSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        });
+    </script>
+</body>
+</html>

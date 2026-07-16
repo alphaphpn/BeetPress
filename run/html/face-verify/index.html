@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Face Verification</title>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.js" crossorigin="anonymous"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; background: #121212; color: white; margin: 0; padding: 20px; }
+        .video-wrapper { position: relative; width: 360px; height: 360px; border-radius: 50%; border: 4px solid #333; overflow: hidden; background: #000; }
+        #webcam { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        #canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: scaleX(-1); }
+        .step-box { margin-top: 20px; padding: 15px; background: #1e1e1e; border-radius: 10px; width: 340px; text-align: center; }
+        .step { color: #666; margin: 5px 0; }
+        .active { color: #00d1ff; font-weight: bold; }
+        .completed { color: #00ff88; text-decoration: line-through; }
+        #status-msg { font-size: 1.2rem; color: #ffcc00; margin-bottom: 10px; height: 30px; }
+    </style>
+</head>
+<body>
+
+    <h2>Biometric Verification</h2>
+    <div id="status-msg">Initializing AI...</div>
+
+    <div class="video-wrapper">
+        <video id="webcam" autoplay playsinline></video>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div class="step-box">
+        <div id="step-blink" class="step">1. Blink your eyes</div>
+        <div id="step-left" class="step">2. Turn face Left</div>
+        <div id="step-right" class="step">3. Turn face Right</div>
+        <div id="step-up" class="step">4. Look Up</div>
+    </div>
+
+    <script type="module">
+        import { FaceLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.js";
+
+        const video = document.getElementById("webcam");
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        const statusMsg = document.getElementById("status-msg");
+
+        let faceLandmarker;
+        let runningMode = "VIDEO";
+        let steps = { blink: false, left: false, right: false, up: false };
+        let mediaRecorder;
+        let chunks = [];
+
+        // Initialize MediaPipe
+        async function init() {
+            const filesetResolver = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm");
+            faceLandmarker = await FaceLandmarker.createFromOptions(filesetResolver, {
+                baseOptions: { modelAssetPath: `https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task`, delegate: "GPU" },
+                outputFaceBlendshapes: true,
+                runningMode: runningMode,
+                numFaces: 1
+            });
+            startCamera();
+        }
+
+        async function startCamera() {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            video.addEventListener("loadeddata", () => {
+                statusMsg.innerText = "Align your face to start";
+                startRecording(stream);
+                predictWebcam();
+            });
+        }
+
+        function startRecording(stream) {
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.ondataavailable = e => chunks.push(e.data);
+            mediaRecorder.onstop = uploadVideo;
+            mediaRecorder.start();
+        }
+
+        async function predictWebcam() {
+            const results = faceLandmarker.detectForVideo(video, performance.now());
+            
+            if (results.faceLandmarks && results.faceLandmarks.length > 0) {
+                const landmarks = results.faceLandmarks[0];
+                const blendshapes = results.faceBlendshapes[0].categories;
+                
+                checkLiveness(landmarks, blendshapes);
+            }
+            
+            if (!Object.values(steps).every(v => v === true)) {
+                window.requestAnimationFrame(predictWebcam);
+            } else {
+                statusMsg.innerText = "Verification Complete! Saving...";
+                mediaRecorder.stop();
+            }
+        }
+
+        function checkLiveness(landmarks, blendshapes) {
+            // 1. Blink Detection (Using Blendshapes for accuracy)
+            const eyeBlinkLeft = blendshapes.find(b => b.categoryName === "eyeBlinkLeft").score;
+            const eyeBlinkRight = blendshapes.find(b => b.categoryName === "eyeBlinkRight").score;
+            if (!steps.blink) {
+                updateUI("step-blink");
+                if (eyeBlinkLeft > 0.4 && eyeBlinkRight > 0.4) {
+                    steps.blink = true;
+                    markComplete("step-blink");
+                }
+            }
+
+            // 2. Face Orientation (Using specific landmark ratios)
+            const nose = landmarks[1];
+            const leftEdge = landmarks[234];
+            const rightEdge = landmarks[454];
+            const topEdge = landmarks[10];
+
+            if (steps.blink && !steps.left) {
+                updateUI("step-left");
+                if (nose.x < leftEdge.x + 0.05) { steps.left = true; markComplete("step-left"); }
+            } 
+            else if (steps.left && !steps.right) {
+                updateUI("step-right");
+                if (nose.x > rightEdge.x - 0.05) { steps.right = true; markComplete("step-right"); }
+            }
+            else if (steps.right && !steps.up) {
+                updateUI("step-up");
+                if (nose.y < topEdge.y + 0.05) { steps.up = true; markComplete("step-up"); }
+            }
+        }
+
+        function updateUI(id) {
+            statusMsg.innerText = "Action: " + document.getElementById(id).innerText;
+            document.getElementById(id).classList.add("active");
+        }
+
+        function markComplete(id) {
+            const el = document.getElementById(id);
+            el.classList.remove("active");
+            el.classList.add("completed");
+        }
+
+        async function uploadVideo() {
+            const blob = new Blob(chunks, { type: 'video/webm' });
+            const formData = new FormData();
+            formData.append('video', blob, 'verified.webm');
+
+            const response = await fetch('upload.php', { method: 'POST', body: formData });
+            const result = await response.json();
+            if(result.status === "success") {
+                statusMsg.innerText = "Verified & Saved Successfully!";
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

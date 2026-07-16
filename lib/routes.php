@@ -26,12 +26,14 @@
 		'portfolio' => 'routes/portfolio.php', 
 		'employee-id-reg' => 'routes/empl-id-reg.php', 
 		'employee-signature' => 'routes/employee-signature.php', 
+		'gad' => 'routes/gad.php', 
 
 		'users-list' => 'routes/users-list.php', 
 
 		'post' => 'routes/post.php', 
 
 		'bp-mngr' => 'routes/bp-mngr.php', 
+		'timelogs-upload' => 'routes/timelogs-upload.php', 
 		'employee' => 'routes/employee.php', 
 		'signup-employee-print' => 'routes/signup-employee-print.php', 
 		'list-employee' => 'routes/list-employee.php', 

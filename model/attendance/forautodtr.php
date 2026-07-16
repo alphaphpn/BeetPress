@@ -38,6 +38,8 @@
 					$officeabrvz = $rowEmployeeInfo['officeabrv'];
 					$officegpslocationz = $rowEmployeeInfo['office_gps_location'];
 					$typeemployeeabrvz = $rowEmployeeInfo['type_employee_abrv'];
+					$typeemployeenoz = $rowEmployeeInfo['type_employee_no'];
+					
 					$headofficerz = $rowEmployeeInfo['headofficer'];
 					$headtitlez = $rowEmployeeInfo['headtitle'];
 					$authheadz = $rowEmployeeInfo['auth_head'];
@@ -69,7 +71,7 @@
 
 					if ($countDTREmployee == 0) {
 						// insert or add new DTR for Seleceted Employee
-						$insertNewDTREmployee = "INSERT INTO employee_dtr_tbl (emp_idcode,yearno,monthno,dtrcode,monthname,profileid,bio_location,bio_no,emp_name,officeid,officecode,officename,officetitle,officeabrv,office_gps_location,type_employee_abrv,headofficer,headtitle,auth_head,auth_title,auth_description,shift_status,time_editable,priority_dtr,time_editable_value,allowed_ot) VALUES (:empidcode,:yrdtr,:monthdtr,:dtrcodex,:monthname,:profileidz,:biolocationz,:bionoz,:empnamez,:officeidz,:officecodez,:officenamez,:officetitlez,:officeabrvz,:officegpslocationz,:typeemployeeabrvz,:headofficerz,:headtitlez,:authheadz,:authtitlez,:authdescriptionz,:shiftstatusz,:timeeditablez,:prioritydtrz,:timeeditablevaluez,:allowedotzz)
+						$insertNewDTREmployee = "INSERT INTO employee_dtr_tbl (emp_idcode,yearno,monthno,dtrcode,monthname,profileid,bio_location,bio_no,emp_name,officeid,officecode,officename,officetitle,officeabrv,office_gps_location,type_employee_abrv,headofficer,headtitle,auth_head,auth_title,auth_description,shift_status,time_editable,priority_dtr,time_editable_value,allowed_ot,type_employee_no) VALUES (:empidcode,:yrdtr,:monthdtr,:dtrcodex,:monthname,:profileidz,:biolocationz,:bionoz,:empnamez,:officeidz,:officecodez,:officenamez,:officetitlez,:officeabrvz,:officegpslocationz,:typeemployeeabrvz,:headofficerz,:headtitlez,:authheadz,:authtitlez,:authdescriptionz,:shiftstatusz,:timeeditablez,:prioritydtrz,:timeeditablevaluez,:allowedotzz,:typeemployeenoz)
 						";
 						$stmntNewDTREmployee = $cnn->prepare($insertNewDTREmployee);
 						$stmntNewDTREmployee->bindParam(':empidcode', $empidcodett);
@@ -89,6 +91,8 @@
 						$stmntNewDTREmployee->bindParam(':officeabrvz', $officeabrvz);
 						$stmntNewDTREmployee->bindParam(':officegpslocationz', $officegpslocationz);
 						$stmntNewDTREmployee->bindParam(':typeemployeeabrvz', $typeemployeeabrvz);
+						$stmntNewDTREmployee->bindParam(':typeemployeenoz', $typeemployeenoz);
+						
 						$stmntNewDTREmployee->bindParam(':headofficerz', $headofficerz);
 						$stmntNewDTREmployee->bindParam(':headtitlez', $headtitlez);
 						$stmntNewDTREmployee->bindParam(':authheadz', $authheadz);

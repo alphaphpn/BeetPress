@@ -35,7 +35,7 @@
 	<script src="<?php echo trim($domainhome); ?>/assets/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 	<script src="<?php echo trim($domainhome); ?>/assets/datatables/1.13.6/js/jquery.dataTables.min.js"></script>
 	<script src="<?php echo trim($domainhome); ?>/assets/datatables/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-	<!-- <script src="<?php // echo trim($domainhome); ?>/assets/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script> -->
+	<script src="<?php echo trim($domainhome); ?>/assets/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
 	<script src="<?php echo trim($domainhome); ?>/assets/ajax/libs/particle-animate/1.0.0/js/particle-animate.js"></script>
 	<script src="<?php echo trim($domainhome); ?>/assets/js/functions.js"></script>
 </head>

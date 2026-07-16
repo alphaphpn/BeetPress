@@ -239,6 +239,73 @@
 				}
 			}
 
+			// Search for the Time Record selected Month for Employee
+			public function lstdaytimem_employeeDTRSub($dtrcode) {
+				$this->clearlist_employeeDTRSub();
+				$this->getConnection();
+
+				$selectQuery = "SELECT * FROM employee_dtr_sub_tbl WHERE dtrcode=:dtrcode";
+				$stmt = $this->cnn->prepare($selectQuery);
+				$stmt->bindParam(':dtrcode', $dtrcode);
+				$stmt->execute();
+
+				$cntRcrd = $stmt->rowCount();
+
+				if ($cntRcrd > 0) {
+					foreach ($stmt as $rwRcrd) {
+						$this->list_empdtrsubautoiddd[] = $rwRcrd['empdtr_sub_autoid'];
+						$this->list_agencycodedd[] = $rwRcrd['agency_code'];
+						$this->list_empidcodedd[] = $rwRcrd['emp_idcode'];
+						$this->list_dtrcodedd[] = $rwRcrd['dtrcode'];
+						$this->list_namedaydd[] = $rwRcrd['nameday'];
+						$this->list_daynodd[] = $rwRcrd['dayno'];
+						$this->list_monthnodd[] = $rwRcrd['monthno'];
+						$this->list_monthnamedd[] = $rwRcrd['monthname'];
+						$this->list_yearnodd[] = $rwRcrd['yearno'];
+						$this->list_biolocationdd[] = $rwRcrd['bio_location'];
+						$this->list_bionodd[] = $rwRcrd['bio_no'];
+						$this->list_amtimeindd[] = $rwRcrd['amtimein'];
+						$this->list_amtimeoutdd[] = $rwRcrd['amtimeout'];
+						$this->list_pmtimeindd[] = $rwRcrd['pmtimein'];
+						$this->list_pmtimeoutdd[] = $rwRcrd['pmtimeout'];
+						$this->list_lateamdd[] = $rwRcrd['late_am'];
+						$this->list_latepmdd[] = $rwRcrd['late_pm'];
+						$this->list_utimeamdd[] = $rwRcrd['utime_am'];
+						$this->list_utimepmdd[] = $rwRcrd['utime_pm'];
+						$this->list_latemindd[] = $rwRcrd['latemin'];
+						$this->list_utimemindd[] = $rwRcrd['utimemin'];
+						$this->list_tardymindd[] = $rwRcrd['tardymin'];
+						$this->list_lateutimehourdd[] = $rwRcrd['lateutime_hour'];
+						$this->list_lateutimemindd[] = $rwRcrd['lateutime_min'];
+						$this->list_overtimehourdd[] = $rwRcrd['overtime_hour'];
+						$this->list_overtimemindd[] = $rwRcrd['overtime_min'];
+						$this->list_attendancegpslocationamindd[] = $rwRcrd['attendance_gps_location_am_in'];
+						$this->list_attendancegpslocationamoutdd[] = $rwRcrd['attendance_gps_location_am_out'];
+						$this->list_attendancegpslocationpmindd[] = $rwRcrd['attendance_gps_location_pm_in'];
+						$this->list_attendancegpslocationpmoutdd[] = $rwRcrd['attendance_gps_location_pm_out'];
+						$this->list_allowedotdd[] = $rwRcrd['allowed_ot'];
+						$this->list_xdeldd[] = $rwRcrd['xdel'];
+						$this->list_createdbydd[] = $rwRcrd['createdby'];
+						$this->list_modifiedbydd[] = $rwRcrd['modifiedby'];
+						$this->list_modifiedatdd[] = $rwRcrd['modified_at'];
+						$this->list_createdatdd[] = $rwRcrd['created_at'];
+
+						include "lib/onoffline.php";
+						if ( $onlineornot == 1 ) {
+							$this->list_agencynamedd[] = utf8_encode($rwRcrd['agency_name']);
+							$this->list_empnamedd[] = utf8_encode($rwRcrd['emp_name']);
+						} else {
+							$this->list_agencynamedd[] = $rwRcrd['agency_name'];
+							$this->list_empnamedd[] = $rwRcrd['emp_name'];
+						}
+					}
+
+					return true;
+				} else {
+					return false;
+				}
+			}
+
 			// Auto DTR
 			public function autodtr_employeeDTRSub($agencycodedd,$agencynamedd,$empidcodedd,$dtrcodedd,$namedaydd,$daynodd,$monthnodd,$monthnamedd,$yearnodd,$empnamedd,$biolocationdd,$bionodd,$amtimeindd,$amtimeoutdd,$pmtimeindd,$pmtimeoutdd,$attendancegpslocationamindd,$attendancegpslocationamoutdd,$attendancegpslocationpmindd,$attendancegpslocationpmoutdd,$allowedotdd) {
 				$this->clearlist_employeeDTRSub();
@@ -289,6 +356,39 @@
 				$stmt->bindParam(':attendancegpslocationpmout', $attendancegpslocationpmoutdd);
 				$stmt->bindParam(':allowedot', $allowedotdd);
 				$stmt->execute();
+			}
+
+			// Sum total Tardy, Undertime and Overtime
+			public function fnSumTUO_employeeDTRSub($dtrcode) {
+				$this->clearlist_employeeDTRSub();
+				$this->getConnection();
+
+				$selectQuery = "SELECT 
+					SUM(lateutime_hour) AS lateutimehour, 
+					SUM(lateutime_min) AS lateutimemin, 
+					SUM(overtime_hour) AS overtimehour, 
+					SUM(overtime_min) AS overtimemin 
+					FROM employee_dtr_sub_tbl 
+					WHERE dtrcode=:dtrcode
+				";
+				$stmt = $this->cnn->prepare($selectQuery);
+				$stmt->bindParam(':dtrcode', $dtrcode);
+				$stmt->execute();
+
+				$cntRcrd = $stmt->rowCount();
+
+				if ($cntRcrd > 0) {
+					foreach ($stmt as $rwRcrd) {
+						$this->list_lateutimehourdd[] = $rwRcrd['lateutimehour'];
+						$this->list_lateutimemindd[] = $rwRcrd['lateutimemin'];
+						$this->list_overtimehourdd[] = $rwRcrd['overtimehour'];
+						$this->list_overtimemindd[] = $rwRcrd['overtimemin'];
+					}
+
+					return true;
+				} else {
+					return false;
+				}
 			}
 		}
 

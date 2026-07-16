@@ -6,7 +6,7 @@
 			<label class="font-size-10">Employee ID: <?php echo trim($empidcodetu); ?></label>
 		</div>
 		<div class="d-flex justify-content-between">
-			<label class="font-size-11">Office: <?php echo trim($officecodetu)." | ".trim($officetitletu); ?></label>
+			<label class="font-size-11">Office: <?php echo trim($officecodetu)." | ".trim($officeabrvtu); ?></label>
 			<label class="font-size-11">DTR-ID: <?php echo trim($dtrcodetu); ?></label>
 		</div>
 		<table class="table" border="2">
@@ -60,16 +60,40 @@
 			</thead>
 
 			<tbody>
-
+			<?php
+				// Your Daily Timelogs
+				require_once "getdtr.php";
+			?>
 			</tbody>
 
 			<tfoot>
 				<tr>
+					<?php
+						require_once "model/employee_dtr_sub/index.php";
+						$sumEmpDTR = new employeeDTRSub();
+
+						if ( $sumEmpDTR->fnSumTUO_employeeDTRSub($dtrcodetu) ) {
+							$sumEmpDTR->fnSumTUO_employeeDTRSub($dtrcodetu);
+
+							for($i = 0; $i < count($sumEmpDTR->list_lateutimehourdd); $i++) {
+								$utlatehrtux = trim($sumEmpDTR->list_lateutimehourdd[$i]);
+								$utlatemintux = trim($sumEmpDTR->list_lateutimemindd[$i]);
+								$othrtux = trim($sumEmpDTR->list_overtimehourdd[$i]);
+								$otmintux = trim($sumEmpDTR->list_overtimemindd[$i]);
+							}
+						} else {
+							$utlatehrtux = null;
+							$utlatemintux = null;
+							$othrtux = null;
+							$otmintux = null;
+						}
+					?>
+
 					<td colspan="6" class="p-0 font-size-10 text-end border-end">Total:</td>
-					<td  align="center" class="p-0 font-size-10 border-end"><?php echo trim($utlatehrtu); ?></td>
-					<td align="center" class="p-0 font-size-10 border-end"><?php echo trim($utlatemintu); ?></td>
-					<td align="center" class="p-0 font-size-10 border-end"><?php echo trim($othrtu); ?></td>
-					<td align="center" class="p-0 font-size-10"><?php echo trim($otmintu); ?></td>
+					<td  align="center" class="p-0 font-size-10 border-end"><?php if ( $utlatehrtux == 0 || $utlatehrtux == null || empty($utlatehrtux) ) { echo ''; } else { echo trim($utlatehrtux); } ?></td>
+					<td align="center" class="p-0 font-size-10 border-end"><?php if ( $utlatemintux == 0 || $utlatemintux == null || empty($utlatemintux) ) { echo ''; } else { echo trim($utlatemintux); } ?></td>
+					<td align="center" class="p-0 font-size-10 border-end"><?php if ( $othrtux == 0 || $othrtux == null || empty($othrtux) ) { echo ''; } else { echo trim($othrtux); } ?></td>
+					<td align="center" class="p-0 font-size-10"><?php if ( $otmintux == 0 || $otmintux == null || empty($otmintux) ) { echo ''; } else { echo trim($otmintux); } ?></td>
 				</tr>
 				<tr>
 					<td colspan="10" class="p-0 font-size-10 border-0 text-indent-32">I CERTIFY on my honor that the above is true and correct report of the hours, work performed record, of which was made daily at the time of arrival and departure from the office</td>

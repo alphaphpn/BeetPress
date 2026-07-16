@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rental Table Timer Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            overflow-x: hidden;
+        }
+        /* Toggleable Sidebar Core Styles */
+        .sidebar {
+            min-height: 100vh;
+            background-color: #212529;
+            transition: all 0.3s ease;
+            width: 240px;
+            z-index: 1000;
+        }
+        .sidebar.collapsed {
+            margin-left: -240px;
+        }
+        .main-content {
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        /* Card Aesthetics */
+        .card-table {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card-table:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+        .timer-display {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        /* Warning blinker effect for the final 5 minutes */
+        .text-blink {
+            animation: blinker 1.5s linear infinite;
+        }
+        @keyframes blinker {
+            50% { opacity: 0.3; }
+        }
+        
+        /* Mobile adjustment overrides */
+        @media (max-width: 767.98px) {
+            .sidebar {
+                position: fixed;
+                margin-left: -240px;
+            }
+            .sidebar.active {
+                margin-left: 0;
+            }
+            .sidebar.collapsed {
+                margin-left: -240px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="d-flex">
+    <div class="sidebar d-flex flex-column p-3 text-white" id="sidebarMenu">
+        <a href="#" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+            <i class="bi bi-clock-history me-2 fs-4"></i>
+            <span class="fs-4">TimeManager</span>
+        </a>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a href="#" class="nav-link active text-white">
+                    <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                </a>
+            </li>
+        </ul>
+        <hr>
+        <div class="text-secondary small">© 2026 TimeManager Inc.</div>
+    </div>
+
+    <div class="main-content flex-grow-1 px-md-4 pt-3">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-outline-dark" id="sidebarToggleBtn">
+                    <i class="bi bi-list fs-5"></i>
+                </button>
+                <h1 class="h2 mb-0">Table Monitoring Dashboard</h1>
+            </div>
+            <div class="mt-2 mt-md-0">
+                <button class="btn btn-outline-secondary me-2" onclick="initializeAudioContext()" id="audioInitBtn">
+                    <i class="bi bi-volume-up-fill me-1"></i>Enable Audio Alarm
+                </button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTableModal">
+                    <i class="bi bi-plus-circle me-2"></i>Add New Table
+                </button>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card border-0 shadow-sm p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="badge bg-primary-subtle text-primary p-3 fs-4 rounded-3 me-3">
+                            <i class="bi bi-grid-3x3-gap"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Total Tables</h6>
+                            <h3 class="mb-0" id="totalTablesCount">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card border-0 shadow-sm p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="badge bg-success-subtle text-success p-3 fs-4 rounded-3 me-3">
+                            <i class="bi bi-play-circle"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Active Rentals</h6>
+                            <h3 class="mb-0" id="activeRentalsCount">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4" id="tablesContainer">
+            </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addTableModal" tabindex="-1" aria-labelledby="addTableModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTableModalLabel">Add Rental Table</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="nameErrorAlert" class="alert alert-danger d-none py-2 mb-3">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>This Table Name/Number already exists. Please choose another.
+                </div>
+                <form id="addTableForm">
+                    <div class="mb-3">
+                        <label for="tableNameInput" class="form-label">Table Name / Number</label>
+                        <input type="text" class="form-control" id="tableNameInput" placeholder="e.g., Table 1, VIP Table" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tableDurationInput" class="form-label">Initial Rental Time (Minutes)</label>
+                        <input type="number" class="form-control" id="tableDurationInput" min="1" placeholder="e.g., 60" required>
+                    </div>
+                    <div class="text-end">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create & Start</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // State storage for registered tables
+    let tableData = [];
+    
+    // Audio Context variable for synthetic buzzer signaling
+    let audioCtx = null;
+
+    // Element Selectors
+    const tablesContainer = document.getElementById('tablesContainer');
+    const addTableForm = document.getElementById('addTableForm');
+    const totalTablesCountEl = document.getElementById('totalTablesCount');
+    const activeRentalsCountEl = document.getElementById('activeRentalsCount');
+    const addTableModalEl = document.getElementById('addTableModal');
+    const audioInitBtn = document.getElementById('audioInitBtn');
+    const sidebarMenu = document.getElementById('sidebarMenu');
+    const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+    const nameErrorAlert = document.getElementById('nameErrorAlert');
+    const bootstrapModalInstance = new bootstrap.Modal(addTableModalEl);
+
+    // Reset error message when modal is closed
+    addTableModalEl.addEventListener('hidden.bs.modal', () => {
+        nameErrorAlert.classList.add('d-none');
+    });
+
+    // --- Sidebar Toggle Implementation ---
+    sidebarToggleBtn.addEventListener('click', () => {
+        sidebarMenu.classList.toggle('collapsed');
+        // Mobile layout utility handler
+        sidebarMenu.classList.toggle('active');
+    });
+
+    // Modern browsers block autoplay audio until a manual layout click happens
+    function initializeAudioContext() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+        audioInitBtn.className = "btn btn-success me-2";
+        audioInitBtn.innerHTML = '<i class="bi bi-volume-up-fill me-1"></i>Audio Alarm Ready';
+    }
+
+    // Synthesize a hardware-style double alert notification chirp
+    function playAlarmSound() {
+        if (!audioCtx) return; 
+        try {
+            const now = audioCtx.currentTime;
+            
+            // First Beep
+            let osc1 = audioCtx.createOscillator();
+            let gain1 = audioCtx.createGain();
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(880, now); // A5 Note
+            gain1.gain.setValueAtTime(0.3, now);
+            gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+            osc1.connect(gain1);
+            gain1.connect(audioCtx.destination);
+            osc1.start(now);
+            osc1.stop(now + 0.15);
+
+            // Second Beep
+            let osc2 = audioCtx.createOscillator();
+            let gain2 = audioCtx.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(880, now + 0.25); 
+            gain2.gain.setValueAtTime(0.3, now + 0.25);
+            gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            osc2.connect(gain2);
+            gain2.connect(audioCtx.destination);
+            osc2.start(now + 0.25);
+            osc2.stop(now + 0.4);
+        } catch (e) {
+            console.error("Audio error execution block:", e);
+        }
+    }
+
+    // Load setup configurations out of persistent Storage on initial runtime initialization
+    function loadTablesFromStorage() {
+        const stored = localStorage.getItem('rental_dashboard_tables');
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                
+                // Calculate elapsed delta time since user last left or reloaded the site
+                const savedTimestamp = localStorage.getItem('rental_dashboard_timestamp');
+                const elapsedSeconds = savedTimestamp ? Math.floor((Date.now() - parseInt(savedTimestamp, 10)) / 1000) : 0;
+
+                parsed.forEach(table => {
+                    // Adjust remaining runtime allocations depending on time spent offline
+                    if (table.isActive && table.remainingSeconds > 0) {
+                        table.remainingSeconds = Math.max(0, table.remainingSeconds - elapsedSeconds);
+                        if (table.remainingSeconds === 0) {
+                            table.isActive = false;
+                        }
+                    }
+                    // Reinitialize runtime DOM cache structure mapping
+                    table.domElements = {};
+                    // Reset interval alarm trigger state history flags on boot load up
+                    table.lastAlarmTime = 0; 
+                    
+                    tableData.push(table);
+                    renderTableCard(table);
+                    updateUIForTable(table);
+                    if(table.remainingSeconds <= 0) {
+                        setTableExpiredUI(table);
+                    }
+                });
+                updateDashboardMetrics();
+            } catch (e) {
+                console.error("Failed parsing storage manifest profiles:", e);
+            }
+        }
+    }
+
+    // Save running dataset snapshot out to LocalStorage 
+    function saveTablesToStorage() {
+        const configurations = tableData.map(t => ({
+            id: t.id,
+            name: t.name,
+            totalSeconds: t.totalSeconds,
+            remainingSeconds: t.remainingSeconds,
+            isActive: t.isActive
+        }));
+        localStorage.setItem('rental_dashboard_tables', JSON.stringify(configurations));
+        localStorage.setItem('rental_dashboard_timestamp', Date.now().toString());
+    }
+
+    // Form submission processing
+    addTableForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        initializeAudioContext(); // Use interaction context to safely awaken backend sound capabilities
+        
+        const name = document.getElementById('tableNameInput').value.trim();
+        const minutes = parseInt(document.getElementById('tableDurationInput').value, 10);
+        
+        // --- Duplicate Name Check Logic ---
+        const isDuplicate = tableData.some(t => t.name.toLowerCase() === name.toLowerCase());
+        
+        if (isDuplicate) {
+            // Show error message and stop execution
+            nameErrorAlert.classList.remove('d-none');
+            return;
+        } else {
+            // Hide error message if validation passes
+            nameErrorAlert.classList.add('d-none');
+        }
+        
+        if(name && !isNaN(minutes)) {
+            createNewTable(name, minutes);
+            addTableForm.reset();
+            bootstrapModalInstance.hide();
+        }
+    });
+
+    // Core table lifecycle management 
+    function createNewTable(name, durationMinutes) {
+        const id = Date.now(); // Generate unique timestamp IDs
+        const totalSeconds = durationMinutes * 60;
+        
+        const tableObj = {
+            id: id,
+            name: name,
+            totalSeconds: totalSeconds,
+            remainingSeconds: totalSeconds,
+            isActive: true,
+            lastAlarmTime: 0,
+            domElements: {}
+        };
+
+        tableData.push(tableObj);
+        renderTableCard(tableObj);
+        updateUIForTable(tableObj);
+        saveTablesToStorage();
+        updateDashboardMetrics();
+    }
+
+    // Build template block and hook directly into DOM
+    function renderTableCard(table) {
+        const col = document.createElement('div');
+        col.className = 'col';
+        col.id = `table-card-container-${table.id}`;
+
+        col.innerHTML = `
+            <div class="card h-100 border-0 shadow-sm card-table">
+                <div class="card-body d-flex flex-column text-center">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-success" id="status-badge-${table.id}">Active</span>
+                        <h5 class="card-title mb-0 fw-bold">${table.name}</h5>
+                        <button class="btn btn-sm btn-outline-danger border-0" onclick="deleteTable(${table.id})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="my-4">
+                        <div class="timer-display text-dark mb-2" id="timer-text-${table.id}">
+                            ${formatTime(table.remainingSeconds)}
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
+                                 id="progress-bar-${table.id}" 
+                                 role="progressbar" 
+                                 style="width: 100%">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto d-flex justify-content-center gap-2">
+                        <button class="btn btn-sm btn-outline-secondary" id="ctrl-pause-${table.id}" onclick="togglePausePlay(${table.id})">
+                            <i class="bi bi-pause-fill me-1"></i>Pause
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary" onclick="addTimeExtension(${table.id}, 30)">
+                            <i class="bi bi-plus-circle me-1"></i>+30m
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary" onclick="addTimeExtension(${table.id}, 60)">
+                            <i class="bi bi-plus-circle me-1"></i>+1h
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        tablesContainer.appendChild(col);
+        
+        table.domElements.timerText = document.getElementById(`timer-text-${table.id}`);
+        table.domElements.progressBar = document.getElementById(`progress-bar-${table.id}`);
+        table.domElements.statusBadge = document.getElementById(`status-badge-${table.id}`);
+        table.domElements.pauseBtn = document.getElementById(`ctrl-pause-${table.id}`);
+    }
+
+    // Secondary controls and actions
+    window.togglePausePlay = function(id) {
+        initializeAudioContext();
+        const table = tableData.find(t => t.id === id);
+        if (!table || table.remainingSeconds <= 0) return;
+
+        table.isActive = !table.isActive;
+        
+        if(table.isActive) {
+            table.domElements.statusBadge.className = "badge bg-success";
+            table.domElements.statusBadge.innerText = "Active";
+            table.domElements.pauseBtn.innerHTML = '<i class="bi bi-pause-fill me-1"></i>Pause';
+            table.domElements.pauseBtn.className = "btn btn-sm btn-outline-secondary";
+            table.domElements.progressBar.classList.add('progress-bar-animated');
+        } else {
+            table.domElements.statusBadge.className = "badge bg-warning text-dark";
+            table.domElements.statusBadge.innerText = "Paused";
+            table.domElements.pauseBtn.innerHTML = '<i class="bi bi-play-fill me-1"></i>Resume';
+            table.domElements.pauseBtn.className = "btn btn-sm btn-outline-success";
+            table.domElements.progressBar.classList.remove('progress-bar-animated');
+        }
+        saveTablesToStorage();
+        updateDashboardMetrics();
+    };
+
+    window.addTimeExtension = function(id, additionalMinutes) {
+        initializeAudioContext();
+        const table = tableData.find(t => t.id === id);
+        if (!table) return;
+
+        const additionalSeconds = additionalMinutes * 60;
+        table.totalSeconds += additionalSeconds;
+        table.remainingSeconds += additionalSeconds;
+        table.lastAlarmTime = 0;
+
+        if (table.remainingSeconds > 0) {
+            table.domElements.pauseBtn.disabled = false;
+            table.domElements.timerText.classList.remove('text-blink');
+            
+            if (table.isActive) {
+                table.domElements.statusBadge.className = "badge bg-success";
+                table.domElements.statusBadge.innerText = "Active";
+                table.domElements.pauseBtn.innerHTML = '<i class="bi bi-pause-fill me-1"></i>Pause';
+                table.domElements.pauseBtn.className = "btn btn-sm btn-outline-secondary";
+                table.domElements.progressBar.classList.add('progress-bar-animated');
+            } else {
+                table.domElements.statusBadge.className = "badge bg-warning text-dark";
+                table.domElements.statusBadge.innerText = "Paused";
+                table.domElements.pauseBtn.innerHTML = '<i class="bi bi-play-fill me-1"></i>Resume';
+                table.domElements.pauseBtn.className = "btn btn-sm btn-outline-success";
+            }
+        }
+
+        updateUIForTable(table);
+        saveTablesToStorage();
+        updateDashboardMetrics();
+    };
+
+    window.deleteTable = function(id) {
+        const index = tableData.findIndex(t => t.id === id);
+        if (index !== -1) {
+            tableData.splice(index, 1);
+            const element = document.getElementById(`table-card-container-${id}`);
+            if (element) element.remove();
+            saveTablesToStorage();
+            updateDashboardMetrics();
+        }
+    };
+
+    // Global Time ticker loop running once per physical second
+    setInterval(() => {
+        let stateChanged = false;
+        
+        tableData.forEach(table => {
+            if (table.isActive && table.remainingSeconds > 0) {
+                table.remainingSeconds--;
+                stateChanged = true;
+                
+                updateUIForTable(table);
+
+                if (table.remainingSeconds <= 300 && table.remainingSeconds > 0) {
+                    if (!table.lastAlarmTime || (table.lastAlarmTime - table.remainingSeconds) >= 30) {
+                        playAlarmSound();
+                        table.lastAlarmTime = table.remainingSeconds;
+                    }
+                }
+
+                if (table.remainingSeconds <= 0) {
+                    setTableExpiredUI(table);
+                    playAlarmSound();
+                }
+            }
+        });
+
+        if (stateChanged) {
+            saveTablesToStorage();
+        }
+    }, 1000);
+
+    function updateUIForTable(table) {
+        if(!table.domElements.timerText) return;
+
+        table.domElements.timerText.innerText = formatTime(table.remainingSeconds);
+        
+        const percentage = (table.remainingSeconds / table.totalSeconds) * 100;
+        table.domElements.progressBar.style.width = `${percentage}%`;
+
+        if (table.remainingSeconds <= 300 && table.remainingSeconds > 0) {
+            table.domElements.progressBar.className = "progress-bar bg-danger progress-bar-striped progress-bar-animated";
+            table.domElements.timerText.className = "timer-display text-danger text-blink";
+        } else if (percentage <= 15) {
+            table.domElements.progressBar.className = "progress-bar bg-danger progress-bar-striped progress-bar-animated";
+            table.domElements.timerText.className = "timer-display text-danger";
+        } else if (percentage <= 40) {
+            table.domElements.progressBar.className = "progress-bar bg-warning progress-bar-striped progress-bar-animated";
+            table.domElements.timerText.className = "timer-display text-warning";
+            table.domElements.timerText.classList.remove('text-blink');
+        } else {
+            table.domElements.progressBar.className = "progress-bar bg-success progress-bar-striped progress-bar-animated";
+            table.domElements.timerText.className = "timer-display text-dark";
+            table.domElements.timerText.classList.remove('text-blink');
+        }
+    }
+
+    function setTableExpiredUI(table) {
+        table.isActive = false;
+        table.domElements.statusBadge.className = "badge bg-danger";
+        table.domElements.statusBadge.innerText = "Time Expired";
+        table.domElements.timerText.className = "timer-display text-danger fw-bold";
+        table.domElements.timerText.classList.remove('text-blink');
+        table.domElements.progressBar.style.width = `0%`;
+        table.domElements.progressBar.classList.remove('progress-bar-animated');
+        table.domElements.pauseBtn.disabled = true;
+    }
+
+    function formatTime(seconds) {
+        if (seconds <= 0) return "00:00:00";
+        const hrs = Math.floor(seconds / 3600);
+        const mins = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+        return [
+            hrs.toString().padStart(2, '0'),
+            mins.toString().padStart(2, '0'),
+            secs.toString().padStart(2, '0')
+        ].join(':');
+    }
+
+    function updateDashboardMetrics() {
+        totalTablesCountEl.innerText = tableData.length;
+        const activeCount = tableData.filter(t => t.isActive && t.remainingSeconds > 0).length;
+        activeRentalsCountEl.innerText = activeCount;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        loadTablesFromStorage();
+        
+        document.body.addEventListener('click', () => {
+            initializeAudioContext();
+        }, { once: true });
+    });
+</script>
+</body>
+</html>

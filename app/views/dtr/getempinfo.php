@@ -49,6 +49,7 @@
 					$officetitletu = $rowDTREmployee['officetitle'];
 					$officeabrvtu = $rowDTREmployee['officeabrv'];
 					$officegpslocationtu = $rowDTREmployee['office_gps_location'];
+					$typeemployeenotu = $rowDTREmployee['type_employee_no'];
 					$typeemployeeabrvtu = $rowDTREmployee['type_employee_abrv'];
 					$headofficertu = $rowDTREmployee['headofficer'];
 					$headtitletu = $rowDTREmployee['headtitle'];
