@@ -3,6 +3,8 @@
 	// ?isemployee=fe86d6d4e69b5821c74e4816f981b4f8  - for DGTHMC
 	// ?isemployee=535ad200e13bd0556a843d992efa9e00  - for Capitol
 
+	// xxx
+
 	$array_key = ["fe86d6d4e69b5821c74e4816f981b4f8", "535ad200e13bd0556a843d992efa9e00"];
 	$emplyornot = isset($_GET['isemployee']) ? $_GET['isemployee'] : null;
 	$settedsec = array_search($emplyornot, $array_key);
