@@ -18,6 +18,7 @@
 				'online_status'    => "INT(1) NOT NULL DEFAULT 0",
 				'device_id'        => "VARCHAR(100) DEFAULT NULL",
 				'device_name'      => "VARCHAR(150) DEFAULT NULL",
+				'duty_status'      => "INT(1) NOT NULL DEFAULT 0",
 			];
 			foreach ($_tracker_cols as $_col => $_def) {
 				$_chk = $_cnn->prepare("SHOW COLUMNS FROM employee_tbl LIKE :col");
@@ -35,6 +36,21 @@
 			$_cnn = null;
 			$_SESSION['_et_migrated'] = 1;
 		} catch (PDOException $_e) { /* silently skip if table not ready */ }
+	}
+
+	// One-time migration for duty_status column (added after initial migration)
+	if (empty($_SESSION['_et_duty_migrated'])) {
+		try {
+			$_cnn3 = new PDO("mysql:host={$host};dbname={$db}", $uname, $pw);
+			$_cnn3->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$_chk3 = $_cnn3->prepare("SHOW COLUMNS FROM employee_tbl LIKE 'duty_status'");
+			$_chk3->execute();
+			if ($_chk3->rowCount() == 0) {
+				$_cnn3->exec("ALTER TABLE employee_tbl ADD COLUMN duty_status INT(1) NOT NULL DEFAULT 0");
+			}
+			$_cnn3 = null;
+			$_SESSION['_et_duty_migrated'] = 1;
+		} catch (PDOException $_e) {}
 	}
 
 	if ( !isset($_SESSION["d2s8wu_ustat"]) && !isset($_SESSION["d2s8wu_verified"]) && !isset($_SESSION['d2s8wu_xdel']) && !isset($_SESSION['d2s8wu_ulevel']) ) {

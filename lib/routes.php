@@ -38,5 +38,6 @@
 		'signup-employee-print' => 'routes/signup-employee-print.php', 
 		'list-employee' => 'routes/list-employee.php', 
 		'employee-list' => 'routes/employee-list.php',
-		'employee-tracker' => 'routes/employee-tracker.php'
+		'employee-tracker' => 'routes/employee-tracker.php',
+		'office' => 'routes/office.php'
 	];

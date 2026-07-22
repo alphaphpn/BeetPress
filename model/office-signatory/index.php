@@ -25,6 +25,7 @@
 				$effectivitydatejj,
 				$signatorystatusjj,
 				$officegpslocationjj,
+				$meterjj,
 				$xdeljj,
 				$createdbyjj,
 				$modifiedbyjj,
@@ -51,6 +52,7 @@
 				$list_effectivitydatejj,
 				$list_signatorystatusjj,
 				$list_officegpslocationjj,
+				$list_meterjj,
 				$list_xdeljj,
 				$list_createdbyjj,
 				$list_modifiedbyjj,
@@ -78,6 +80,7 @@
 				$this->list_effectivitydatejj = array();
 				$this->list_signatorystatusjj = array();
 				$this->list_officegpslocationjj = array();
+				$this->list_meterjj = array();
 				$this->list_xdeljj = array();
 				$this->list_createdbyjj = array();
 				$this->list_modifiedbyjj = array();
@@ -106,6 +109,7 @@
 				$this->list_effectivitydatejj = array();
 				$this->list_signatorystatusjj = array();
 				$this->list_officegpslocationjj = array();
+				$this->list_meterjj = array();
 				$this->list_xdeljj = array();
 				$this->list_createdbyjj = array();
 				$this->list_modifiedbyjj = array();
@@ -164,6 +168,7 @@
 						$this->list_effectivitydatejj[] = $rwRcrd['effectivity_date'];
 						$this->list_signatorystatusjj[] = $rwRcrd['signatory_status'];
 						$this->list_officegpslocationjj[] = $rwRcrd['office_gps_location'];
+						$this->list_meterjj[] = $rwRcrd['meter'] ?? null;
 						$this->list_xdeljj[] = $rwRcrd['xdel'];
 						$this->list_createdbyjj[] = $rwRcrd['createdby'];
 						$this->list_modifiedbyjj[] = $rwRcrd['modifiedby'];
@@ -209,6 +214,7 @@
 						$this->list_effectivitydatejj[] = $rwRcrd['effectivity_date'];
 						$this->list_signatorystatusjj[] = $rwRcrd['signatory_status'];
 						$this->list_officegpslocationjj[] = $rwRcrd['office_gps_location'];
+						$this->list_meterjj[] = $rwRcrd['meter'] ?? null;
 						$this->list_xdeljj[] = $rwRcrd['xdel'];
 						$this->list_createdbyjj[] = $rwRcrd['createdby'];
 						$this->list_modifiedbyjj[] = $rwRcrd['modifiedby'];

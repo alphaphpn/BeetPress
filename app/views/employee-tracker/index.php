@@ -44,6 +44,7 @@ try {
                         <th></th>
                         <th></th>
                         <th></th>
+                        <th></th>
                         <th class="remove-dropdown"></th>
                         <th class="remove-dropdown"></th>
                         <th class="remove-dropdown"></th>
@@ -59,6 +60,7 @@ try {
                         <th>No.</th>
                         <th class="sticky-col">Employee ID</th>
                         <th>Employee Name</th>
+                        <th>Duty Status</th>
                         <th>Office Title</th>
                         <th>Designation</th>
                         <th>Role</th>
@@ -110,18 +112,24 @@ try {
                                 $oTextColor = $ostatus == 1 ? 'text-success' : 'text-secondary';
                                 $deviceid   = htmlspecialchars($tracker->list_device_id[$i] ?? '', ENT_QUOTES);
                                 $devicename = htmlspecialchars($tracker->list_device_name[$i] ?? '', ENT_QUOTES);
+                                $dutyVal    = (int)($tracker->list_duty_status[$i] ?? 0);
+                                $dutyLabel  = $dutyVal == 1 ? 'On-Duty' : 'Off-Duty';
+                                $dutyBadge  = $dutyVal == 1
+                                    ? '<span class="badge bg-success">On-Duty</span>'
+                                    : '<span class="badge bg-secondary">Off-Duty</span>';
 
                                 // All row data stored in data-* for the edit modal
                                 $rowData = htmlspecialchars(json_encode([
-                                    'empid'      => $empid,
-                                    'officetitle'=> $otitle,
-                                    'desig'      => $desig,
-                                    'role'       => $roleVal,
-                                    'wloc'       => $wloc,
-                                    'landmark'   => $landmark,
-                                    'lat'        => $lat,
-                                    'lng'        => $lng,
-                                    'meter'      => $meter,
+                                    'empid'       => $empid,
+                                    'officetitle' => $otitle,
+                                    'desig'       => $desig,
+                                    'role'        => $roleVal,
+                                    'wloc'        => $wloc,
+                                    'landmark'    => $landmark,
+                                    'lat'         => $lat,
+                                    'lng'         => $lng,
+                                    'meter'       => $meter,
+                                    'duty_status' => $dutyVal,
                                 ]), ENT_QUOTES);
 
                                 $wlocLabel = $wloc == 1
@@ -132,6 +140,7 @@ try {
                                     echo '<td>' . $xno_oo . '</td>';
                                     echo '<td class="sticky-col fw-bold">' . htmlspecialchars($empid, ENT_QUOTES) . '</td>';
                                     echo '<td>' . $ename . '</td>';
+                                    echo '<td class="cell-duty" data-order="' . $dutyVal . '" data-search="' . $dutyLabel . '">' . $dutyBadge . '</td>';
                                     echo '<td class="cell-officetitle">' . htmlspecialchars($otitle) . '</td>';
                                     echo '<td class="cell-desig">' . htmlspecialchars($desig) . '</td>';
                                     echo '<td class="cell-role" data-search="' . $roleLabel . '" data-order="' . $roleVal . '">' . $roleLabel . '</td>';
@@ -153,7 +162,7 @@ try {
                                 echo '</tr>';
                             }
                         } else {
-                            echo '<tr><td colspan="15" class="text-center text-muted py-4">No records found.</td></tr>';
+                            echo '<tr><td colspan="16" class="text-center text-muted py-4">No records found.</td></tr>';
                         }
                     ?>
                 </tbody>
@@ -162,6 +171,7 @@ try {
                         <td class="remove-dropdown"></td>
                         <td class="remove-dropdown"></td>
                         <td class="remove-dropdown"></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -231,6 +241,15 @@ try {
                         </select>
                     </div>
 
+                    <!-- Duty Status -->
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold mb-1">Duty Status</label>
+                        <select class="form-select form-select-sm" id="editDutyStatus">
+                            <option value="0">Off-Duty</option>
+                            <option value="1">On-Duty</option>
+                        </select>
+                    </div>
+
                     <div class="col-12"><hr class="my-1"></div>
 
                     <!-- Landmark / Office -->
@@ -256,7 +275,7 @@ try {
                     <!-- Meter -->
                     <div class="col-md-4">
                         <label class="form-label mb-1" style="font-size:.85rem;">Meter</label>
-                        <input type="text" class="form-control form-control-sm bg-secondary text-white" id="editMeter" readonly placeholder="Auto-filled from office">
+                        <input type="number" step="0.01" class="form-control form-control-sm" id="editMeter" placeholder="Enter meter value">
                     </div>
                 </div>
             </div>
@@ -323,6 +342,7 @@ function openEditModal(btn) {
     document.getElementById('editLat').value          = data.lat     || '';
     document.getElementById('editLng').value          = data.lng     || '';
     document.getElementById('editMeter').value        = data.meter   || '';
+    document.getElementById('editDutyStatus').value  = data.duty_status ?? 0;
 
     // Set office title
     document.getElementById('editOfficetitle').value = data.officetitle || '';
@@ -358,7 +378,8 @@ function saveEditModal() {
     const landmark   = document.getElementById('editLandmark').value;
     const lat        = document.getElementById('editLat').value.trim();
     const lng        = document.getElementById('editLng').value.trim();
-    const meter      = document.getElementById('editMeter').value.trim();
+    const meter       = document.getElementById('editMeter').value.trim();
+    const duty_status = document.getElementById('editDutyStatus').value;
 
     if (!desig) { alert('Designation cannot be empty.'); return; }
 
@@ -370,7 +391,7 @@ function saveEditModal() {
     fetch('model/employee-tracker/update-all.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ empid, officetitle, desig, role, wloc, landmark, lat, lng, meter })
+        body: new URLSearchParams({ empid, officetitle, desig, role, wloc, landmark, lat, lng, meter, duty_status })
     })
     .then(r => r.json())
     .then(data => {
@@ -378,7 +399,7 @@ function saveEditModal() {
         btn.innerHTML = orig;
         if (data.status === 'success') {
             bootstrap.Modal.getInstance(document.getElementById('editEmployeeModal')).hide();
-            updateRow(empid, { officetitle, desig, role: parseInt(role), wloc: parseInt(wloc), landmark, lat, lng, meter });
+            updateRow(empid, { officetitle, desig, role: parseInt(role), wloc: parseInt(wloc), landmark, lat, lng, meter, duty_status: parseInt(duty_status) });
         } else {
             alert('Error: ' + (data.msg || 'Failed to save.'));
         }
@@ -429,5 +450,17 @@ function updateRow(empid, d) {
     row.querySelector('.cell-lat').textContent      = d.lat   || '—';
     row.querySelector('.cell-meter').textContent    = d.meter
         ? parseFloat(d.meter).toFixed(2) + ' m' : '—';
+
+    // Duty Status
+    if ('duty_status' in d) {
+        const dutyCell  = row.querySelector('.cell-duty');
+        const dutyLbl   = d.duty_status == 1 ? 'On-Duty' : 'Off-Duty';
+        const dutyBadge = d.duty_status == 1
+            ? '<span class="badge bg-success">On-Duty</span>'
+            : '<span class="badge bg-secondary">Off-Duty</span>';
+        dutyCell.innerHTML        = dutyBadge;
+        dutyCell.dataset.order    = d.duty_status;
+        dutyCell.dataset.search   = dutyLbl;
+    }
 }
 </script>

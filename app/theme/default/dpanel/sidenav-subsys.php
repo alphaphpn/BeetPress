@@ -30,6 +30,11 @@
 								<div class="sb-nav-link-icon"><i class="fas fa-map-marker-alt"></i></div>
 								Employee Tracker
 							</a>
+
+							<a class="nav-link" href="office">
+								<div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
+								Office
+							</a>
 						<?php
 							}
 						?>

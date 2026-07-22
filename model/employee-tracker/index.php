@@ -22,7 +22,8 @@
 				$list_office_meter,
 				$list_online_status,
 				$list_device_id,
-				$list_device_name;
+				$list_device_name,
+				$list_duty_status;
 
 			public function __construct() {
 				$this->list_empidcode        = [];
@@ -38,34 +39,29 @@
 				$this->list_online_status    = [];
 				$this->list_device_id        = [];
 				$this->list_device_name      = [];
+				$this->list_duty_status      = [];
 			}
 
 			public function fn_ListEmployeeTracker($officeid) {
 				$this->__construct();
 				$this->getConnection();
 
-				$joinMeter = "LEFT JOIN (
-					    SELECT officetitle, MAX(meter) AS meter
-					    FROM office_signatory_tbl WHERE xdel=0
-					    GROUP BY officetitle
-					) _off ON _off.officetitle = e.office_landmark";
-
 				if (empty($officeid) || $officeid == 0 || $officeid == null) {
 					$sql = "SELECT e.emp_idcode, e.emp_name_forid, e.officetitle, e.designationforid,
 					               e.employee_role, e.work_location, e.office_landmark,
 					               e.office_longitude, e.office_latitude,
-					               COALESCE(_off.meter, e.office_meter) AS office_meter,
-					               e.online_status, e.device_id, e.device_name
-					        FROM employee_tbl e {$joinMeter}
+					               e.office_meter,
+					               e.online_status, e.device_id, e.device_name, e.duty_status
+					        FROM employee_tbl e
 					        WHERE e.xdel=0 ORDER BY e.created_at DESC";
 					$stmt = $this->cnn->prepare($sql);
 				} else {
 					$sql = "SELECT e.emp_idcode, e.emp_name_forid, e.officetitle, e.designationforid,
 					               e.employee_role, e.work_location, e.office_landmark,
 					               e.office_longitude, e.office_latitude,
-					               COALESCE(_off.meter, e.office_meter) AS office_meter,
-					               e.online_status, e.device_id, e.device_name
-					        FROM employee_tbl e {$joinMeter}
+					               e.office_meter,
+					               e.online_status, e.device_id, e.device_name, e.duty_status
+					        FROM employee_tbl e
 					        WHERE e.officeid=:officeid AND e.xdel=0 ORDER BY e.created_at DESC";
 					$stmt = $this->cnn->prepare($sql);
 					$stmt->bindParam(':officeid', $officeid);
@@ -87,6 +83,7 @@
 						$this->list_online_status[]    = $row['online_status'];
 						$this->list_device_id[]        = $row['device_id'];
 						$this->list_device_name[]      = $row['device_name'];
+						$this->list_duty_status[]      = $row['duty_status'];
 					}
 					return true;
 				}
