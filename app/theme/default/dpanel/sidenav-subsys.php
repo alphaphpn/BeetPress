@@ -25,6 +25,11 @@
 								<div class="sb-nav-link-icon"><i class="fas fa-user-tag"></i></div>
 								Employee List
 							</a>
+
+							<a class="nav-link" href="employee-tracker">
+								<div class="sb-nav-link-icon"><i class="fas fa-map-marker-alt"></i></div>
+								Employee Tracker
+							</a>
 						<?php
 							}
 						?>
