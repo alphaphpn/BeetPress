@@ -27,6 +27,7 @@
 		'employee-id-reg' => 'routes/empl-id-reg.php', 
 		'employee-signature' => 'routes/employee-signature.php', 
 		'gad' => 'routes/gad.php', 
+		'downloads' => 'routes/downloads.php', 
 
 		'users-list' => 'routes/users-list.php', 
 
@@ -37,7 +38,8 @@
 		'employee' => 'routes/employee.php', 
 		'signup-employee-print' => 'routes/signup-employee-print.php', 
 		'list-employee' => 'routes/list-employee.php', 
-		'employee-list' => 'routes/employee-list.php',
-		'employee-tracker' => 'routes/employee-tracker.php',
+		'employee-list' => 'routes/employee-list.php', 
+		'employee-tracker' => 'routes/employee-tracker.php', 
+		'employee-registration' => 'routes/employee-registration.php', 
 		'office' => 'routes/office.php'
 	];

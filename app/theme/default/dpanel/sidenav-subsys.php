@@ -1,6 +1,11 @@
 						<?php
 							if ( $disp_ulevel == 1 || $disp_ulevel == 16 || $disp_ulevel == 16 || $disp_ulevel == 17 ) {
 						?>
+							<a class="nav-link" href="employee-registration">
+								<div class="sb-nav-link-icon"><i class="fas fa-user-plus"></i></div>
+								Employee Registration
+							</a>
+
 							<a class="nav-link" href="#">
 								<div class="sb-nav-link-icon"><i class="fas fa-upload"></i></div>
 								Upload Timelogs
@@ -16,10 +21,10 @@
 								DocTrack
 							</a>
 
-							<a class="nav-link" href="employee-id-reg">
+							<!-- a class="nav-link" href="employee-id-reg">
 								<div class="sb-nav-link-icon"><i class="far fa-address-card"></i></div>
 								Employee ID Registration
-							</a>
+							</a -->
 
 							<a class="nav-link" href="employee-list">
 								<div class="sb-nav-link-icon"><i class="fas fa-user-tag"></i></div>

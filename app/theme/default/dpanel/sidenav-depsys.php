@@ -111,5 +111,30 @@
 								Environment and Natural Resources
 							</a>
 						<?php
+							} elseif ( $disp_officecode == 1032 ) {
+						?>
+							<div class="nav-item">
+								<!-- Sidebar Main Item -->
+								<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseHR" aria-expanded="false" aria-controls="collapseHR">
+									<div class="sb-nav-link-icon"><i class="fas fa-desktop"></i></div>
+								Human Resource
+									<div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+								</a>
+
+								<!-- Expanding Sub-menu -->
+								<div class="collapse" id="collapseHR">
+									<nav class="sb-sidenav-menu-nested nav">
+										<a class="nav-link" href="#">
+											<div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+										Employee List
+										</a>
+										<a class="nav-link" href="#">
+											<div class="sb-nav-link-icon"><i class="fas fa-user-clock"></i></div>
+										Attendance
+										</a>
+									</nav>
+								</div>
+							</div>
+						<?php
 							}
 						?>

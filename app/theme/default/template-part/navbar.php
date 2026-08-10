@@ -135,7 +135,7 @@
 								<li><a class="dropdown-item" href="<?php if ( $the_homepage == 1) { } else { echo trim($domainhome).'/'; } ?>#careers">Careers</a></li>
 								<li><a class="dropdown-item" href="<?php if ( $the_homepage == 1) { } else { echo trim($domainhome).'/'; } ?>#programs-projects">Programs and Projects</a></li>
 								<li><a class="dropdown-item" href="<?php if ( $the_homepage == 1) { } else { echo trim($domainhome).'/'; } ?>gad">Gender and Development</a></li>
-								<li><a class="dropdown-item" href="<?php if ( $the_homepage == 1) { } else { echo trim($domainhome).'/'; } ?>#downloads">Downloads</a></li>
+								<li><a class="dropdown-item" href="<?php if ( $the_homepage == 1) { } else { echo trim($domainhome).'/'; } ?>downloads">Downloads</a></li>
 								<li><hr class="dropdown-divider"></li>
 								<li><a class="dropdown-item" href="<?php if ( $the_homepage == 1) { } else { echo trim($domainhome).'/'; } ?>#faq">Frequently Ask Questions</a></li>
 								<li><hr class="dropdown-divider"></li>
