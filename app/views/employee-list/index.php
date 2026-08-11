@@ -142,6 +142,10 @@
         width: 320px;
         pointer-events: none;
     }
+
+    #employeeListExportControls {
+        white-space: nowrap;
+    }
 </style>
 
 <div class="container-fluid">
@@ -667,6 +671,99 @@
 </div>
 
 <script>
+    // DataTables replaces these labels with filter controls during initialization, so save them first.
+    const employeeListExportColumns = Array.from(document.querySelectorAll('#theadtitle th'))
+        .map(function (header, index) {
+            return { index: index, title: header.textContent.trim() };
+        })
+        .filter(function (column) {
+            return column.title !== 'ImgData' && column.title !== 'Action';
+        });
+
+    // Export the same filtered and sorted employee records currently shown by DataTables.
+    function getEmployeeListExportData() {
+        const table = $('#listRecView').DataTable();
+
+        const rows = table.rows({ search: 'applied', order: 'current', page: 'all' }).nodes().toArray()
+            .map(function (row) {
+                return employeeListExportColumns.map(function (column) {
+                    return $(row).children('td').eq(column.index).text().replace(/\s+/g, ' ').trim();
+                });
+            });
+
+        return { columns: employeeListExportColumns, rows: rows };
+    }
+
+    function escapeEmployeeListHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function printEmployeeList() {
+        const data = getEmployeeListExportData();
+        const printWindow = window.open('', '_blank');
+        if (!printWindow) {
+            alert('Please allow pop-ups to open the print preview.');
+            return;
+        }
+
+        const headers = data.columns.map(function (column) {
+            return '<th>' + escapeEmployeeListHtml(column.title) + '</th>';
+        }).join('');
+        const body = data.rows.map(function (row) {
+            return '<tr>' + row.map(function (cell) {
+                return '<td>' + escapeEmployeeListHtml(cell) + '</td>';
+            }).join('') + '</tr>';
+        }).join('');
+
+        printWindow.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Employee List</title>' +
+            '<style>body{font-family:Arial,sans-serif;margin:24px;color:#111}h1{font-size:20px;margin:0 0 6px}p{margin:0 0 18px;color:#555;font-size:12px}table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:1px solid #999;padding:6px;text-align:left;vertical-align:top}th{background:#eee}@media print{@page{size:landscape;margin:10mm}}</style>' +
+            '</head><body><h1>Employee List</h1><p>Generated ' + escapeEmployeeListHtml(new Date().toLocaleString()) + '</p><table><thead><tr>' + headers + '</tr></thead><tbody>' + body + '</tbody></table>' +
+            '<script>window.onload=function(){window.print();};<\/script></body></html>');
+        printWindow.document.close();
+    }
+
+    function exportEmployeeListToExcel() {
+        const data = getEmployeeListExportData();
+        const headers = data.columns.map(function (column) {
+            return '<th>' + escapeEmployeeListHtml(column.title) + '</th>';
+        }).join('');
+        const body = data.rows.map(function (row) {
+            return '<tr>' + row.map(function (cell) {
+                return '<td>' + escapeEmployeeListHtml(cell) + '</td>';
+            }).join('') + '</tr>';
+        }).join('');
+        const excelHtml = '<html><head><meta charset="utf-8"></head><body><table><thead><tr>' + headers + '</tr></thead><tbody>' + body + '</tbody></table></body></html>';
+        const blob = new Blob(['\ufeff', excelHtml], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const date = new Date().toISOString().slice(0, 10);
+        link.href = url;
+        link.download = 'employee-list-' + date + '.xls';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+    }
+
+    window.addEventListener('load', function () {
+        const navigation = document.getElementById('trnsfrPaginate');
+        if (!navigation || document.getElementById('employeeListExportControls')) {
+            return;
+        }
+
+        const controls = document.createElement('div');
+        controls.id = 'employeeListExportControls';
+        controls.className = 'd-flex gap-2 align-items-center me-auto';
+        controls.innerHTML = '<button type="button" class="btn btn-outline-secondary btn-sm" onclick="printEmployeeList()"><i class="bi bi-printer"></i> Print</button>' +
+            '<button type="button" class="btn btn-success btn-sm" onclick="exportEmployeeListToExcel()"><i class="bi bi-file-earmark-excel"></i> Export to Excel</button>';
+        navigation.prepend(controls);
+    });
+
     // ==========================================
     // HOVER PROFILE CARD LOGIC
     // ==========================================
