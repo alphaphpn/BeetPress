@@ -1,0 +1,29 @@
+/* Dashboard theme overrides. Dark is the default; light is 0a_conf.dashboard_theme = 1. */
+body.dashboard-theme-light {
+    background-color: #f8f9fa !important;
+    color: #212529;
+}
+
+body.dashboard-theme-light #particle-animate {
+    opacity: 3%;
+}
+
+body.dashboard-theme-light .last-bg-color {
+    background-color: #e9ecef !important;
+}
+
+body.dashboard-theme-light table.table-dark {
+    --bs-table-color: #212529;
+    --bs-table-bg: #ffffff;
+    --bs-table-border-color: #dee2e6;
+    --bs-table-striped-bg: #f2f4f6;
+    --bs-table-striped-color: #212529;
+    --bs-table-active-bg: #e9ecef;
+    --bs-table-active-color: #212529;
+    --bs-table-hover-bg: #e9ecef;
+    --bs-table-hover-color: #212529;
+}
+
+body.dashboard-theme-light table.dataTable.table-striped > tbody > tr.odd > * {
+    color: var(--bs-table-striped-color) !important;
+}

@@ -15,7 +15,7 @@
 
 	<div id="layoutSidenav">
 		<div id="layoutSidenav_nav">
-			<nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+			<nav class="sb-sidenav accordion sb-sidenav-<?php echo $dashboard_theme_name; ?>" id="sidenavAccordion">
 				<div class="sb-sidenav-header d-flex">
 					<div title="<?php echo trim($disp_uname); ?>" class="img-responsive rounded-2 w-100" style="min-height: 72px; max-width: 70px; background-color: #393633;background-image: url('<?php echo trim($pixloc); ?>public/userID/<?php echo trim($disp_uid); ?>.jpeg'); background-position: center top; background-repeat: no-repeat; background-size: cover;"></div>
 

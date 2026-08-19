@@ -6,7 +6,7 @@
 <div class="container-fluid">
 	<div class="pt-3">
 		<div class="table-responsive">
-			<table id="listRecView" class="table table-striped table-hover">
+			<table id="listRecView" class="table table-dark table-striped table-hover">
 				<thead id="remSortH">
 					<tr>
 						<th class="remove-dropdown"></th>

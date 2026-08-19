@@ -1,3 +1,9 @@
+<?php
+	include_once dirname(__DIR__, 4) . '/lib/dashboard-theme.php';
+	$dashboard_theme = getDashboardTheme();
+	$dashboard_theme_name = $dashboard_theme === 1 ? 'light' : 'dark';
+	$dashboard_navbar_class = $dashboard_theme === 1 ? 'navbar-light bg-light' : 'navbar-dark bg-dark';
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,6 +26,7 @@
 	<link rel="stylesheet" href="<?php echo trim($domainhome); ?>/assets/css/startup-bootstrap.css">
 	<link rel="stylesheet" href="<?php echo trim($domainhome); ?>/assets/css/dashboard.css">
 	<link rel="stylesheet" href="<?php echo trim($domainhome); ?>/assets/css/dashboard-style.css">
+	<link rel="stylesheet" href="<?php echo trim($domainhome); ?>/assets/css/dashboard-theme.css">
 	<link rel="stylesheet" href="<?php echo trim($domainhome); ?>/assets/css/style.css">
 	<link rel="stylesheet" href="<?php echo trim($domainhome); ?>/assets/datatables/1.13.6/css/dataTables.bootstrap5.min.css">
 
@@ -43,5 +50,4 @@
 	<script src="<?php echo trim($domainhome); ?>/assets/charts/loader.js"></script>
 </head>
 
-<body class="sb-nav-fixed">
-	
+<body class="sb-nav-fixed dashboard-theme-<?php echo $dashboard_theme_name; ?>">
