@@ -1,6 +1,11 @@
 						<?php
-							if ( $disp_ulevel == 1) {
+							if ( $disp_ulevel == 1 ) {
 						?>
+							<a class="nav-link" href="dmessages">
+								<div class="sb-nav-link-icon"><i class="fas fa-mail-bulk"></i></div>
+								Message(s)
+							</a>
+
 							<a class="nav-link" href="#">
 								<div class="sb-nav-link-icon"><i class="fas fa-cogs"></i></div>
 								Settings

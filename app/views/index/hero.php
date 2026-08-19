@@ -4,8 +4,8 @@
 			<div class="row vh-100">
 				<div class="col-lg-12 m-auto text-center">
 					<label id="label-daynreturn"></label> <label id="label-datereturn"></label>
-					<hr class="hr-ann-hofer p-0 m-0">
-					<img src="<?php echo trim($domainhome); ?>/assets/media/Ann-K-Hofer.png" class="w-100" style="max-width: 768px;">
+					<!-- hr class="hr-ann-hofer p-0 m-0" -->
+					<!-- img src="<?php echo trim($domainhome); ?>/assets/media/Ann-K-Hofer.png" class="w-100" style="max-width: 768px;" -->
 					<!-- <h2 class="txt-top-hero-title-site">Ann K. Hofer</h2>
 					<h3 class="txt-top-hero-title-site">Governor</h3> -->
 					<hr class="hr-ann-hofer p-0 m-0">
@@ -16,6 +16,6 @@
 		</div>
 
 		<video class="object-fit-cover" width="100%" height="100%" autoplay muted loop>
-			<source src="<?php echo trim($domainhome); ?>/public/hero-banner/video/2ndTerm-AnnKHofer.mp4" type="video/mp4">
+			<source src="<?php echo trim($domainhome); ?>/public/hero-banner/video/SOPA-2026-Gov-Ann-Hofer.mp4" type="video/mp4">
 		</video>
 	</section>

@@ -32,7 +32,7 @@
 			<li class="nav-item dropdown">
 				<a class="nav-link dropdown-toggle show" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="true"><i class="fas fa-user fa-fw text-white"></i></a>
 				<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown" data-bs-popper="static">
-					<li><a class="dropdown-item" href="<?php echo $domainhome; ?>">Site</a></li>
+					<li><a class="dropdown-item" href="./">Site</a></li>
 					<li><hr class="dropdown-divider" /></li>
 					<li><a class="dropdown-item" href="#!">Settings</a></li>
 					<li><a class="dropdown-item" href="#!">Activity Log</a></li>

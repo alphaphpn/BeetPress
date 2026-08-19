@@ -76,10 +76,18 @@
 								Assessor
 							</a>
 
-							<a class="nav-link" href="#">
-								<div class="sb-nav-link-icon"><i class="fas fa-desktop"></i></div>
-								Social Welfare
-							</a>
+							<div class="nav-item">
+								<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseSocialWelfare" aria-expanded="false" aria-controls="collapseSocialWelfare">
+									<div class="sb-nav-link-icon"><i class="fas fa-hands-helping"></i></div>
+									Social Welfare
+									<div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+								</a>
+								<div class="collapse" id="collapseSocialWelfare">
+									<nav class="sb-sidenav-menu-nested nav">
+										<a class="nav-link" href="<?php echo trim($domainhome); ?>/gad-module"><div class="sb-nav-link-icon"><i class="fas fa-chart-bar"></i></div>GAD Module</a>
+									</nav>
+								</div>
+							</div>
 
 							<a class="nav-link" href="#">
 								<div class="sb-nav-link-icon"><i class="fas fa-desktop"></i></div>
@@ -112,6 +120,7 @@
 							</a>
 						<?php
 							} elseif ( $disp_officecode == 1032 ) {
+								// HR
 						?>
 							<div class="nav-item">
 								<!-- Sidebar Main Item -->
@@ -124,14 +133,46 @@
 								<!-- Expanding Sub-menu -->
 								<div class="collapse" id="collapseHR">
 									<nav class="sb-sidenav-menu-nested nav">
-										<a class="nav-link" href="#">
+										<a class="nav-link" href="employee-registration">
 											<div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
-										Employee List
+										Employee Registration
 										</a>
 										<a class="nav-link" href="#">
 											<div class="sb-nav-link-icon"><i class="fas fa-user-clock"></i></div>
 										Attendance
 										</a>
+									</nav>
+								</div>
+							</div>
+						<?php
+							} elseif ( $disp_officecode == 7611 ) {
+								// PSWDO
+						?>
+							<div class="nav-item">
+								<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseSocialWelfare" aria-expanded="false" aria-controls="collapseSocialWelfare">
+									<div class="sb-nav-link-icon"><i class="fas fa-hands-helping"></i></div>
+									Social Welfare
+									<div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+								</a>
+								<div class="collapse" id="collapseSocialWelfare">
+									<nav class="sb-sidenav-menu-nested nav">
+										<a class="nav-link" href="<?php echo trim($domainhome); ?>/gad-module"><div class="sb-nav-link-icon"><i class="fas fa-chart-bar"></i></div>GAD Module</a>
+									</nav>
+								</div>
+							</div>
+						<?php
+							} elseif ( $disp_officecode == 1031 ) {
+								// OPAd
+						?>
+							<div class="nav-item">
+								<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseOPAd" aria-expanded="false" aria-controls="collapseOPAd">
+									<div class="sb-nav-link-icon"><i class="fas fa-hands-helping"></i></div>
+									Administrator
+									<div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+								</a>
+								<div class="collapse" id="collapseOPAd">
+									<nav class="sb-sidenav-menu-nested nav">
+										<a class="nav-link" href="employee-registration"><div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>Employee Registration</a>
 									</nav>
 								</div>
 							</div>

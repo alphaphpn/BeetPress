@@ -24,9 +24,14 @@
 		'sign-out' => 'lib/logout.php', 
 		'pds' => 'routes/pds.php', 
 		'portfolio' => 'routes/portfolio.php', 
+		'appointment-print' => 'routes/appointment-print.php',
+		'appointment-schedule' => 'routes/appointment-schedule.php',
+		'meeting-schedule' => 'routes/meeting-schedule.php',
+		'dcalendar' => 'routes/dcalendar.php',
 		'employee-id-reg' => 'routes/empl-id-reg.php', 
 		'employee-signature' => 'routes/employee-signature.php', 
 		'gad' => 'routes/gad.php', 
+		'gad-module' => 'routes/gad-module.php',
 		'downloads' => 'routes/downloads.php', 
 
 		'users-list' => 'routes/users-list.php', 
@@ -34,6 +39,7 @@
 		'post' => 'routes/post.php', 
 
 		'bp-mngr' => 'routes/bp-mngr.php', 
+		'dmessages' => 'routes/dmessages.php', 
 		'timelogs-upload' => 'routes/timelogs-upload.php', 
 		'employee' => 'routes/employee.php', 
 		'signup-employee-print' => 'routes/signup-employee-print.php', 

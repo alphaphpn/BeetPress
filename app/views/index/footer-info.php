@@ -66,8 +66,8 @@
 						<h3 class="txt-color-primary">Office Hours</h3>
 						<hr>
 						<p>
-							Monday to Friday <br> 
-							<b>8:00 AM to 5:00 PM</b>
+							Monday to Thursday <br> 
+							<b>9:00 AM to 5:00 PM</b>
 						</p>
 
 						<p>

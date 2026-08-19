@@ -32,7 +32,7 @@ try {
 
 <div class="container-fluid">
     <div class="pt-3">
-        <h5 class="mb-3 fw-bold">Employee Tracker</h5>
+        <h5 class="mb-3 fw-bold text-light">Employee Tracker</h5>
         <div class="table-responsive">
             <table id="listRecView" class="table table-dark table-striped table-hover">
                 <thead id="remSortH">

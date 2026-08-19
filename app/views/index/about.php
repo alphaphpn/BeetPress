@@ -16,8 +16,8 @@
 					<div class="slider-for mt-5" style="z-index: 1;">
 						<div>
 							<div class="feat-present position-relative clearfix shadow">
-								<video class="float-start" width="100%" height="100%" controls autoplay muted loop>
-									<source src="<?php echo trim($domainhome); ?>/public/oltama.mp4" type="video/mp4">
+								<video class="float-start" width="100%" height="100%" controls muted loop>
+									<source src="<?php echo trim($domainhome); ?>/public/hero-banner/video/SOPA-2026-Gov-Ann-Hofer.mp4" type="video/mp4">
 								</video>
 							</div>
 						</div>
@@ -32,32 +32,16 @@
 
 						<div>
 							<div class="feat-present position-relative clearfix shadow">
+								<video class="float-start" width="100%" height="100%" controls autoplay muted loop>
+									<source src="<?php echo trim($domainhome); ?>/public/oltama.mp4" type="video/mp4">
+								</video>
+							</div>
+						</div>
+
+						<div>
+							<div class="feat-present position-relative clearfix shadow">
 								<video class="float-start" width="100%" height="100%" controls muted loop>
 									<source src="<?php echo trim($domainhome); ?>/public/zumba-2025-08-nanz.mp4" type="video/mp4">
-								</video>
-							</div>
-						</div>
-
-						<div>
-							<div class="feat-present position-relative clearfix shadow">
-								<video class="float-start" width="100%" height="100%" controls muted loop>
-									<source src="<?php echo trim($domainhome); ?>/public/video-hero-banner.mp4" type="video/mp4">
-								</video>
-							</div>
-						</div>
-
-						<div>
-							<div class="feat-present position-relative clearfix shadow">
-								<video class="float-start" width="100%" height="100%" controls muted loop>
-									<source src="<?php echo trim($domainhome); ?>/public/video-hero-banner.mp4" type="video/mp4">
-								</video>
-							</div>
-						</div>
-
-						<div>
-							<div class="feat-present position-relative clearfix shadow">
-								<video class="float-start" width="100%" height="100%" controls muted loop>
-									<source src="<?php echo trim($domainhome); ?>/public/video-hero-banner.mp4" type="video/mp4">
 								</video>
 							</div>
 						</div>
@@ -65,27 +49,22 @@
 
 					<div class="slider-nav" style="z-index: 1;">
 						<div>
-							<div class="feat-thumbimg" style="background-image: url(<?php echo trim($domainhome); ?>/public/oltama.png);">
+							<div class="feat-thumbimg" style="background-image: url(<?php echo trim($domainhome); ?>/public/video-hero-banner.png);">
 							</div>
 						</div>
+
 						<div>
 							<div class="feat-thumbimg" style="background-image: url(<?php echo trim($domainhome); ?>/public/hero-banner/video/2ndTerm-AnnKHofer.png);">
 							</div>
 						</div>
+
+						<div>
+							<div class="feat-thumbimg" style="background-image: url(<?php echo trim($domainhome); ?>/public/oltama.png);">
+							</div>
+						</div>
+
 						<div>
 							<div class="feat-thumbimg" style="background-image: url(<?php echo trim($domainhome); ?>/public/zumba-2025-08-nanz.jpg);">
-							</div>
-						</div>
-						<div>
-							<div class="feat-thumbimg" style="background-image: url(<?php echo trim($domainhome); ?>/public/video-hero-banner.png);">
-							</div>
-						</div>
-						<div>
-							<div class="feat-thumbimg" style="background-image: url(<?php echo trim($domainhome); ?>/public/video-hero-banner.png);">
-							</div>
-						</div>
-						<div>
-							<div class="feat-thumbimg" style="background-image: url(<?php echo trim($domainhome); ?>/public/video-hero-banner.png);">
 							</div>
 						</div>
 					</div>

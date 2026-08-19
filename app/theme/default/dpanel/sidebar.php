@@ -50,9 +50,19 @@
 								<span class="badge bg-danger">Info</span>
 							</a>
 
-							<a class="nav-link" href="<?php echo trim($domainhome); ?>/bp-mngr">
+							<a class="nav-link" href="<?php echo trim($domainhome); ?>/dcalendar">
 								<div class="sb-nav-link-icon"><i class="fas fa-calendar-alt"></i></div>
 								Calendar
+							</a>
+
+							<a class="nav-link" href="<?php echo trim($domainhome); ?>/appointment-schedule">
+								<div class="sb-nav-link-icon"><i class="fas fa-calendar-check"></i></div>
+								Appointment Schedule
+							</a>
+
+							<a class="nav-link" href="<?php echo trim($domainhome); ?>/meeting-schedule">
+								<div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+								Meeting Schedule
 							</a>
 
 						<div class="sb-sidenav-menu-heading">Apps</div>
@@ -92,7 +102,7 @@
 
 					} else {
 				?>
-					<a href="javascript: history.back()" class="float-end btn btn-sm btn-danger">Back</a>
+					<a href="javascript: history.back()" class="float-end btn btn-sm btn-danger mt-2">Back</a>
 				<?php
 					}
 				?>

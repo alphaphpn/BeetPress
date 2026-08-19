@@ -16,15 +16,15 @@
 			$_SESSION["d2s8wu_ustat"]==1 && $_SESSION["d2s8wu_verified"]==1 && $_SESSION['d2s8wu_xdel']==0 && $_SESSION['d2s8wu_ulevel'] == 16 && $_SESSION["d2s8wu_officecode"] == 1031 || 
 			$_SESSION["d2s8wu_ustat"]==1 && $_SESSION["d2s8wu_verified"]==1 && $_SESSION['d2s8wu_xdel']==0 && $_SESSION['d2s8wu_ulevel'] == 16 && $_SESSION["d2s8wu_officecode"] == 1032) {
 
-			$the_htitle = "DashPanel: Employee Registration";
+			$the_htitle = "DashPanel: Messages from Contact Form";
 			$the_refresh = null;
 			$the_expires = null;
-			$page_title = "Employee Registration";
-			$breadcrumb = "Employee Registration";
+			$page_title = "Messages";
+			$breadcrumb = "Contact Us - Form (Messages)";
 			include_once "app/theme/{$theme}/dpanel/header.php";
 			include_once "app/theme/{$theme}/dpanel/navbar.php";
 			include_once "app/theme/{$theme}/dpanel/sidebar.php";
-			include_once "app/views/employee-registration/index.php";
+			include_once "app/views/dmessages/index.php";
 			include_once "app/theme/{$theme}/dpanel/footer-datatables.php";
 
 			/** For Web Refresh

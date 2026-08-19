@@ -76,6 +76,16 @@
 			/* Firefox */
 		}
 
+		#disp-pix #canvas.uploaded-photo {
+			transform: none;
+			-webkit-transform: none;
+			-moz-transform: none;
+			cursor: grab;
+			touch-action: none;
+		}
+
+		#disp-pix #canvas.uploaded-photo:active { cursor: grabbing; }
+
 		.vidframez {
 			position: absolute;
 			border-width: 12px 56px 88px 56px;
@@ -188,6 +198,8 @@
 								<h6 class="text-center text-primary">Profile Picture</h6>
 								<div class="my-1 w-100 text-center">
 									<button id="bttn-sampix" class="text-center m-auto btn btn-info btn-sm" type="button">Sample Picture</button>
+									<button id="upload-photo" class="btn btn-primary btn-sm" type="button">Upload Photo</button>
+									<input id="photo-upload-input" type="file" accept="image/*" class="d-none">
 								</div>
 
 								<div id="samp-pix" class="row my-2 d-none">
@@ -229,6 +241,12 @@
 									<div class="col m-0">
 										<p class="text-center m-0">Put only the Face inside the Frame.</p>
 									</div>
+								</div>
+
+								<div id="upload-editor-controls" class="text-center d-none mb-2">
+									<small class="d-block mb-1">Drag the photo to position it in the frame.</small>
+									<label for="upload-zoom-slider">Resize:</label>
+									<input type="range" id="upload-zoom-slider" min="1" max="3" value="1" step="0.01">
 								</div>
 
 								<div class="my-2 text-center">
@@ -1111,6 +1129,119 @@
 		let disppix = document.querySelector("#disp-pix");
 		let canvas = document.querySelector("#canvas");
 		let imgdata = document.querySelector("#imgdata");
+		let uploadPhotoButton = document.querySelector("#upload-photo");
+		let photoUploadInput = document.querySelector("#photo-upload-input");
+		let uploadEditorControls = document.querySelector("#upload-editor-controls");
+		let uploadZoomSlider = document.querySelector("#upload-zoom-slider");
+		let uploadedImage = null;
+		let uploadedImageState = { baseScale: 1, zoom: 1, x: 0, y: 0 };
+		let uploadDragState = null;
+
+		const passportWidth = 413;
+		const passportHeight = 531;
+
+		function renderUploadedPhoto() {
+			if (!uploadedImage) return;
+
+			const context = canvas.getContext('2d');
+			const scale = uploadedImageState.baseScale * uploadedImageState.zoom;
+			const imageWidth = uploadedImage.naturalWidth * scale;
+			const imageHeight = uploadedImage.naturalHeight * scale;
+			uploadedImageState.x = Math.min(0, Math.max(passportWidth - imageWidth, uploadedImageState.x));
+			uploadedImageState.y = Math.min(0, Math.max(passportHeight - imageHeight, uploadedImageState.y));
+			canvas.width = passportWidth;
+			canvas.height = passportHeight;
+			context.clearRect(0, 0, passportWidth, passportHeight);
+			context.drawImage(
+				uploadedImage,
+				uploadedImageState.x,
+				uploadedImageState.y,
+				imageWidth,
+				imageHeight
+			);
+			imgdata.value = canvas.toDataURL('image/jpeg', 0.92);
+		}
+
+		function stopActiveCamera() {
+			if (videoStream) {
+				videoStream.getTracks().forEach(track => track.stop());
+				video.srcObject = null;
+				videoStream = null;
+				videoTrack = null;
+			}
+			zoomContainer.classList.add('d-none');
+		}
+
+		uploadPhotoButton.addEventListener('click', function() {
+			photoUploadInput.click();
+		});
+
+		photoUploadInput.addEventListener('change', function() {
+			const file = this.files && this.files[0];
+			if (!file) return;
+
+			const reader = new FileReader();
+			reader.onload = function(event) {
+				uploadedImage = new Image();
+				uploadedImage.onload = function() {
+					stopActiveCamera();
+					const coverScale = Math.max(passportWidth / uploadedImage.naturalWidth, passportHeight / uploadedImage.naturalHeight);
+					uploadedImageState.baseScale = coverScale;
+					uploadedImageState.zoom = 1;
+					uploadedImageState.x = (passportWidth - uploadedImage.naturalWidth * coverScale) / 2;
+					uploadedImageState.y = (passportHeight - uploadedImage.naturalHeight * coverScale) / 2;
+					uploadZoomSlider.value = 1;
+					canvas.classList.add('uploaded-photo');
+					disppix.classList.remove('d-none');
+					dispvid.classList.add('d-none');
+					uploadEditorControls.classList.remove('d-none');
+					camera_button.classList.remove('d-none');
+					click_button.classList.add('d-none');
+					stopCameraBtn.classList.add('d-none');
+					retakephoto.classList.add('d-none');
+					renderUploadedPhoto();
+				};
+				uploadedImage.src = event.target.result;
+			};
+			reader.readAsDataURL(file);
+			this.value = '';
+		});
+
+		uploadZoomSlider.addEventListener('input', function() {
+			if (!uploadedImage) return;
+			const previousScale = uploadedImageState.baseScale * uploadedImageState.zoom;
+			const centerX = passportWidth / 2;
+			const centerY = passportHeight / 2;
+			const imagePointX = (centerX - uploadedImageState.x) / previousScale;
+			const imagePointY = (centerY - uploadedImageState.y) / previousScale;
+			uploadedImageState.zoom = parseFloat(this.value);
+			const newScale = uploadedImageState.baseScale * uploadedImageState.zoom;
+			uploadedImageState.x = centerX - imagePointX * newScale;
+			uploadedImageState.y = centerY - imagePointY * newScale;
+			renderUploadedPhoto();
+		});
+
+		canvas.addEventListener('pointerdown', function(event) {
+			if (!uploadedImage) return;
+			canvas.setPointerCapture(event.pointerId);
+			uploadDragState = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
+		});
+
+		canvas.addEventListener('pointermove', function(event) {
+			if (!uploadDragState || event.pointerId !== uploadDragState.pointerId) return;
+			const rect = canvas.getBoundingClientRect();
+			uploadedImageState.x += (event.clientX - uploadDragState.x) * (passportWidth / rect.width);
+			uploadedImageState.y += (event.clientY - uploadDragState.y) * (passportHeight / rect.height);
+			uploadDragState.x = event.clientX;
+			uploadDragState.y = event.clientY;
+			renderUploadedPhoto();
+		});
+
+		function endUploadDrag(event) {
+			if (uploadDragState && event.pointerId === uploadDragState.pointerId) uploadDragState = null;
+		}
+		canvas.addEventListener('pointerup', endUploadDrag);
+		canvas.addEventListener('pointercancel', endUploadDrag);
 
 		// New elements for camera selection
 		let cameraSelect = document.querySelector("#camera-select"); // Assuming a <select> element with id="camera-select"
@@ -1185,6 +1316,9 @@
 		 * @param {string} deviceId - The device ID of the camera to use.
 		 */
 		async function startCamera(deviceId) {
+			uploadedImage = null;
+			canvas.classList.remove('uploaded-photo');
+			uploadEditorControls.classList.add('d-none');
 			// Stop any existing stream first
 			if (videoStream) {
 				videoStream.getTracks().forEach(track => track.stop());
@@ -1325,12 +1459,12 @@
 		});
 
 		click_button.addEventListener('click', async function() {
+			uploadedImage = null;
+			canvas.classList.remove('uploaded-photo');
+			uploadEditorControls.classList.add('d-none');
 			disppix.classList.remove('d-none');
 
 			// Define standard passport photo dimensions in pixels (35mm x 45mm @ 300 DPI)
-			const passportWidth = 413;
-			const passportHeight = 531;
-
 			// Set the canvas dimensions to the passport size
 			canvas.width = passportWidth;
 			canvas.height = passportHeight;
@@ -1390,4 +1524,32 @@
 				zoomContainer.classList.remove('d-none');
 			}
 		});
+
+		function PwHideShow() {
+			var x = document.getElementById("password");
+			if (x.type === "password") {
+				x.type = "text";
+				$('#show_hide_password i').removeClass( "fa-eye-slash" );
+				$('#show_hide_password i').addClass( "fa-eye" );
+				x.onpaste = true;
+			} else {
+				x.type = "password";
+				$('#show_hide_password i').addClass( "fa-eye-slash" );
+				$('#show_hide_password i').removeClass( "fa-eye" );
+				x.onpaste = false;
+			}
+		}
+
+		function PwHideShow2() {
+			var x = document.getElementById("password2");
+			if (x.type === "password") {
+				x.type = "text";
+				$('#show_hide_password2 i').removeClass( "fa-eye-slash" );
+				$('#show_hide_password2 i').addClass( "fa-eye" );
+			} else {
+				x.type = "password";
+				$('#show_hide_password2 i').addClass( "fa-eye-slash" );
+				$('#show_hide_password2 i').removeClass( "fa-eye" );
+			}
+		}
 	</script>

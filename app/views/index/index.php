@@ -14,6 +14,6 @@
 	include_once "contact.php";
 	include_once "feat-img.php";
 	include_once "footer-info.php";
-	include_once "index.html";
+	// include_once "index.html";
 
 ?>

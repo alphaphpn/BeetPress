@@ -1,11 +1,6 @@
 						<?php
 							if ( $disp_ulevel == 1 || $disp_ulevel == 16 || $disp_ulevel == 16 || $disp_ulevel == 17 ) {
 						?>
-							<a class="nav-link" href="employee-registration">
-								<div class="sb-nav-link-icon"><i class="fas fa-user-plus"></i></div>
-								Employee Registration
-							</a>
-
 							<a class="nav-link" href="#">
 								<div class="sb-nav-link-icon"><i class="fas fa-upload"></i></div>
 								Upload Timelogs
@@ -47,6 +42,11 @@
 						<?php
 							if ( $disp_ulevel == 1) {
 						?>
+							<a class="nav-link" href="employee-registration">
+								<div class="sb-nav-link-icon"><i class="fas fa-user-plus"></i></div>
+								Employee Registration
+							</a>
+							
 							<a class="nav-link" href="#">
 								<div class="sb-nav-link-icon"><i class="fas fa-clock"></i></div>
 								DTR Builder
