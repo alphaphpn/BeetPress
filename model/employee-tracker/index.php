@@ -45,14 +45,33 @@
 			public function fn_ListEmployeeTracker($officeid) {
 				$this->__construct();
 				$this->getConnection();
+				$currentYear = (int) date('Y');
+				$currentMonth = (int) date('n');
+				$currentDay = (int) date('j');
+				$currentPeriod = date('A') === 'AM' ? 'AM' : 'PM';
+
+				// Duty status is calculated from today's DTR: clock-in without its matching clock-out means On-Duty.
+				$dutyStatusSql = "CASE WHEN :duty_period = 'AM' THEN
+					CASE WHEN NULLIF(TRIM(d.amtimein), '') IS NOT NULL AND NULLIF(TRIM(d.amtimeout), '') IS NULL THEN 1 ELSE 0 END
+					ELSE CASE WHEN NULLIF(TRIM(d.pmtimein), '') IS NOT NULL AND NULLIF(TRIM(d.pmtimeout), '') IS NULL THEN 1 ELSE 0 END
+					END AS duty_status";
+				$dtrJoinSql = "LEFT JOIN (
+					SELECT emp_idcode,
+						MAX(amtimein) AS amtimein, MAX(amtimeout) AS amtimeout,
+						MAX(pmtimein) AS pmtimein, MAX(pmtimeout) AS pmtimeout
+					FROM employee_dtr_sub_tbl
+					WHERE yearno = :dtr_year AND monthno = :dtr_month AND dayno = :dtr_day
+					GROUP BY emp_idcode
+				) d ON d.emp_idcode = e.emp_idcode";
+				$params = array(':duty_period' => $currentPeriod, ':dtr_year' => $currentYear, ':dtr_month' => $currentMonth, ':dtr_day' => $currentDay);
 
 				if (empty($officeid) || $officeid == 0 || $officeid == null) {
 					$sql = "SELECT e.emp_idcode, e.emp_name_forid, e.officetitle, e.designationforid,
 					               e.employee_role, e.work_location, e.office_landmark,
 					               e.office_longitude, e.office_latitude,
 					               e.office_meter,
-					               e.online_status, e.device_id, e.device_name, e.duty_status
-					        FROM employee_tbl e
+					               e.online_status, e.device_id, e.device_name, {$dutyStatusSql}
+					        FROM employee_tbl e {$dtrJoinSql}
 					        WHERE e.xdel=0 ORDER BY e.created_at DESC";
 					$stmt = $this->cnn->prepare($sql);
 				} else {
@@ -60,13 +79,13 @@
 					               e.employee_role, e.work_location, e.office_landmark,
 					               e.office_longitude, e.office_latitude,
 					               e.office_meter,
-					               e.online_status, e.device_id, e.device_name, e.duty_status
-					        FROM employee_tbl e
+					               e.online_status, e.device_id, e.device_name, {$dutyStatusSql}
+					        FROM employee_tbl e {$dtrJoinSql}
 					        WHERE e.officeid=:officeid AND e.xdel=0 ORDER BY e.created_at DESC";
 					$stmt = $this->cnn->prepare($sql);
-					$stmt->bindParam(':officeid', $officeid);
+					$params[':officeid'] = $officeid;
 				}
-				$stmt->execute();
+				$stmt->execute($params);
 
 				if ($stmt->rowCount() > 0) {
 					foreach ($stmt as $row) {

@@ -34,7 +34,7 @@ try {
     <div class="pt-3">
         <h5 class="mb-3 fw-bold text-light">Employee Tracker</h5>
         <div class="table-responsive">
-            <table id="listRecView" class="table table-dark table-striped table-hover">
+            <table id="listRecView" class="table table-dark table-striped table-hover" data-default-duty-status="On-Duty">
                 <thead id="remSortH">
                     <tr>
                         <th class="remove-dropdown"></th>
@@ -129,7 +129,6 @@ try {
                                     'lat'         => $lat,
                                     'lng'         => $lng,
                                     'meter'       => $meter,
-                                    'duty_status' => $dutyVal,
                                 ]), ENT_QUOTES);
 
                                 $wlocLabel = $wloc == 1
@@ -241,15 +240,6 @@ try {
                         </select>
                     </div>
 
-                    <!-- Duty Status -->
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold mb-1">Duty Status</label>
-                        <select class="form-select form-select-sm" id="editDutyStatus">
-                            <option value="0">Off-Duty</option>
-                            <option value="1">On-Duty</option>
-                        </select>
-                    </div>
-
                     <div class="col-12"><hr class="my-1"></div>
 
                     <!-- Landmark / Office -->
@@ -342,8 +332,6 @@ function openEditModal(btn) {
     document.getElementById('editLat').value          = data.lat     || '';
     document.getElementById('editLng').value          = data.lng     || '';
     document.getElementById('editMeter').value        = data.meter   || '';
-    document.getElementById('editDutyStatus').value  = data.duty_status ?? 0;
-
     // Set office title
     document.getElementById('editOfficetitle').value = data.officetitle || '';
 
@@ -379,8 +367,6 @@ function saveEditModal() {
     const lat        = document.getElementById('editLat').value.trim();
     const lng        = document.getElementById('editLng').value.trim();
     const meter       = document.getElementById('editMeter').value.trim();
-    const duty_status = document.getElementById('editDutyStatus').value;
-
     if (!desig) { alert('Designation cannot be empty.'); return; }
 
     const btn = document.getElementById('editSaveBtn');
@@ -391,7 +377,7 @@ function saveEditModal() {
     fetch('model/employee-tracker/update-all.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ empid, officetitle, desig, role, wloc, landmark, lat, lng, meter, duty_status })
+        body: new URLSearchParams({ empid, officetitle, desig, role, wloc, landmark, lat, lng, meter })
     })
     .then(r => r.json())
     .then(data => {
@@ -399,7 +385,7 @@ function saveEditModal() {
         btn.innerHTML = orig;
         if (data.status === 'success') {
             bootstrap.Modal.getInstance(document.getElementById('editEmployeeModal')).hide();
-            updateRow(empid, { officetitle, desig, role: parseInt(role), wloc: parseInt(wloc), landmark, lat, lng, meter, duty_status: parseInt(duty_status) });
+            updateRow(empid, { officetitle, desig, role: parseInt(role), wloc: parseInt(wloc), landmark, lat, lng, meter });
         } else {
             alert('Error: ' + (data.msg || 'Failed to save.'));
         }
@@ -451,16 +437,5 @@ function updateRow(empid, d) {
     row.querySelector('.cell-meter').textContent    = d.meter
         ? parseFloat(d.meter).toFixed(2) + ' m' : '—';
 
-    // Duty Status
-    if ('duty_status' in d) {
-        const dutyCell  = row.querySelector('.cell-duty');
-        const dutyLbl   = d.duty_status == 1 ? 'On-Duty' : 'Off-Duty';
-        const dutyBadge = d.duty_status == 1
-            ? '<span class="badge bg-success">On-Duty</span>'
-            : '<span class="badge bg-secondary">Off-Duty</span>';
-        dutyCell.innerHTML        = dutyBadge;
-        dutyCell.dataset.order    = d.duty_status;
-        dutyCell.dataset.search   = dutyLbl;
-    }
 }
 </script>

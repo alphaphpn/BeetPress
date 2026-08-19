@@ -17,7 +17,6 @@ $landmark    = trim($_POST['landmark']     ?? '');
 $lat         = trim($_POST['lat']          ?? '');
 $lng         = trim($_POST['lng']          ?? '');
 $meter       = trim($_POST['meter']        ?? '');
-$duty_status = intval($_POST['duty_status'] ?? 0);
 
 if (!$empid) {
     echo json_encode(['status' => 'error', 'msg' => 'Invalid request']);
@@ -36,8 +35,7 @@ try {
         office_landmark   = :landmark,
         office_latitude   = :lat,
         office_longitude  = :lng,
-        office_meter      = :meter,
-        duty_status       = :duty_status
+        office_meter      = :meter
         WHERE emp_idcode  = :empid");
 
     $stmt->execute([
@@ -49,7 +47,6 @@ try {
         ':lat'          => $lat   !== '' ? $lat   : null,
         ':lng'          => $lng   !== '' ? $lng   : null,
         ':meter'        => $meter !== '' ? $meter : null,
-        ':duty_status'  => $duty_status,
         ':empid'        => $empid,
     ]);
 

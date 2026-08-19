@@ -13,7 +13,9 @@
 		$(document).ready( function () {
 			$('#listRecView').DataTable( {
 				initComplete: function () {
-					this.api().columns().every( function () {
+					var tableApi = this.api();
+					var defaultDutyStatus = tableApi.table().node().dataset.defaultDutyStatus;
+					tableApi.columns().every( function () {
 
 						/** Filter Group for each column Start **/
 						var column = this;
@@ -29,11 +31,22 @@
 							.draw();
 						});
 
-						column.data().unique().sort().each( function ( d, j ) {
-							select.append( '<option value="'+d+'">'+d+'</option>' )
-						});
+						if (defaultDutyStatus && column.index() === 3) {
+							select.append('<option value="On-Duty">ON-Duty</option>');
+							select.append('<option value="Off-Duty">OFF-Duty</option>');
+						} else {
+							column.data().unique().sort().each( function ( d, j ) {
+								select.append( '<option value="'+d+'">'+d+'</option>' )
+							});
+						}
 						/** Filter Group for each column End **/
 					});
+
+					if (defaultDutyStatus) {
+						var dutyColumn = tableApi.column(3);
+						$(dutyColumn.header()).find('select').val(defaultDutyStatus);
+						dutyColumn.search('^' + $.fn.dataTable.util.escapeRegex(defaultDutyStatus) + '$', true, false).draw();
+					}
 				}, 
 				lengthMenu: [
 					[5, 10, 25, 50, 100, -1],
