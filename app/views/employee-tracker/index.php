@@ -114,9 +114,14 @@ try {
                                 $devicename = htmlspecialchars($tracker->list_device_name[$i] ?? '', ENT_QUOTES);
                                 $dutyVal    = (int)($tracker->list_duty_status[$i] ?? 0);
                                 $dutyLabel  = $dutyVal == 1 ? 'On-Duty' : 'Off-Duty';
-                                $dutyBadge  = $dutyVal == 1
-                                    ? '<span class="badge bg-success">On-Duty</span>'
-                                    : '<span class="badge bg-secondary">Off-Duty</span>';
+                                $dutyTooltip = htmlspecialchars($tracker->list_duty_tooltip[$i] ?? 'No time log is available.', ENT_QUOTES);
+                                $dutyOrigin = htmlspecialchars($tracker->list_duty_map_origin[$i] ?? '', ENT_QUOTES);
+                                $dutyDestination = htmlspecialchars($tracker->list_duty_map_destination[$i] ?? '', ENT_QUOTES);
+                                $dutyBadgeClass = $dutyVal == 1 ? 'bg-success' : 'bg-secondary';
+                                $dutyBadge  = '<button type="button" class="badge border-0 ' . $dutyBadgeClass . '"'
+                                    . ' data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' . $dutyTooltip . '"'
+                                    . ' data-map-origin="' . $dutyOrigin . '" data-map-destination="' . $dutyDestination . '"'
+                                    . ' onclick="openDutyMap(this)">' . $dutyLabel . '</button>';
 
                                 // All row data stored in data-* for the edit modal
                                 $rowData = htmlspecialchars(json_encode([
@@ -314,7 +319,27 @@ document.addEventListener('DOMContentLoaded', function () {
         opt.dataset.meter = (o.meter !== null && o.meter !== undefined && o.meter !== '') ? o.meter : '';
         landmarkSel.add(opt);
     });
+
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (element) {
+        new bootstrap.Tooltip(element);
+    });
 });
+
+function openDutyMap(button) {
+    const origin = button.dataset.mapOrigin || '';
+    const destination = button.dataset.mapDestination || '';
+
+    if (!destination) {
+        alert('No GPS location is available for this employee\'s current time-log event.');
+        return;
+    }
+
+    const mapUrl = 'https://www.google.com/maps/dir/?api=1'
+        + '&origin=' + encodeURIComponent(origin || 'Current Location')
+        + '&destination=' + encodeURIComponent(destination)
+        + '&travelmode=driving';
+    window.open(mapUrl, 'employeeDutyMap', 'width=1100,height=760,noopener,noreferrer');
+}
 
 
 // ============================================================

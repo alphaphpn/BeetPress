@@ -23,7 +23,10 @@
 				$list_online_status,
 				$list_device_id,
 				$list_device_name,
-				$list_duty_status;
+				$list_duty_status,
+				$list_duty_tooltip,
+				$list_duty_map_origin,
+				$list_duty_map_destination;
 
 			public function __construct() {
 				$this->list_empidcode        = [];
@@ -40,6 +43,27 @@
 				$this->list_device_id        = [];
 				$this->list_device_name      = [];
 				$this->list_duty_status      = [];
+				$this->list_duty_tooltip     = [];
+				$this->list_duty_map_origin  = [];
+				$this->list_duty_map_destination = [];
+			}
+
+			private function hasTimeLog($value) {
+				return trim((string) $value) !== '';
+			}
+
+			private function gpsCoordinates($value) {
+				preg_match_all('/-?\d+(?:\.\d+)?/', (string) $value, $matches);
+				if (count($matches[0]) < 2) return '';
+				$first = (float) $matches[0][0];
+				$second = (float) $matches[0][1];
+				if (abs($first) > 90 && abs($second) <= 90) {
+					$temp = $first;
+					$first = $second;
+					$second = $temp;
+				}
+				if (abs($first) > 90 || abs($second) > 180) return '';
+				return $first . ',' . $second;
 			}
 
 			public function fn_ListEmployeeTracker($officeid) {
@@ -58,7 +82,11 @@
 				$dtrJoinSql = "LEFT JOIN (
 					SELECT emp_idcode,
 						MAX(amtimein) AS amtimein, MAX(amtimeout) AS amtimeout,
-						MAX(pmtimein) AS pmtimein, MAX(pmtimeout) AS pmtimeout
+						MAX(pmtimein) AS pmtimein, MAX(pmtimeout) AS pmtimeout,
+						MAX(attendance_gps_location_am_in) AS attendance_gps_location_am_in,
+						MAX(attendance_gps_location_am_out) AS attendance_gps_location_am_out,
+						MAX(attendance_gps_location_pm_in) AS attendance_gps_location_pm_in,
+						MAX(attendance_gps_location_pm_out) AS attendance_gps_location_pm_out
 					FROM employee_dtr_sub_tbl
 					WHERE yearno = :dtr_year AND monthno = :dtr_month AND dayno = :dtr_day
 					GROUP BY emp_idcode
@@ -70,7 +98,11 @@
 					               e.employee_role, e.work_location, e.office_landmark,
 					               e.office_longitude, e.office_latitude,
 					               e.office_meter,
-					               e.online_status, e.device_id, e.device_name, {$dutyStatusSql}
+					               e.online_status, e.device_id, e.device_name,
+					               d.amtimein, d.amtimeout, d.pmtimein, d.pmtimeout,
+					               d.attendance_gps_location_am_in, d.attendance_gps_location_am_out,
+					               d.attendance_gps_location_pm_in, d.attendance_gps_location_pm_out,
+					               {$dutyStatusSql}
 					        FROM employee_tbl e {$dtrJoinSql}
 					        WHERE e.xdel=0 ORDER BY e.created_at DESC";
 					$stmt = $this->cnn->prepare($sql);
@@ -79,7 +111,11 @@
 					               e.employee_role, e.work_location, e.office_landmark,
 					               e.office_longitude, e.office_latitude,
 					               e.office_meter,
-					               e.online_status, e.device_id, e.device_name, {$dutyStatusSql}
+					               e.online_status, e.device_id, e.device_name,
+					               d.amtimein, d.amtimeout, d.pmtimein, d.pmtimeout,
+					               d.attendance_gps_location_am_in, d.attendance_gps_location_am_out,
+					               d.attendance_gps_location_pm_in, d.attendance_gps_location_pm_out,
+					               {$dutyStatusSql}
 					        FROM employee_tbl e {$dtrJoinSql}
 					        WHERE e.officeid=:officeid AND e.xdel=0 ORDER BY e.created_at DESC";
 					$stmt = $this->cnn->prepare($sql);
@@ -103,6 +139,30 @@
 						$this->list_device_id[]        = $row['device_id'];
 						$this->list_device_name[]      = $row['device_name'];
 						$this->list_duty_status[]      = $row['duty_status'];
+
+						$timeLogDetails = array(
+							'AM In: ' . ($this->hasTimeLog($row['amtimein']) ? $row['amtimein'] : 'Not logged'),
+							'AM Out: ' . ($this->hasTimeLog($row['amtimeout']) ? $row['amtimeout'] : 'Not logged'),
+							'PM In: ' . ($this->hasTimeLog($row['pmtimein']) ? $row['pmtimein'] : 'Not logged'),
+							'PM Out: ' . ($this->hasTimeLog($row['pmtimeout']) ? $row['pmtimeout'] : 'Not logged')
+						);
+						$latestGps = '';
+						if ($currentPeriod === 'AM') {
+							$latestGps = $this->hasTimeLog($row['amtimeout']) ? $row['attendance_gps_location_am_out'] : $row['attendance_gps_location_am_in'];
+						} else {
+							if ($this->hasTimeLog($row['pmtimeout'])) $latestGps = $row['attendance_gps_location_pm_out'];
+							elseif ($this->hasTimeLog($row['pmtimein'])) $latestGps = $row['attendance_gps_location_pm_in'];
+							elseif ($this->hasTimeLog($row['amtimeout'])) $latestGps = $row['attendance_gps_location_am_out'];
+							else $latestGps = $row['attendance_gps_location_am_in'];
+						}
+						$destination = $this->gpsCoordinates($latestGps);
+						$origin = $this->gpsCoordinates($row['office_latitude'] . ',' . $row['office_longitude']);
+						if ($origin === '') $origin = trim((string) $row['office_landmark']);
+						if ($destination !== '') $timeLogDetails[] = 'Click to open directions to the logged GPS location.';
+						else $timeLogDetails[] = 'No GPS location is available for the current time-log event.';
+						$this->list_duty_tooltip[] = implode("\n", $timeLogDetails);
+						$this->list_duty_map_origin[] = $origin;
+						$this->list_duty_map_destination[] = $destination;
 					}
 					return true;
 				}
