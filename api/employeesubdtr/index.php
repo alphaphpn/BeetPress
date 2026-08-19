@@ -66,22 +66,119 @@
 			if (!$recordExists) {
 				// --- NO RECORD FOUND: GENERATE ALL DAYS FOR THAT MONTH ---
 				$daysInMonth = cal_days_in_month(CAL_GREGORIAN, $monthno, $yearno);
-				$monthName   = date("M", mktime(0, 0, 0, $monthno, 10)); // e.g., "Jul"
+				// $monthName   = date("M", mktime(0, 0, 0, $monthno, 10)); // e.g., "Jul"
+				$monthName = date("F", mktime(0, 0, 0, $monthno, 10)); // e.g., "July"
 
 				// 1. Format the month with a leading zero (e.g., 7 -> "07")
 				$formattedMonth = str_pad($monthno, 2, "0", STR_PAD_LEFT);
 				
-				// 2. Generate the dtrcode (e.g., "87654321-2026-07")
-				$dtrcode = $employeeid . "-" . $yearno . "-" . $formattedMonth;
+				// 2. Generate the dtrcode (e.g., "20260787654321")
+				$dtrcode = $yearno . $formattedMonth . $employeeid;
 
-				// 3. Added dtrcode to the INSERT column list and parameters
-				$insertQuery = "INSERT INTO employee_dtr_sub_tbl 
-					(dtrcode, emp_idcode, yearno, monthno, monthname, dayno, nameday, amtimein, amtimeout, pmtimein, pmtimeout, attendance_gps_location_am_in, attendance_gps_location_am_out, attendance_gps_location_pm_in, attendance_gps_location_pm_out) 
+				// Create the monthly DTR header first when it does not yet exist.  The
+				// header is the snapshot used by the DTR view for the employee, office,
+				// and approving-officer information.
+				$employeeQuery = "SELECT agency_code, agency_name, profileid, bio_location, bio_no,
+					emp_name, officeid, officecode, officename, officetitle, officeabrv,
+					office_gps_location, type_employee_no, type_employee_abrv, headofficer,
+					headtitle, auth_head, auth_title, auth_description, shift_status,
+					time_editable, priority_dtr, time_editable_value, allowed_ot
+					FROM employee_tbl WHERE emp_idcode = :id LIMIT 1";
+				$employeeStmt = $cnn->prepare($employeeQuery);
+				$employeeStmt->execute([':id' => $employeeid]);
+				$employee = $employeeStmt->fetch(PDO::FETCH_ASSOC);
+
+				if ($employee === false) {
+					http_response_code(404);
+					echo json_encode([
+						"status" => "error",
+						"message" => "Employee information was not found."
+					]);
+					exit;
+				}
+
+				// Check the monthly DTR before generating any daily rows.  When it
+				// already exists, its dtrcode must also be used by the new sub-DTR
+				// rows so the DTR view can join the header and the daily logs.
+				$monthlyDtrQuery = "SELECT dtrcode FROM employee_dtr_tbl
+					WHERE emp_idcode = :id AND yearno = :year AND monthno = :month
+					LIMIT 1";
+				$monthlyDtrStmt = $cnn->prepare($monthlyDtrQuery);
+				$monthlyDtrStmt->execute([
+					':id' => $employeeid,
+					':year' => $yearno,
+					':month' => $monthno,
+				]);
+				$monthlyDtr = $monthlyDtrStmt->fetch(PDO::FETCH_ASSOC);
+				$monthlyDtrExists = $monthlyDtr !== false;
+
+				$cnn->beginTransaction();
+
+				if (!$monthlyDtrExists) {
+					$insertMonthlyDtr = "INSERT INTO employee_dtr_tbl
+						(agency_code, agency_name, emp_idcode, dtrcode, yearno, monthno, monthname,
+						profileid, bio_location, bio_no, emp_name, officeid, officecode, officename,
+						officetitle, officeabrv, office_gps_location, type_employee_no,
+						type_employee_abrv, headofficer, headtitle, auth_head, auth_title,
+						auth_description, shift_status, time_editable, priority_dtr,
+						time_editable_value, allowed_ot)
+						VALUES
+						(:agency_code, :agency_name, :emp_idcode, :dtrcode, :yearno, :monthno, :monthname,
+						:profileid, :bio_location, :bio_no, :emp_name, :officeid, :officecode, :officename,
+						:officetitle, :officeabrv, :office_gps_location, :type_employee_no,
+						:type_employee_abrv, :headofficer, :headtitle, :auth_head, :auth_title,
+						:auth_description, :shift_status, :time_editable, :priority_dtr,
+						:time_editable_value, :allowed_ot)";
+					$insertMonthlyDtrStmt = $cnn->prepare($insertMonthlyDtr);
+					$insertMonthlyDtrStmt->execute([
+						':agency_code' => $employee['agency_code'],
+						':agency_name' => $employee['agency_name'],
+						':emp_idcode' => $employeeid,
+						':dtrcode' => $dtrcode,
+						':yearno' => $yearno,
+						':monthno' => $monthno,
+						':monthname' => $monthName,
+						':profileid' => $employee['profileid'],
+						':bio_location' => $employee['bio_location'],
+						':bio_no' => $employee['bio_no'],
+						':emp_name' => $employee['emp_name'],
+						':officeid' => $employee['officeid'],
+						':officecode' => $employee['officecode'],
+						':officename' => $employee['officename'],
+						':officetitle' => $employee['officetitle'],
+						':officeabrv' => $employee['officeabrv'],
+						':office_gps_location' => $employee['office_gps_location'],
+						':type_employee_no' => $employee['type_employee_no'],
+						':type_employee_abrv' => $employee['type_employee_abrv'],
+						':headofficer' => $employee['headofficer'],
+						':headtitle' => $employee['headtitle'],
+						':auth_head' => $employee['auth_head'],
+						':auth_title' => $employee['auth_title'],
+						':auth_description' => $employee['auth_description'],
+						':shift_status' => $employee['shift_status'],
+						':time_editable' => $employee['time_editable'],
+						':priority_dtr' => $employee['priority_dtr'],
+						':time_editable_value' => $employee['time_editable_value'],
+						':allowed_ot' => $employee['allowed_ot'],
+					]);
+				} else {
+					$dtrcode = $monthlyDtr['dtrcode'];
+				}
+
+				// Generate the daily records after the monthly header has been confirmed.
+				$insertQuery = "INSERT INTO employee_dtr_sub_tbl
+					(agency_code, agency_name, dtrcode, emp_idcode, yearno, monthno, monthname,
+					dayno, nameday, emp_name, bio_location, bio_no, allowed_ot, amtimein,
+					amtimeout, pmtimein, pmtimeout, attendance_gps_location_am_in,
+					attendance_gps_location_am_out, attendance_gps_location_pm_in,
+					attendance_gps_location_pm_out)
 					VALUES 
-					(:dtrcode, :id, :year, :month, :monthname, :day, :nameday, :amtimein, :amtimeout, :pmtimein, :pmtimeout, :gpslocamin, :gpslocamout, :gpslocpmin, :gpslocpmout)";
+					(:agencycode, :agencyname, :dtrcode, :id, :year, :month, :monthname,
+					:day, :nameday, :empname, :biolocation, :biono, :allowedot, :amtimein,
+					:amtimeout, :pmtimein, :pmtimeout, :gpslocamin, :gpslocamout,
+					:gpslocpmin, :gpslocpmout)";
 				
 				$insertStmt = $cnn->prepare($insertQuery);
-				$cnn->beginTransaction();
 
 				for ($d = 1; $d <= $daysInMonth; $d++) {
 					// 3-letter day name (e.g., "Wed")
@@ -98,6 +195,8 @@
 					$currGpsPout= ($d == $dayno && $gpslocpmout !== null) ? $gpslocpmout : "";
 
 					$insertStmt->execute([
+						":agencycode"   => $employee['agency_code'],
+						":agencyname"   => $employee['agency_name'],
 						":dtrcode"      => $dtrcode, // Bind the formatted dtrcode here
 						":id"           => $employeeid,
 						":year"         => $yearno,
@@ -105,6 +204,10 @@
 						":monthname"    => $monthName,
 						":day"          => $d,
 						":nameday"      => $nameday,
+						":empname"      => $employee['emp_name'],
+						":biolocation"  => $employee['bio_location'],
+						":biono"        => $employee['bio_no'],
+						":allowedot"    => $employee['allowed_ot'],
 						":amtimein"     => $currAmIn,
 						":amtimeout"    => $currAmOut,
 						":pmtimein"     => $currPmIn,
