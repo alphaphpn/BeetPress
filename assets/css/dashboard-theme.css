@@ -1,4 +1,4 @@
-/* Dashboard theme overrides. Dark is the default; light is 0a_conf.dashboard_theme = 1. */
+/* Dashboard theme overrides. Dark is the default; light is user_tbl.dashboard_theme = 1. */
 body.dashboard-theme-light {
     background-color: #f8f9fa !important;
     color: #212529;

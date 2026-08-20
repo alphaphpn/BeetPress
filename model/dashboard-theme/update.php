@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 if (
-    !isset($_SESSION['d2s8wu_ustat'], $_SESSION['d2s8wu_verified'], $_SESSION['d2s8wu_xdel'], $_SESSION['d2s8wu_ulevel']) ||
+    !isset($_SESSION['d2s8wu_uid'], $_SESSION['d2s8wu_ustat'], $_SESSION['d2s8wu_verified'], $_SESSION['d2s8wu_xdel'], $_SESSION['d2s8wu_ulevel']) ||
     (int) $_SESSION['d2s8wu_ustat'] !== 1 ||
     (int) $_SESSION['d2s8wu_verified'] !== 1 ||
     (int) $_SESSION['d2s8wu_xdel'] !== 0
@@ -45,18 +45,16 @@ try {
         throw new RuntimeException('Database connection is unavailable.');
     }
 
-    ensureDashboardThemeColumn($cnn);
-    $agencyId = $cnn->query("SELECT `agency_id` FROM `0a_conf` ORDER BY `agency_id` ASC LIMIT 1")->fetchColumn();
+    ensureUserDashboardThemeColumn($cnn);
+    $userId = trim((string) $_SESSION['d2s8wu_uid']);
 
-    if ($agencyId === false) {
-        throw new RuntimeException('No configuration record was found.');
-    }
-
-    $statement = $cnn->prepare('UPDATE `0a_conf` SET `dashboard_theme` = :dashboard_theme WHERE `agency_id` = :agency_id');
+    $statement = $cnn->prepare('UPDATE `user_tbl` SET `dashboard_theme` = :dashboard_theme WHERE `uid` = :uid');
     $statement->execute([
         ':dashboard_theme' => (int) $_POST['dashboard_theme'],
-        ':agency_id' => (int) $agencyId,
+        ':uid' => $userId,
     ]);
+
+    $_SESSION['d2s8wu_dashboard_theme'] = (int) $_POST['dashboard_theme'];
 
     echo json_encode(['status' => 'success']);
 } catch (Throwable $exception) {
