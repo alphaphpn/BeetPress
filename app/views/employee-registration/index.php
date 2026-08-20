@@ -1464,8 +1464,10 @@
 						return;
 					}
 					const streamUrl = streamUrls[index++];
-					// Request the image in CORS mode so a camera that permits it can also
-					// be drawn onto the canvas and saved as the employee photo.
+					// The browser loads this same-origin URL. The PHP endpoint then reaches
+					// the private LAN camera, so remote users never need access to its IP.
+					const proxyUrl = new URL('<?php echo trim($domainhome); ?>/employee-registration-camera-stream', window.location.origin);
+					proxyUrl.searchParams.set('url', streamUrl);
 					ipCameraPreview.crossOrigin = 'anonymous';
 					ipCameraPreview.onload = () => {
 						ipCameraPreview.onload = null;
@@ -1473,7 +1475,7 @@
 						resolve();
 					};
 					ipCameraPreview.onerror = tryNextUrl;
-					ipCameraPreview.src = streamUrl;
+					ipCameraPreview.src = proxyUrl.href;
 				};
 				tryNextUrl();
 			});
