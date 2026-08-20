@@ -55,11 +55,21 @@
 	$employeeRegistrationSucceeded = false;
 	$employeeRegistrationPrintUrl = null;
 	$employeeRegistrationGmailComposeUrl = null;
+	$ipCameraAddress = '';
+	$cameraConfigCnn = null;
+	try {
+		$cameraConfigCnn = new PDO("mysql:host={$host};dbname={$db}", $uname, $pw);
+		$cameraConfigCnn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$cameraConfigCnn->exec("CREATE TABLE IF NOT EXISTS employee_camera_config_tbl (config_key VARCHAR(50) NOT NULL PRIMARY KEY, ip_camera_address VARCHAR(255) NOT NULL, updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+		$cameraConfigQuery = $cameraConfigCnn->prepare("SELECT ip_camera_address FROM employee_camera_config_tbl WHERE config_key = 'employee_registration_ip_camera' LIMIT 1");
+		$cameraConfigQuery->execute();
+		$ipCameraAddress = (string) ($cameraConfigQuery->fetchColumn() ?: '');
+	} catch (PDOException $exception) { }
 
 ?>
 
 	<style>
-		#disp-vid { max-width: 290px; height: 356px!important; overflow: hidden; }
+		#disp-vid { max-width: 290px; height: 350px!important; overflow: hidden; padding: 0; }
 		#disp-vid video#video { 
 			max-height: 350px; 
 			object-fit: cover; 
@@ -77,6 +87,14 @@
 			/* Safari and Chrome */
 			-moz-transform: rotateY(180deg);
 			/* Firefox */
+		}
+
+		#disp-vid img#ip-camera-preview {
+			width: 100%;
+			height: auto;
+			max-height: none;
+			max-width: none;
+			transform: rotateY(180deg);
 		}
 
 		#disp-pix #canvas.uploaded-photo {
@@ -224,7 +242,8 @@
 
 								<div class="row justify-content-center">
 									<div id="disp-vid" class="col-md-4 mb-2 text-center mx-auto w-100 h-auto position-relative">
-										<video id="video" title="Picture" class="w-auto h-auto" autoplay></video>
+										<video id="video" title="Picture" class="w-auto h-auto" autoplay playsinline></video>
+										<img id="ip-camera-preview" title="IP camera preview" class="d-none" alt="IP camera preview" crossorigin="anonymous">
 
 										<div id="zoom-container"class="d-none">
 											<label for="zoom-slider">Zoom:</label>
@@ -256,8 +275,13 @@
 								</div>
 
 								<div class="my-2 text-center">
-									<div id="select-container" class="d-none"> <label for="camera-select">Select Camera:</label>
-										<select id="camera-select"></select>
+									<div id="select-container" class="d-none"><label for="camera-select">Select Camera:</label>
+										<select id="camera-select" name="camera_source"></select>
+									</div>
+									<div id="ip-camera-address-container" class="d-none mt-2 mx-auto" style="max-width: 360px;">
+										<label for="ip-camera-address" class="form-label">IP Camera Address</label>
+										<input id="ip-camera-address" name="ip_camera_address" type="text" class="form-control" value="<?php echo htmlspecialchars($ipCameraAddress, ENT_QUOTES, 'UTF-8'); ?>" placeholder="192.168.1.100 or http://192.168.1.100/stream" autocomplete="off">
+										<small class="text-muted">Enter the camera's base address (for example, http://192.168.1.25:8080). Common /stream and /video feeds are detected automatically.</small>
 									</div>
 								</div>
 
@@ -1130,6 +1154,7 @@
 		let stopCameraBtn = document.querySelector("#stop-camera");
 		let dispvid = document.querySelector("#disp-vid");
 		let video = document.querySelector("#video");
+		let ipCameraPreview = document.querySelector("#ip-camera-preview");
 		let retakephoto = document.querySelector("#retake-photo");
 		let click_button = document.querySelector("#click-photo");
 		let disppix = document.querySelector("#disp-pix");
@@ -1175,6 +1200,11 @@
 				videoStream = null;
 				videoTrack = null;
 			}
+			video.removeAttribute('src');
+			video.load();
+			ipCameraPreview.removeAttribute('src');
+			ipCameraPreview.classList.add('d-none');
+			video.classList.remove('d-none');
 			zoomContainer.classList.add('d-none');
 		}
 
@@ -1252,6 +1282,8 @@
 		// New elements for camera selection
 		let cameraSelect = document.querySelector("#camera-select"); // Assuming a <select> element with id="camera-select"
 		let selectContainer = document.querySelector("#select-container"); // Assuming a container for the select element
+		let ipCameraAddress = document.querySelector("#ip-camera-address");
+		let ipCameraAddressContainer = document.querySelector("#ip-camera-address-container");
 
 		let videowidth = video.offsetWidth;
 		let videoheight = video.offsetHeight;
@@ -1268,7 +1300,8 @@
 		async function populateCameraSelect() {
 			try {
 				// Request permission first, otherwise device labels might be empty
-				await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+				const permissionStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+				permissionStream.getTracks().forEach(track => track.stop());
 				// Stop the temporary stream immediately
 				if (videoStream) {
 					videoStream.getTracks().forEach(track => track.stop());
@@ -1279,7 +1312,7 @@
 				const videoDevices = devices.filter(device => device.kind === 'videoinput');
 
 				// Clear existing options
-				cameraSelect.innerHTML = '';
+				cameraSelect.innerHTML = '<option value="">Select Camera</option>';
 
 				if (videoDevices.length > 0) {
 					videoDevices.forEach(device => {
@@ -1297,22 +1330,25 @@
 
 						cameraSelect.appendChild(option);
 					});
-					// Show the selector if there's more than one device to choose from
-					if (videoDevices.length > 1) {
-						selectContainer.classList.remove('d-none');
-					} else {
-						selectContainer.classList.add('d-none'); // Hide if only one camera is found
-					}
-				} else {
-					// No video devices found
-					console.warn("No video input devices found.");
-					selectContainer.classList.add('d-none');
 				}
+				const ipCameraOption = document.createElement('option');
+				ipCameraOption.value = 'ip-camera';
+				ipCameraOption.text = 'IP Camera';
+				cameraSelect.appendChild(ipCameraOption);
+				if (videoDevices.length > 0) cameraSelect.selectedIndex = 1;
+				selectContainer.classList.remove('d-none');
 			} catch (err) {
 				console.error("Error enumerating devices: ", err);
-				selectContainer.classList.add('d-none');
+				cameraSelect.innerHTML = '<option value="">Select Camera</option><option value="ip-camera">IP Camera</option>';
+				selectContainer.classList.remove('d-none');
 			}
 		}
+
+		cameraSelect.addEventListener('change', function() {
+			const isIpCamera = this.value === 'ip-camera';
+			ipCameraAddressContainer.classList.toggle('d-none', !isIpCamera);
+			if (isIpCamera) ipCameraAddress.focus();
+		});
 
 		// Initial population of the camera select dropdown
 		populateCameraSelect();
@@ -1322,17 +1358,15 @@
 		 * @param {string} deviceId - The device ID of the camera to use.
 		 */
 		async function startCamera(deviceId) {
+			if (deviceId === 'ip-camera') {
+				startIpCamera();
+				return;
+			}
 			uploadedImage = null;
 			canvas.classList.remove('uploaded-photo');
 			uploadEditorControls.classList.add('d-none');
-			// Stop any existing stream first
-			if (videoStream) {
-				videoStream.getTracks().forEach(track => track.stop());
-				video.srcObject = null;
-				videoStream = null;
-				videoTrack = null; // Clear track reference
-				zoomContainer.classList.add('d-none'); // Hide zoom controls on stop
-			}
+			// Stop either a local camera or an IP-camera preview before switching.
+			stopActiveCamera();
 
 			try {
 				// Constraints object using the selected deviceId
@@ -1372,6 +1406,77 @@
 				// Ensure zoom controls are hidden on failure
 				zoomContainer.classList.add('d-none');
 			}
+		}
+
+		async function startIpCamera() {
+			const address = ipCameraAddress.value.trim();
+			if (!address) {
+				alert('Enter the IP camera address first.');
+				ipCameraAddress.focus();
+				return;
+			}
+			let cameraUrl;
+			try {
+				cameraUrl = new URL(/^https?:\/\//i.test(address) ? address : `http://${address}`);
+				if (!['http:', 'https:'].includes(cameraUrl.protocol)) throw new Error('Unsupported protocol');
+			} catch (err) {
+				alert('Enter a valid HTTP or HTTPS IP camera address.');
+				ipCameraAddress.focus();
+				return;
+			}
+
+			// A bare address is normally the camera's HTML control page, not its
+			// MJPEG feed. IP Phone Camera uses /stream; Android IP Webcam uses /video.
+			const streamUrls = [];
+			if (cameraUrl.pathname === '/' || cameraUrl.pathname === '') {
+				['/stream', '/video'].forEach(pathname => {
+					const streamUrl = new URL(cameraUrl.href);
+					streamUrl.pathname = pathname;
+					streamUrls.push(streamUrl.href);
+				});
+			}
+			streamUrls.push(cameraUrl.href);
+
+			try {
+				stopActiveCamera();
+				await loadIpCameraPreview([...new Set(streamUrls)]);
+				video.classList.add('d-none');
+				ipCameraPreview.classList.remove('d-none');
+				dispvid.classList.remove('d-none');
+				disppix.classList.add('d-none');
+				camera_button.classList.add('d-none');
+				click_button.classList.remove('d-none');
+				stopCameraBtn.classList.remove('d-none');
+				retakephoto.classList.add('d-none');
+			} catch (err) {
+				console.error('Error accessing IP camera: ', err);
+				alert('Could not open the IP camera stream. Check the address, network connection, and the camera\'s browser/CORS access settings.');
+				stopActiveCamera();
+			}
+		}
+
+		function loadIpCameraPreview(streamUrls) {
+			return new Promise((resolve, reject) => {
+				let index = 0;
+				const tryNextUrl = () => {
+					if (index >= streamUrls.length) {
+						reject(new Error('No browser-compatible IP camera stream found.'));
+						return;
+					}
+					const streamUrl = streamUrls[index++];
+					// Request the image in CORS mode so a camera that permits it can also
+					// be drawn onto the canvas and saved as the employee photo.
+					ipCameraPreview.crossOrigin = 'anonymous';
+					ipCameraPreview.onload = () => {
+						ipCameraPreview.onload = null;
+						ipCameraPreview.onerror = null;
+						resolve();
+					};
+					ipCameraPreview.onerror = tryNextUrl;
+					ipCameraPreview.src = streamUrl;
+				};
+				tryNextUrl();
+			});
 		}
 
 		/**
@@ -1428,34 +1533,21 @@
 		camera_button.addEventListener('click', async function() {
 			// Get the selected camera ID from the dropdown
 			const selectedDeviceId = cameraSelect.value;
+			if (!selectedDeviceId) {
+				alert('Select a camera first.');
+				return;
+			}
 			startCamera(selectedDeviceId);
 		});
 
 		stopCameraBtn.addEventListener('click', async function() {
-			// Check if a stream exists
-			if (videoStream) {
-				// Get all video tracks from the stream
-				const tracks = videoStream.getTracks();
-
-				// Loop through each track and stop it
-				tracks.forEach(track => track.stop());
-
-				// Clear the video source
-				video.srcObject = null;
-				videoStream = null;
-				videoTrack = null; // Clear the track reference
-
-				// FIX: Hide Zoom controls when the camera is stopped
-				zoomContainer.classList.add('d-none');
-
-				// Update button visibility
-				camera_button.classList.remove("d-none");
-				click_button.classList.add('d-none');
-				stopCameraBtn.classList.add('d-none');
-				retakephoto.classList.add('d-none');
-				dispvid.classList.add('d-none');
-				disppix.classList.add('d-none');
-			}
+			stopActiveCamera();
+			camera_button.classList.remove("d-none");
+			click_button.classList.add('d-none');
+			stopCameraBtn.classList.add('d-none');
+			retakephoto.classList.add('d-none');
+			dispvid.classList.add('d-none');
+			disppix.classList.add('d-none');
 		});
 
 		// Zoom Slider Event Listener
@@ -1475,8 +1567,16 @@
 			canvas.width = passportWidth;
 			canvas.height = passportHeight;
 
-			// Calculate the aspect ratio of the video feed
-			const videoAspectRatio = video.videoWidth / video.videoHeight;
+			const frameSource = !ipCameraPreview.classList.contains('d-none') ? ipCameraPreview : video;
+			const sourceWidth = frameSource === video ? video.videoWidth : ipCameraPreview.naturalWidth;
+			const sourceHeight = frameSource === video ? video.videoHeight : ipCameraPreview.naturalHeight;
+			if (!sourceWidth || !sourceHeight) {
+				alert('Wait for the camera preview to load before taking a photo.');
+				return;
+			}
+
+			// Calculate the aspect ratio of the camera feed
+			const videoAspectRatio = sourceWidth / sourceHeight;
 
 			// Calculate the aspect ratio of the passport photo
 			const passportAspectRatio = passportWidth / passportHeight;
@@ -1486,24 +1586,35 @@
 			// Determine how to crop the video to fit the passport aspect ratio
 			if (videoAspectRatio > passportAspectRatio) {
 				// Video is wider than the passport aspect ratio, so we need to crop the sides
-				sHeight = video.videoHeight;
-				sWidth = video.videoHeight * passportAspectRatio;
-				sx = (video.videoWidth - sWidth) / 2; // Center the crop horizontally
+				sHeight = sourceHeight;
+				sWidth = sourceHeight * passportAspectRatio;
+				sx = (sourceWidth - sWidth) / 2; // Center the crop horizontally
 				sy = 0;
 			} else {
 				// Video is taller than the passport aspect ratio, so we need to crop the top and bottom
-				sWidth = video.videoWidth;
-				sHeight = video.videoWidth / passportAspectRatio;
+				sWidth = sourceWidth;
+				sHeight = sourceWidth / passportAspectRatio;
 				sx = 0;
-				sy = (video.videoHeight - sHeight) / 2; // Center the crop vertically
+				sy = (sourceHeight - sHeight) / 2; // Center the crop vertically
 			}
 
 			// Draw the cropped video frame onto the canvas
-			canvas.getContext('2d').drawImage(video, sx, sy, sWidth, sHeight, 0, 0, passportWidth, passportHeight);
+			try {
+				canvas.getContext('2d').drawImage(frameSource, sx, sy, sWidth, sHeight, 0, 0, passportWidth, passportHeight);
+			} catch (err) {
+				alert('The IP camera preview cannot be captured. Enable CORS access on the camera, or use Upload Photo.');
+				return;
+			}
 
 			// canvas.style.width = videowidth+'px';
 			// canvas.style.height = video.offsetHeight+'px';
-			let image_data_url = canvas.toDataURL('image/jpeg');
+			let image_data_url;
+			try {
+				image_data_url = canvas.toDataURL('image/jpeg');
+			} catch (err) {
+				alert('The IP camera allows previewing but blocks photo capture. Enable CORS access on the camera, or use Upload Photo.');
+				return;
+			}
 
 			// data url of the image
 			// console.log(image_data_url);

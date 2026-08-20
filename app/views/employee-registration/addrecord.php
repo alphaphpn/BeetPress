@@ -39,6 +39,16 @@
 		$employeeRegistrationGmailComposeUrl = null;
 
 		if ( isset($_POST["btnSubmit"]) ) {
+			$reg_camera_source = trim((string) ($_POST['camera_source'] ?? ''));
+			$reg_ip_camera_address = trim((string) ($_POST['ip_camera_address'] ?? ''));
+			if ($reg_camera_source === 'ip-camera' && $reg_ip_camera_address !== '' && strlen($reg_ip_camera_address) <= 255 && $cameraConfigCnn instanceof PDO) {
+				try {
+					$saveIpCamera = $cameraConfigCnn->prepare("INSERT INTO employee_camera_config_tbl (config_key, ip_camera_address) VALUES ('employee_registration_ip_camera', :ip_camera_address) ON DUPLICATE KEY UPDATE ip_camera_address = VALUES(ip_camera_address)");
+					$saveIpCamera->execute(array(':ip_camera_address' => $reg_ip_camera_address));
+					$ipCameraAddress = $reg_ip_camera_address;
+				} catch (PDOException $exception) { }
+			}
+
 			$reg_imgpic = isset($_POST["imgdata"]) ? $_POST["imgdata"] : null;
 			$reg_zipcode = isset($_POST["zipcode"]) ? $_POST["zipcode"] : null;
 			$reg_nickname = isset($_POST["nickname"]) ? $_POST["nickname"] : null;
