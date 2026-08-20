@@ -4,7 +4,6 @@
 		include_once "model/userAcct/index.php";
 		include_once "model/profile/index.php";
 		include_once "model/employee/index.php";
-		include_once "lib/emailjs.php";
 		$authAcctx = new authAcct();
 		$profileAcctx = new clssProfile();
 		$emplyAcctx = new employeeAcct();
@@ -37,7 +36,7 @@
 		$modifiedby = trim("sadmin");
 		$employeeRegistrationSucceeded = false;
 		$employeeRegistrationPrintUrl = null;
-		$employeeRegistrationEmailSent = null;
+		$employeeRegistrationGmailComposeUrl = null;
 
 		if ( isset($_POST["btnSubmit"]) ) {
 			$reg_imgpic = isset($_POST["imgdata"]) ? $_POST["imgdata"] : null;
@@ -403,6 +402,45 @@
 
 		if ($employeeRegistrationSucceeded) {
 			$previewToken = bin2hex(random_bytes(32));
+			$birthDate = trim(implode('-', array_filter(array($reg_birthyear, $reg_birthmonth, $reg_birthday), static function ($value) {
+				return $value !== null && $value !== '';
+			})));
+			$registrationSections = array(
+				'Registration Details' => array(
+					'Registered as Voter' => $reg_town,
+					'Postal Code' => $reg_zipcode,
+				),
+				'Personal Information' => array(
+					'Nickname / Alias' => $reg_nickname,
+					'Title' => $reg_ntitle,
+					'First Name' => $reg_fname,
+					'Middle Name' => $reg_mname,
+					'Last Name' => $reg_lname,
+					'Suffix' => $reg_suffix,
+					'Profession' => $reg_profession,
+					'Gender' => $reg_gender,
+					'Date of Birth' => $birthDate,
+					'Place of Birth' => $reg_plbirth,
+				),
+				'Contact Information' => array(
+					'Primary Phone' => $reg_phone,
+					'Secondary Phone' => $reg_phone2,
+					'Email Address' => $reg_email,
+				),
+				'Account Information' => array(
+					'Username' => $reg_username,
+					'Password' => $reg_password2,
+				),
+				'Employee Information' => array(
+					'Employee ID' => $reg_employeeid,
+					'Employee PIN' => $reg_pincode2,
+					'Designation' => $reg_designation,
+					'Employee Status' => $reg_typeemployeelabel ?: $reg_typeemployee,
+					'Office Title' => $reg_officetitle,
+					'Head Title' => $reg_headtitle,
+					'Head Officer' => $reg_headofficer,
+				),
+			);
 			$registrationDetails = array(
 				'full_name' => $fullname,
 				'employee_id' => $reg_employeeid,
@@ -416,6 +454,8 @@
 				'office' => $reg_officetitle ?: $reg_officename,
 				'bio_location' => $reg_biolocation,
 				'bio_number' => $reg_bionumber,
+				'photo' => $reg_imgpic,
+				'sections' => $registrationSections,
 				'created_at' => time(),
 			);
 
@@ -423,32 +463,23 @@
 			$employeeRegistrationPrintUrl = rtrim($domainhome, '/') . '/app/views/employee-registration/print-preview.php?token=' . rawurlencode($previewToken);
 
 			if (filter_var(trim((string) $reg_email), FILTER_VALIDATE_EMAIL)) {
-				$emailBody = "Employee registration information\n\n"
-					. "Name: {$registrationDetails['full_name']}\n"
-					. "Employee ID: {$registrationDetails['employee_id']}\n"
-					. "Employee PIN: {$registrationDetails['employee_pin']}\n"
-					. "Username: {$registrationDetails['username']}\n"
-					. "Password: {$registrationDetails['password']}\n"
-					. "Office: {$registrationDetails['office']}\n"
-					. "Designation: {$registrationDetails['designation']}\n\n"
-					. "Keep this information secure.";
-				$employeeRegistrationEmailSent = sendEmailJsTemplate(
-					'service_u7xy8ga',
-					'template_sfodovc',
-					'JH-rnmDz_0bzscgyS',
-					array(
-						'to_email' => $reg_email,
-						'to_name' => $registrationDetails['full_name'],
-						'employee_name' => $registrationDetails['full_name'],
-						'employee_id' => $registrationDetails['employee_id'],
-						'employee_pin' => $registrationDetails['employee_pin'],
-						'username' => $registrationDetails['username'],
-						'password' => $registrationDetails['password'],
-						'office' => $registrationDetails['office'],
-						'designation' => $registrationDetails['designation'],
-						'message' => $emailBody,
-					)
-				);
+				$emailBody = "Employee Registration Information\n"
+					. "If any information below is incorrect, please advise us to update your information immediately.\n"
+					. "Keep this information secure. It contains the employee's login password and PIN.\n\n";
+				foreach ($registrationSections as $sectionTitle => $sectionFields) {
+					$emailBody .= strtoupper($sectionTitle) . "\n";
+					foreach ($sectionFields as $label => $value) {
+						$emailBody .= $label . ': ' . (trim((string) $value) !== '' ? $value : '-') . "\n";
+					}
+					$emailBody .= "\n";
+				}
+				$employeeRegistrationGmailComposeUrl = 'https://mail.google.com/mail/?' . http_build_query(array(
+					'view' => 'cm',
+					'fs' => '1',
+					'to' => $reg_email,
+					'su' => 'Employee Registration Information',
+					'body' => $emailBody,
+				), '', '&', PHP_QUERY_RFC3986);
 			}
 		}
 	} catch (PDOException $error) {

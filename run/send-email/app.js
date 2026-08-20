@@ -1,7 +1,7 @@
 // 1. Initialize EmailJS with your Public Key
 (function() {
     // Replace 'YOUR_PUBLIC_KEY' with your actual EmailJS Public Key
-    emailjs.init("YOUR_PUBLIC_KEY");
+    emailjs.init("JH-rnmDz_0bzscgyS");
 })();
 
 // 2. DOM Elements
@@ -20,7 +20,7 @@ emailForm.addEventListener('submit', function(event) {
 
     // EmailJS parameters (must match template variables in EmailJS dashboard)
     const serviceID = 'service_u7xy8ga';  // Replace with your Service ID
-    const templateID = 'YOUR_TEMPLATE_ID'; // Replace with your Template ID
+    const templateID = 'template_sfodovc'; // Replace with your Template ID
 
     // Send the form directly
     emailjs.sendForm(serviceID, templateID, this)

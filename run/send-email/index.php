@@ -25,6 +25,8 @@
           <div id="alertBox" class="alert d-none" role="alert"></div>
 
           <form id="emailForm">
+            <input type="hidden" name="to_email" value="tech.team@sibugay.gov.ph">
+
             <!-- Sender Name -->
             <div class="mb-3">
               <label for="from_name" class="form-label font-weight-bold">Your Name</label>

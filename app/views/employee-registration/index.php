@@ -54,7 +54,7 @@
 	$reg_officenmbering = null;
 	$employeeRegistrationSucceeded = false;
 	$employeeRegistrationPrintUrl = null;
-	$employeeRegistrationEmailSent = null;
+	$employeeRegistrationGmailComposeUrl = null;
 
 ?>
 
@@ -188,10 +188,10 @@
 										echo '<p>You have successfully registered as an Employee. Do you want to print the Employee Information?</p>';
 										echo '<a class="btn btn-light m-2" target="_blank" rel="noopener" href="'.htmlspecialchars($employeeRegistrationPrintUrl, ENT_QUOTES, 'UTF-8').'">Yes</a>';
 										echo '<a class="btn btn-secondary m-2" href="'.htmlspecialchars($domainhome, ENT_QUOTES, 'UTF-8').'/employee-registration">No</a>';
-										if ($employeeRegistrationEmailSent === true) {
-											echo '<p class="mb-0 small">A copy of the registration information was also sent to the employee email address.</p>';
-										} elseif ($employeeRegistrationEmailSent === false) {
-											echo '<p class="mb-0 small text-warning">The registration was saved, but the email copy could not be sent.</p>';
+										if ($employeeRegistrationGmailComposeUrl !== null) {
+											echo '<p class="mb-1 small">A Gmail compose window will open with the registration information filled in. Review it and click Send.</p>';
+											echo '<a class="btn btn-danger btn-sm" target="_blank" rel="noopener" href="'.htmlspecialchars($employeeRegistrationGmailComposeUrl, ENT_QUOTES, 'UTF-8').'">Open Gmail Compose</a>';
+											echo '<script>window.addEventListener("load", function () { window.open('.json_encode($employeeRegistrationGmailComposeUrl, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT).', "_blank", "noopener"); });</script>';
 										}
 									echo '</div>';
 								}
