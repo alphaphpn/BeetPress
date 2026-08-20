@@ -562,12 +562,12 @@
 									}
 								}
 							} elseif ( $emailgg ) {
-								if ( filter_var($reg_email, FILTER_VALIDATE_EMAIL) ) {
+								if (filter_var($emailgg, FILTER_VALIDATE_EMAIL)) {
 									// Valid Email
 									// Search for Duplicate Email
-									$finddupQry_email = "SELECT * FROM user_tbl WHERE phone=:phone LIMIT 1";
+									$finddupQry_email = "SELECT * FROM user_tbl WHERE email=:email LIMIT 1";
 									$stmt_finddupQry_email = $this->cnn->prepare($finddupQry_email);
-									$stmt_finddupQry_email->bindParam(':phone', $phonegg);
+									$stmt_finddupQry_email->bindParam(':email', $emailgg);
 									$stmt_finddupQry_email->execute();
 									$cntRcrd_finddupQry_email = $stmt_finddupQry_email->rowCount();
 									if ($cntRcrd_finddupQry_email > 0) {

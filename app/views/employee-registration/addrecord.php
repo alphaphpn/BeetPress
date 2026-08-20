@@ -4,6 +4,7 @@
 		include_once "model/userAcct/index.php";
 		include_once "model/profile/index.php";
 		include_once "model/employee/index.php";
+		include_once "lib/emailjs.php";
 		$authAcctx = new authAcct();
 		$profileAcctx = new clssProfile();
 		$emplyAcctx = new employeeAcct();
@@ -431,11 +432,22 @@
 					. "Office: {$registrationDetails['office']}\n"
 					. "Designation: {$registrationDetails['designation']}\n\n"
 					. "Keep this information secure.";
-				$employeeRegistrationEmailSent = @mail(
-					$reg_email,
-					'Employee Registration Information',
-					$emailBody,
-					"Content-Type: text/plain; charset=UTF-8\r\n"
+				$employeeRegistrationEmailSent = sendEmailJsTemplate(
+					'service_u7xy8ga',
+					'template_sfodovc',
+					'JH-rnmDz_0bzscgyS',
+					array(
+						'to_email' => $reg_email,
+						'to_name' => $registrationDetails['full_name'],
+						'employee_name' => $registrationDetails['full_name'],
+						'employee_id' => $registrationDetails['employee_id'],
+						'employee_pin' => $registrationDetails['employee_pin'],
+						'username' => $registrationDetails['username'],
+						'password' => $registrationDetails['password'],
+						'office' => $registrationDetails['office'],
+						'designation' => $registrationDetails['designation'],
+						'message' => $emailBody,
+					)
 				);
 			}
 		}
