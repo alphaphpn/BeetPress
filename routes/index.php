@@ -4,7 +4,8 @@
 	include_once "lib/env.php";
 	include_once "lib/function.php";
 	$the_homepage = 1;
-	$the_htitle = "eSibugay PH";
+	$the_htitle = "Province of Zamboanga Sibugay | Official Website";
+	$the_meta_description = "Official website of the Provincial Government of Zamboanga Sibugay, Philippines. Find public services, provincial information, appointments, and contact details.";
 	$the_refresh = null;
 	$the_expires = null;
 	include_once "app/theme/{$theme}/template-part/header.php";

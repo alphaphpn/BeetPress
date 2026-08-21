@@ -2,9 +2,23 @@
 	$officeId = trim((string) ($_SESSION['d2s8wu_officeid'] ?? ''));
 	$appointments = array();
 	$appointmentLoadError = null;
+	$appointmentStatusMessage = null;
 	try {
 		$appointmentScheduleCnn = new PDO("mysql:host={$host};dbname={$db}", $uname, $pw);
 		$appointmentScheduleCnn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		if (empty($_SESSION['appointment_schedule_csrf'])) $_SESSION['appointment_schedule_csrf'] = bin2hex(random_bytes(32));
+		if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['appointment_toggle_status'])) {
+			$appointmentId = (int) ($_POST['appointment_id'] ?? 0);
+			$csrfToken = (string) ($_POST['appointment_schedule_csrf'] ?? '');
+			if (!hash_equals($_SESSION['appointment_schedule_csrf'], $csrfToken)) {
+				$appointmentLoadError = 'Your appointment update session has expired. Please try again.';
+			} elseif ($appointmentId > 0) {
+				$status = isset($_POST['appointment_confirmed']) ? 'Confirmed' : 'Pending';
+				$updateAppointment = $appointmentScheduleCnn->prepare("UPDATE appointment_tbl SET appointment_status = :status WHERE appointment_autoid = :appointment_id AND officeid = :officeid AND appointment_status <> 'Cancelled'");
+				$updateAppointment->execute(array(':status' => $status, ':appointment_id' => $appointmentId, ':officeid' => $officeId));
+				$appointmentStatusMessage = $updateAppointment->rowCount() ? 'Appointment status updated.' : 'The appointment could not be updated.';
+			}
+		}
 		$appointmentQuery = $appointmentScheduleCnn->prepare("SELECT appointment_autoid, appointment_name, appointment_phone, appointment_email, appointment_address, appointment_purpose, officetitle, appointment_date, appointment_time, appointment_status FROM appointment_tbl WHERE officeid = :officeid ORDER BY appointment_date ASC, appointment_time ASC");
 		$appointmentQuery->execute(array(':officeid' => $officeId));
 		$appointments = $appointmentQuery->fetchAll(PDO::FETCH_ASSOC);
@@ -35,12 +49,13 @@
 
 <div class="pt-3">
 	<h5 class="mb-1 fw-bold text-light">Appointment Schedule</h5>
-	<p class="text-muted mb-4">Bookings for your office only. Select a highlighted calendar date to view its schedule.</p>
+	<p class="text-muted mb-4">Bookings for your office only. Use the switch to confirm an appointment, or select a highlighted calendar date to view its schedule.</p>
+	<?php if ($appointmentStatusMessage): ?><div class="alert alert-success"><?php echo htmlspecialchars($appointmentStatusMessage); ?></div><?php endif; ?>
 	<?php if ($appointmentLoadError): ?><div class="alert alert-warning"><?php echo htmlspecialchars($appointmentLoadError); ?></div><?php endif; ?>
 	<div class="row g-4">
 		<div class="col-xl-6"><div class="card"><div class="card-body"><div id="appointment-admin-calendar"></div></div></div></div>
-		<div class="col-xl-6"><div class="card"><div class="card-body"><h6 class="mb-3">Booked Appointments</h6><div class="table-responsive"><table id="listRecView" class="table table-dark table-striped table-hover align-middle"><thead><tr><th>Date</th><th>Time</th><th>Name</th><th>Phone</th><th>Purpose</th><th>Status</th></tr></thead><tbody>
-			<?php foreach ($appointments as $appointment): ?><tr><td><?php echo htmlspecialchars(date('M j, Y', strtotime($appointment['appointment_date']))); ?></td><td><?php echo htmlspecialchars(date('g:i A', strtotime($appointment['appointment_time']))); ?></td><td><?php echo htmlspecialchars($appointment['appointment_name']); ?></td><td><?php echo htmlspecialchars($appointment['appointment_phone']); ?></td><td><?php echo htmlspecialchars($appointment['appointment_purpose']); ?></td><td><?php echo htmlspecialchars($appointment['appointment_status']); ?></td></tr><?php endforeach; ?>
+		<div class="col-xl-6"><div class="card"><div class="card-body"><h6 class="mb-3">Booked Appointments</h6><div class="table-responsive"><table id="listRecView" class="table table-dark table-striped table-hover align-middle"><thead><tr><th>Date</th><th>Time</th><th>Name</th><th>Phone</th><th>Purpose</th><th>Status</th><th>Confirmed</th></tr></thead><tbody>
+			<?php foreach ($appointments as $appointment): ?><tr><td><?php echo htmlspecialchars(date('M j, Y', strtotime($appointment['appointment_date']))); ?></td><td><?php echo htmlspecialchars(date('g:i A', strtotime($appointment['appointment_time']))); ?></td><td><?php echo htmlspecialchars($appointment['appointment_name']); ?></td><td><?php echo htmlspecialchars($appointment['appointment_phone']); ?></td><td><?php echo htmlspecialchars($appointment['appointment_purpose']); ?></td><td><?php echo htmlspecialchars($appointment['appointment_status']); ?></td><td><form method="post" class="m-0"><input type="hidden" name="appointment_schedule_csrf" value="<?php echo htmlspecialchars($_SESSION['appointment_schedule_csrf']); ?>"><input type="hidden" name="appointment_id" value="<?php echo (int) $appointment['appointment_autoid']; ?>"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" name="appointment_confirmed" aria-label="Confirm appointment for <?php echo htmlspecialchars($appointment['appointment_name']); ?>" <?php echo $appointment['appointment_status'] === 'Confirmed' ? 'checked' : ''; ?> <?php echo $appointment['appointment_status'] === 'Cancelled' ? 'disabled' : ''; ?> onchange="this.form.submit()"><input type="hidden" name="appointment_toggle_status" value="1"></div></form></td></tr><?php endforeach; ?>
 		</tbody></table></div></div></div></div>
 	</div>
 </div>

@@ -16,8 +16,8 @@
 	$the_htitle = "DashPanel: Calendar";
 	$the_refresh = null;
 	$the_expires = null;
-	$page_title = "Appointment Schedule";
-	$breadcrumb = "Appointments for your office";
+	$page_title = "Calendar";
+	$breadcrumb = "Appointments, meetings, and events for your office";
 	include_once "app/theme/{$theme}/dpanel/header.php";
 	include_once "app/theme/{$theme}/dpanel/navbar.php";
 	include_once "app/theme/{$theme}/dpanel/sidebar.php";

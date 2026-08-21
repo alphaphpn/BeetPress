@@ -65,6 +65,23 @@
 								Meeting Schedule
 							</a>
 
+							<a class="nav-link" href="<?php echo trim($domainhome); ?>/event-schedule">
+								<div class="sb-nav-link-icon"><i class="fas fa-calendar-day"></i></div>
+								Events Schedule
+							</a>
+
+							<?php if (in_array((int) $disp_ulevel, array(1, 2), true)): ?>
+								<a class="nav-link" href="<?php echo trim($domainhome); ?>/holidays">
+									<div class="sb-nav-link-icon"><i class="fas fa-umbrella-beach"></i></div>
+									Holidays
+								</a>
+							<?php endif; ?>
+
+							<a class="nav-link" href="<?php echo trim($domainhome); ?>/birthday-calendar">
+								<div class="sb-nav-link-icon"><i class="fas fa-birthday-cake"></i></div>
+								Birthday Calendar
+							</a>
+
 						<div class="sb-sidenav-menu-heading">Apps</div>
 							<?php include_once "sidenav-subsys.php"; ?>
 
