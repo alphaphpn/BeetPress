@@ -81,7 +81,7 @@
 					if (!$hasScheduleLock) {
 						$appointmentError = 'That time is currently being booked. Please choose another available time.';
 					} else {
-						$existingSchedule = $appointmentCnn->prepare("SELECT COUNT(*) FROM appointment_tbl WHERE appointment_date = :appointment_date AND appointment_time = :appointment_time AND appointment_status <> 'Cancelled'");
+						$existingSchedule = $appointmentCnn->prepare("SELECT COUNT(*) FROM appointment_tbl WHERE appointment_date = :appointment_date AND appointment_time = :appointment_time AND appointment_status NOT IN ('Cancelled', 'Cancel')");
 						$existingSchedule->execute(array(':appointment_date' => $selectedDate, ':appointment_time' => $selectedTime));
 						if ((int) $existingSchedule->fetchColumn() > 0) {
 							$appointmentError = 'That time was just booked. Please choose another available time.';
@@ -119,7 +119,7 @@
 			}
 		}
 
-		$bookedSlotsStmt = $appointmentCnn->prepare("SELECT appointment_date, appointment_time FROM appointment_tbl WHERE appointment_date >= CURDATE() AND appointment_status <> 'Cancelled'");
+		$bookedSlotsStmt = $appointmentCnn->prepare("SELECT appointment_date, appointment_time FROM appointment_tbl WHERE appointment_date >= CURDATE() AND appointment_status NOT IN ('Cancelled', 'Cancel')");
 		$bookedSlotsStmt->execute();
 		foreach ($bookedSlotsStmt->fetchAll(PDO::FETCH_ASSOC) as $slot) {
 			$date = $slot['appointment_date'];

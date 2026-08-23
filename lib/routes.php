@@ -52,6 +52,15 @@
 		'employee-list' => 'routes/employee-list.php', 
 		'employee-tracker' => 'routes/employee-tracker.php', 
 		'employee-registration' => 'routes/employee-registration.php', 
-		'employee-registration-camera-stream' => 'routes/employee-registration-camera-stream.php',
-		'office' => 'routes/office.php'
+		'employee-registration-camera-stream' => 'routes/employee-registration-camera-stream.php', 
+		'office' => 'routes/office.php', 
+		'document-tracker' => 'routes/document-tracker.php',
+		'document-tracer'  => 'routes/document-tracer.php',
+		'document-tracker-new' => 'routes/document-tracker.php', 
+		'document-tracker-incoming' => 'routes/document-tracker.php', 
+		'document-tracker-outgoing' => 'routes/document-tracker.php', 
+		'document-tracker-completed' => 'routes/document-tracker.php',
+		'document-tracker-closed' => 'routes/document-tracker.php',
+		'document-tracker-archived' => 'routes/document-tracker.php',
+		'document-tracker-detail' => 'routes/document-tracker.php'
 	];

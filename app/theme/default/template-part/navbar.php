@@ -50,6 +50,7 @@
 						<li class="nav-item dropdown">
 							<a class="nav-link dropdown-toggle" href="<?php if ( $the_homepage == 1) { } else { echo trim($domainhome).'/'; } ?>#services">Services</a>
 							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="<?php if ( $the_homepage == 1) { } else { echo trim($domainhome).'/'; } ?>#">Document Tracer</a></li>
 								<li class="nav-item dropend">
 									<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Apps</a>
 									<ul class="dropdown-menu">

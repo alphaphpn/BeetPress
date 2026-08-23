@@ -49,7 +49,7 @@
 					<div class="position-relative clearfix">
 						<h3 class="txt-color-primary">Gov't Link</h3>
 						<hr>
-						<a class="text-decoration-none" href="//e.bir.gov.ph" target="_blank">eGOV</a> | 
+						<a class="text-decoration-none" href="//e.gov.ph" target="_blank">eGOV</a> | 
 						<a class="text-warning text-decoration-none" href="//www.bir.gov.ph" target="_blank">BIR</a> | 
 						<a class="text-decoration-none" href="//dict.gov.ph" target="_blank">DICT</a> | 
 						<a class="text-decoration-none" href="//pnpclearance.ph/register" target="_blank">PNP</a> | 
@@ -57,7 +57,9 @@
 						<a class="text-light text-decoration-none" href="//www.gppb.gov.ph/" target="_blank">GPPB</a> | 
 						<a class="text-decoration-none" href="//philgeps.gov.ph/" target="_blank">PhilGEPS</a> | 
 						<a class="text-light text-decoration-none" href="//www.coa.gov.ph/" target="_blank">COA</a> | 
-						<a class="text-light text-decoration-none" href="//www.dbm.gov.ph/" target="_blank">DBM</a>
+						<a class="text-light text-decoration-none" href="//www.dbm.gov.ph/" target="_blank">DBM</a> | 
+						<a class="text-decoration-none" href="//passport.gov.ph/appointment" target="_blank">Passport</a> | 
+						<a class="text-decoration-none" href="//govca.npki.gov.ph/ors/" target="_blank">PNPKI</a>
 					</div>
 				</div>
 

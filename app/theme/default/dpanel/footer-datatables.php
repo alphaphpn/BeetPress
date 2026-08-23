@@ -11,14 +11,21 @@
 
 	<script>
 		$(document).ready( function () {
+			var appointmentStatusFilterOnly = $('#listRecView').data('status-filter-only') === true;
+			var noTableFilters = $('#listRecView').data('no-filters') === true;
 			$('#listRecView').DataTable( {
+				searching: !appointmentStatusFilterOnly && !noTableFilters,
 				initComplete: function () {
 					var tableApi = this.api();
 					var defaultDutyStatus = tableApi.table().node().dataset.defaultDutyStatus;
+					var statusFilterOnly = tableApi.table().node().dataset.statusFilterOnly === 'true';
+					var noFilters = tableApi.table().node().dataset.noFilters === 'true';
 					tableApi.columns().every( function () {
 
 						/** Filter Group for each column Start **/
 						var column = this;
+						if (noFilters) return;
+						if (statusFilterOnly && column.index() !== 5) return;
 						var select = $('<select><option value=""></option></select>')
 						.appendTo( $(column.header()).empty() )
 						.on( 'change', function () {
@@ -31,7 +38,11 @@
 							.draw();
 						});
 
-						if (defaultDutyStatus && column.index() === 3) {
+						if (statusFilterOnly && column.index() === 5) {
+							select.append('<option value="Pending">Pending</option>');
+							select.append('<option value="Approved">Approved</option>');
+							select.append('<option value="Cancel">Cancel</option>');
+						} else if (defaultDutyStatus && column.index() === 3) {
 							select.append('<option value="On-Duty">ON-Duty</option>');
 							select.append('<option value="Off-Duty">OFF-Duty</option>');
 						} else {

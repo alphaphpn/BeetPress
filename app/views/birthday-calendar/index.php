@@ -43,7 +43,7 @@
 	#birthday-calendar-modal .birthday-pagination { font-size: 1rem; }
 	@media (max-width: 575px) { .birthday-calendar td { height: 74px; padding: 2px; } .birthday-calendar .birthday-day { min-height: 68px; padding: 4px; gap: 3px; } .birthday-calendar .birthday-date-number { font-size: 1.35rem; } .birthday-calendar .birthday-preview { font-size: .58rem; } }
 </style>
-<div class="pt-3"><h5 class="mb-1 fw-bold text-light">Birthday Calendar</h5><p class="text-muted mb-4"><?php echo $birthdayCanViewAll ? 'Employee birthdays across all offices.' : 'Employee birthdays for your office.'; ?></p><?php if ($birthdayError): ?><div class="alert alert-warning"><?php echo htmlspecialchars($birthdayError); ?></div><?php endif; ?><div class="card"><div class="card-body"><div id="birthday-calendar"></div></div></div></div>
+<div class="pt-5"><h5 class="mb-1 fw-bold text-light">Birthday Calendar</h5><p class="text-muted mb-4"><?php echo $birthdayCanViewAll ? 'Employee birthdays across all offices.' : 'Employee birthdays for your office.'; ?></p><?php if ($birthdayError): ?><div class="alert alert-warning"><?php echo htmlspecialchars($birthdayError); ?></div><?php endif; ?><div class="card"><div class="card-body"><div id="birthday-calendar"></div></div></div></div>
 <div class="modal fade" id="birthday-calendar-modal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="birthday-calendar-modal-title">Birthdays</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="birthday-calendar-modal-body"></div></div></div></div>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
