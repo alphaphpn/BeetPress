@@ -84,7 +84,7 @@
 						<div class="val-b"><?php echo trim($birthdaycc1); ?></div>
 						<div class="lbl">Date of Birth</div>
 						<div class="val-b"><?php echo trim(strtoupper($gendercc1)); ?></div>
-						<div class="lbl">Gender</div>
+						<div class="lbl">Sex</div>
 					</div>
 					<div class="b-qr">
 						<div id="qrcode1"></div>
