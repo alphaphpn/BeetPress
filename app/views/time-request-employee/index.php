@@ -27,7 +27,7 @@ try {
         } elseif ($recordId <= 0 || !in_array($field, $allowedFields, true) || !in_array($action, array('approved', 'disapproved'), true)) {
             $timeRequestError = 'Invalid time request.';
         } else {
-            $newStatus = $action === 'approved' ? 'APPROVED' : 'DELETED';
+            $newStatus = $action === 'approved' ? 'APPROVED' : 'DISAPPROVED';
             $officeScope = '';
             $params = array(':record_id' => $recordId);
             if ($timeRequestOfficeId !== '' && $timeRequestOfficeId !== '0') {

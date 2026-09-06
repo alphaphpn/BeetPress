@@ -1,4 +1,8 @@
 <?php
+	if ($_SERVER['REQUEST_METHOD'] === 'POST' && !defined('ATTENDANCE_KIOSK')) {
+		require __DIR__ . '/kiosk.php';
+		exit;
+	}
 
 	header("Content-Type: application/json; charset=UTF-8");
 	header("Access-Control-Allow-Origin: *");
@@ -47,9 +51,9 @@
 
 	if ($token === "0a7a004339f450a46fe7b34767c54577") {
 		try {
-			require_once '../../lib/env.php';
+			require_once __DIR__ . '/../../lib/env.php';
 
-			$cnn = new PDO("mysql:host={$host};dbname={$db}", $uname, $pw);
+			if (!defined('ATTENDANCE_KIOSK')) $cnn = new PDO("mysql:host={$host};dbname={$db}", $uname, $pw);
 			$cnn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 			// 3. Check if record exists for this employee/year/month/day
@@ -89,6 +93,7 @@
 				$employee = $employeeStmt->fetch(PDO::FETCH_ASSOC);
 
 				if ($employee === false) {
+					if (defined('ATTENDANCE_KIOSK')) throw new RuntimeException('Employee information was not found.');
 					http_response_code(404);
 					echo json_encode([
 						"status" => "error",
@@ -112,7 +117,7 @@
 				$monthlyDtr = $monthlyDtrStmt->fetch(PDO::FETCH_ASSOC);
 				$monthlyDtrExists = $monthlyDtr !== false;
 
-				$cnn->beginTransaction();
+				if (!$cnn->inTransaction()) $cnn->beginTransaction();
 
 				if (!$monthlyDtrExists) {
 					$insertMonthlyDtr = "INSERT INTO employee_dtr_tbl
@@ -219,7 +224,7 @@
 					]);
 				}
 
-				$cnn->commit();
+				if (!defined('ATTENDANCE_KIOSK')) $cnn->commit();
 
 				http_response_code(200);
 				echo json_encode([

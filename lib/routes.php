@@ -38,6 +38,7 @@
 		'gad' => 'routes/gad.php', 
 		'gad-module' => 'routes/gad-module.php',
 		'downloads' => 'routes/downloads.php', 
+		'in-out' => 'routes/in-out.php', 
 
 		'users-list' => 'routes/users-list.php', 
 
