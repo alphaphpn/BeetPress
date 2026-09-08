@@ -26,7 +26,16 @@
 				$list_duty_status,
 				$list_duty_tooltip,
 				$list_duty_map_origin,
-				$list_duty_map_destination;
+				$list_duty_map_destination,
+				$list_am_time_in,
+				$list_am_time_out,
+				$list_pm_time_in,
+				$list_pm_time_out,
+				$list_am_time_in_destination,
+				$list_am_time_out_destination,
+				$list_pm_time_in_destination,
+				$list_pm_time_out_destination,
+				$list_time_log_map_origin;
 
 			public function __construct() {
 				$this->list_empidcode        = [];
@@ -46,6 +55,15 @@
 				$this->list_duty_tooltip     = [];
 				$this->list_duty_map_origin  = [];
 				$this->list_duty_map_destination = [];
+				$this->list_am_time_in       = [];
+				$this->list_am_time_out      = [];
+				$this->list_pm_time_in       = [];
+				$this->list_pm_time_out      = [];
+				$this->list_am_time_in_destination = [];
+				$this->list_am_time_out_destination = [];
+				$this->list_pm_time_in_destination = [];
+				$this->list_pm_time_out_destination = [];
+				$this->list_time_log_map_origin = [];
 			}
 
 			private function hasTimeLog($value) {
@@ -163,6 +181,15 @@
 						$this->list_duty_tooltip[] = implode("\n", $timeLogDetails);
 						$this->list_duty_map_origin[] = $origin;
 						$this->list_duty_map_destination[] = $destination;
+						$this->list_am_time_in[] = $row['amtimein'];
+						$this->list_am_time_out[] = $row['amtimeout'];
+						$this->list_pm_time_in[] = $row['pmtimein'];
+						$this->list_pm_time_out[] = $row['pmtimeout'];
+						$this->list_am_time_in_destination[] = $this->gpsCoordinates($row['attendance_gps_location_am_in']);
+						$this->list_am_time_out_destination[] = $this->gpsCoordinates($row['attendance_gps_location_am_out']);
+						$this->list_pm_time_in_destination[] = $this->gpsCoordinates($row['attendance_gps_location_pm_in']);
+						$this->list_pm_time_out_destination[] = $this->gpsCoordinates($row['attendance_gps_location_pm_out']);
+						$this->list_time_log_map_origin[] = $origin;
 					}
 					return true;
 				}

@@ -1,4 +1,11 @@
 <?php
+// Only system administrators and administrators can edit tracker records.
+$canEditEmployeeTracker = in_array(
+    (int) ($_SESSION['d2s8wu_ulevel'] ?? 0),
+    [1, 2],
+    true
+);
+
 // Load offices for dropdowns
 try {
     $offCnn  = new PDO("mysql:host={$host};dbname={$db}", $uname, $pw);
@@ -45,6 +52,10 @@ try {
                         <th></th>
                         <th></th>
                         <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th class="remove-dropdown"></th>
                         <th class="remove-dropdown"></th>
                         <th class="remove-dropdown"></th>
@@ -52,7 +63,9 @@ try {
                         <th class="remove-dropdown"></th>
                         <th class="remove-dropdown"></th>
                         <th></th>
-                        <th class="remove-dropdown"></th>
+                        <?php if ($canEditEmployeeTracker): ?>
+                            <th class="remove-dropdown"></th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
                 <thead id="theadtitle">
@@ -61,6 +74,10 @@ try {
                         <th class="sticky-col">Employee ID</th>
                         <th>Employee Name</th>
                         <th>Duty Status</th>
+                        <th>AM-In</th>
+                        <th>AM-Out</th>
+                        <th>PM-In</th>
+                        <th>PM-Out</th>
                         <th>Office Title</th>
                         <th>Designation</th>
                         <th>Role</th>
@@ -72,7 +89,9 @@ try {
                         <th>Device ID</th>
                         <th>Device Name</th>
                         <th>Online Status</th>
-                        <th>Action</th>
+                        <?php if ($canEditEmployeeTracker): ?>
+                            <th>Action</th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody>
@@ -123,6 +142,14 @@ try {
                                     . ' data-map-origin="' . $dutyOrigin . '" data-map-destination="' . $dutyDestination . '"'
                                     . ' onclick="openDutyMap(this)">' . $dutyLabel . '</button>';
 
+                                $timeLogs = [
+                                    ['time' => $tracker->list_am_time_in[$i] ?? '', 'destination' => $tracker->list_am_time_in_destination[$i] ?? ''],
+                                    ['time' => $tracker->list_am_time_out[$i] ?? '', 'destination' => $tracker->list_am_time_out_destination[$i] ?? ''],
+                                    ['time' => $tracker->list_pm_time_in[$i] ?? '', 'destination' => $tracker->list_pm_time_in_destination[$i] ?? ''],
+                                    ['time' => $tracker->list_pm_time_out[$i] ?? '', 'destination' => $tracker->list_pm_time_out_destination[$i] ?? ''],
+                                ];
+                                $timeLogOrigin = htmlspecialchars($tracker->list_time_log_map_origin[$i] ?? '', ENT_QUOTES);
+
                                 // All row data stored in data-* for the edit modal
                                 $rowData = htmlspecialchars(json_encode([
                                     'empid'       => $empid,
@@ -145,6 +172,17 @@ try {
                                     echo '<td class="sticky-col fw-bold">' . htmlspecialchars($empid, ENT_QUOTES) . '</td>';
                                     echo '<td>' . $ename . '</td>';
                                     echo '<td class="cell-duty" data-order="' . $dutyVal . '" data-search="' . $dutyLabel . '">' . $dutyBadge . '</td>';
+                                    foreach ($timeLogs as $timeLog) {
+                                        $timeValue = trim((string) $timeLog['time']);
+                                        $timeDestination = htmlspecialchars($timeLog['destination'], ENT_QUOTES);
+                                        if ($timeValue === '') {
+                                            echo '<td>—</td>';
+                                        } else {
+                                            echo '<td><button type="button" class="btn btn-link btn-sm p-0 text-info text-decoration-underline"'
+                                                . ' data-map-origin="' . $timeLogOrigin . '" data-map-destination="' . $timeDestination . '"'
+                                                . ' onclick="openDutyMap(this)">' . htmlspecialchars($timeValue, ENT_QUOTES) . '</button></td>';
+                                        }
+                                    }
                                     echo '<td class="cell-officetitle">' . htmlspecialchars($otitle) . '</td>';
                                     echo '<td class="cell-desig">' . htmlspecialchars($desig) . '</td>';
                                     echo '<td class="cell-role" data-search="' . $roleLabel . '" data-order="' . $roleVal . '">' . $roleLabel . '</td>';
@@ -157,16 +195,18 @@ try {
                                     echo '<td>' . ($deviceid ?: '—') . '</td>';
                                     echo '<td>' . ($devicename ?: '—') . '</td>';
                                     echo '<td class="' . $oTextColor . ' fw-bold" data-order="' . $ostatus . '">' . $oLabel . '</td>';
-                                    echo '<td>
-                                            <button class="btn btn-warning btn-sm px-2 py-1" style="font-size:.75rem;"
-                                                    onclick="openEditModal(this)">
-                                                <i class="fas fa-pen me-1"></i>Edit
-                                            </button>
-                                          </td>';
+                                    if ($canEditEmployeeTracker) {
+                                        echo '<td>
+                                                <button class="btn btn-warning btn-sm px-2 py-1" style="font-size:.75rem;"
+                                                        onclick="openEditModal(this)">
+                                                    <i class="fas fa-pen me-1"></i>Edit
+                                                </button>
+                                              </td>';
+                                    }
                                 echo '</tr>';
                             }
                         } else {
-                            echo '<tr><td colspan="16" class="text-center text-muted py-4">No records found.</td></tr>';
+                            echo '<tr><td colspan="' . ($canEditEmployeeTracker ? 20 : 19) . '" class="text-center text-muted py-4">No records found.</td></tr>';
                         }
                     ?>
                 </tbody>
@@ -180,6 +220,10 @@ try {
                         <td></td>
                         <td></td>
                         <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td class="remove-dropdown"></td>
                         <td class="remove-dropdown"></td>
                         <td class="remove-dropdown"></td>
@@ -187,7 +231,9 @@ try {
                         <td class="remove-dropdown"></td>
                         <td class="remove-dropdown"></td>
                         <td></td>
-                        <td class="remove-dropdown"></td>
+                        <?php if ($canEditEmployeeTracker): ?>
+                            <td class="remove-dropdown"></td>
+                        <?php endif; ?>
                     </tr>
                 </tfoot>
             </table>

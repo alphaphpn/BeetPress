@@ -1,5 +1,9 @@
 <?php
 
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
 if (file_exists("../../lib/cnn.php")) {
     require_once "../../lib/cnn.php";
 } elseif (file_exists("../../../lib/cnn.php")) {
@@ -7,6 +11,12 @@ if (file_exists("../../lib/cnn.php")) {
 }
 
 header('Content-Type: application/json');
+
+if (!in_array((int) ($_SESSION['d2s8wu_ulevel'] ?? 0), [1, 2], true)) {
+    http_response_code(403);
+    echo json_encode(['status' => 'error', 'msg' => 'You are not authorized to edit employee tracker records.']);
+    exit;
+}
 
 $empid       = trim($_POST['empid']        ?? '');
 $officetitle = trim($_POST['officetitle']  ?? '');
