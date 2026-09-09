@@ -35,13 +35,14 @@ try {
     #listRecView th,
     #listRecView td { text-align: center; vertical-align: middle; white-space: nowrap; }
     #listRecView_filter { text-align: center; }
+    #trnsfrPaginate .attendance-print-button { margin-right: auto; }
 </style>
 
 <div class="container-fluid">
     <div class="pt-3">
         <h5 class="mb-3 fw-bold text-light">Employee Tracker</h5>
         <div class="table-responsive">
-            <table id="listRecView" class="table table-dark table-striped table-hover" data-default-duty-status="On-Duty">
+            <table id="listRecView" class="table table-dark table-striped table-hover" data-default-duty-status="On-Duty" data-attendance-print="true">
                 <thead id="remSortH">
                     <tr>
                         <th class="remove-dropdown"></th>
@@ -133,6 +134,9 @@ try {
                                 $devicename = htmlspecialchars($tracker->list_device_name[$i] ?? '', ENT_QUOTES);
                                 $dutyVal    = (int)($tracker->list_duty_status[$i] ?? 0);
                                 $dutyLabel  = $dutyVal == 1 ? 'On-Duty' : 'Off-Duty';
+                                $onDutyTime = date('A') === 'AM'
+                                    ? ($tracker->list_am_time_in[$i] ?? '')
+                                    : ($tracker->list_pm_time_in[$i] ?? '');
                                 $dutyTooltip = htmlspecialchars($tracker->list_duty_tooltip[$i] ?? 'No time log is available.', ENT_QUOTES);
                                 $dutyOrigin = htmlspecialchars($tracker->list_duty_map_origin[$i] ?? '', ENT_QUOTES);
                                 $dutyDestination = htmlspecialchars($tracker->list_duty_map_destination[$i] ?? '', ENT_QUOTES);
@@ -167,7 +171,12 @@ try {
                                     ? 'On-Prem'
                                     : 'Field';
 
-                                echo '<tr data-row="' . $rowData . '">';
+                                echo '<tr data-row="' . $rowData . '"'
+                                    . ' data-employee-id="' . htmlspecialchars($empid, ENT_QUOTES) . '"'
+                                    . ' data-employee-name="' . $ename . '"'
+                                    . ' data-office-title="' . htmlspecialchars($otitle, ENT_QUOTES) . '"'
+                                    . ' data-duty-status="' . $dutyLabel . '"'
+                                    . ' data-on-duty-time="' . htmlspecialchars(trim((string) $onDutyTime), ENT_QUOTES) . '">';
                                     echo '<td>' . $xno_oo . '</td>';
                                     echo '<td class="sticky-col fw-bold">' . htmlspecialchars($empid, ENT_QUOTES) . '</td>';
                                     echo '<td>' . $ename . '</td>';
@@ -385,6 +394,72 @@ function openDutyMap(button) {
         + '&destination=' + encodeURIComponent(destination)
         + '&travelmode=driving';
     window.open(mapUrl, 'employeeDutyMap', 'width=1100,height=760,noopener,noreferrer');
+}
+
+// Opens a clean attendance report for every currently filtered On-Duty row.
+function printFilteredOnDutyEmployees() {
+    const table = $('#listRecView').DataTable();
+    const employees = table.rows({ search: 'applied' }).nodes().toArray()
+        .map(row => ({
+            employeeId: row.dataset.employeeId || '',
+            employeeName: row.dataset.employeeName || '',
+            officeTitle: row.dataset.officeTitle || '',
+            dutyStatus: row.dataset.dutyStatus || '',
+            onDutyTime: row.dataset.onDutyTime || '—'
+        }))
+        .filter(employee => employee.dutyStatus === 'On-Duty');
+
+    if (!employees.length) {
+        alert('There are no On-Duty employees in the current table filter.');
+        return;
+    }
+
+    const officeTitles = [...new Set(employees.map(employee => employee.officeTitle).filter(Boolean))];
+    const officeTitle = officeTitles.length === 1 ? officeTitles[0] : 'Multiple Offices';
+    const asOf = new Intl.DateTimeFormat(undefined, {
+        year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true
+    }).format(new Date());
+    const escapeHtml = value => String(value).replace(/[&<>"']/g, character => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+    })[character]);
+    const rows = employees.map((employee, index) => `
+        <tr>
+            <td>${index + 1}</td>
+            <td>${escapeHtml(employee.employeeId)}</td>
+            <td>${escapeHtml(employee.employeeName)}</td>
+            <td>${escapeHtml(employee.onDutyTime)}</td>
+        </tr>`).join('');
+
+    const preview = window.open('', '_blank');
+    if (!preview) {
+        alert('The print preview was blocked. Please allow pop-ups for this site and try again.');
+        return;
+    }
+
+    preview.document.write(`<!doctype html>
+        <html><head><title>Employee Attendance</title>
+        <style>
+            @page { size: auto; margin: 18mm; }
+            body { font-family: Arial, sans-serif; color: #111; }
+            header { text-align: center; margin-bottom: 24px; }
+            h1 { font-size: 20px; margin: 0 0 6px; }
+            header p { margin: 3px 0; font-size: 14px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #333; padding: 8px; text-align: left; }
+            th { background: #eee; }
+            th:first-child, td:first-child { width: 42px; text-align: center; }
+        </style></head><body>
+        <header>
+            <h1>Employee Attendance</h1>
+            <p>As of ${escapeHtml(asOf)}</p>
+            <p>${escapeHtml(officeTitle)}</p>
+        </header>
+        <table><thead><tr><th>No.</th><th>Employee ID</th><th>Employee Name</th><th>Time of On-Duty Status</th></tr></thead>
+        <tbody>${rows}</tbody></table>
+        </body></html>`);
+    preview.document.close();
+    preview.focus();
+    preview.print();
 }
 
 
