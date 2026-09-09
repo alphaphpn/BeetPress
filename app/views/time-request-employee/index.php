@@ -54,19 +54,19 @@ try {
         $queryParams = array($timeRequestOfficeId, $timeRequestOfficeId, $timeRequestOfficeId, $timeRequestOfficeId);
     }
     $timeRequestSql = "
-        SELECT d.empdtr_sub_autoid AS record_id, d.emp_idcode, e.emp_name_forid AS employee_name, e.officetitle, 'AM-In' AS requested_period, d.amtimein AS requested_time
+        SELECT d.empdtr_sub_autoid AS record_id, d.emp_idcode, e.emp_name_forid AS employee_name, e.officetitle, DATE_FORMAT(CONCAT(d.yearno, '-', LPAD(d.monthno, 2, '0'), '-', LPAD(d.dayno, 2, '0')), '%M %e, %Y') AS request_date, 'AM-In' AS requested_period, d.amtimein AS requested_time
         FROM employee_dtr_sub_tbl d INNER JOIN employee_tbl e ON e.emp_idcode = d.emp_idcode
         WHERE d.amtimein LIKE '% - REQUEST%' AND e.xdel = 0{$officeWhere}
         UNION ALL
-        SELECT d.empdtr_sub_autoid AS record_id, d.emp_idcode, e.emp_name_forid AS employee_name, e.officetitle, 'AM-Out' AS requested_period, d.amtimeout AS requested_time
+        SELECT d.empdtr_sub_autoid AS record_id, d.emp_idcode, e.emp_name_forid AS employee_name, e.officetitle, DATE_FORMAT(CONCAT(d.yearno, '-', LPAD(d.monthno, 2, '0'), '-', LPAD(d.dayno, 2, '0')), '%M %e, %Y') AS request_date, 'AM-Out' AS requested_period, d.amtimeout AS requested_time
         FROM employee_dtr_sub_tbl d INNER JOIN employee_tbl e ON e.emp_idcode = d.emp_idcode
         WHERE d.amtimeout LIKE '% - REQUEST%' AND e.xdel = 0{$officeWhere}
         UNION ALL
-        SELECT d.empdtr_sub_autoid AS record_id, d.emp_idcode, e.emp_name_forid AS employee_name, e.officetitle, 'PM-In' AS requested_period, d.pmtimein AS requested_time
+        SELECT d.empdtr_sub_autoid AS record_id, d.emp_idcode, e.emp_name_forid AS employee_name, e.officetitle, DATE_FORMAT(CONCAT(d.yearno, '-', LPAD(d.monthno, 2, '0'), '-', LPAD(d.dayno, 2, '0')), '%M %e, %Y') AS request_date, 'PM-In' AS requested_period, d.pmtimein AS requested_time
         FROM employee_dtr_sub_tbl d INNER JOIN employee_tbl e ON e.emp_idcode = d.emp_idcode
         WHERE d.pmtimein LIKE '% - REQUEST%' AND e.xdel = 0{$officeWhere}
         UNION ALL
-        SELECT d.empdtr_sub_autoid AS record_id, d.emp_idcode, e.emp_name_forid AS employee_name, e.officetitle, 'PM-Out' AS requested_period, d.pmtimeout AS requested_time
+        SELECT d.empdtr_sub_autoid AS record_id, d.emp_idcode, e.emp_name_forid AS employee_name, e.officetitle, DATE_FORMAT(CONCAT(d.yearno, '-', LPAD(d.monthno, 2, '0'), '-', LPAD(d.dayno, 2, '0')), '%M %e, %Y') AS request_date, 'PM-Out' AS requested_period, d.pmtimeout AS requested_time
         FROM employee_dtr_sub_tbl d INNER JOIN employee_tbl e ON e.emp_idcode = d.emp_idcode
         WHERE d.pmtimeout LIKE '% - REQUEST%' AND e.xdel = 0{$officeWhere}
         ORDER BY record_id DESC, requested_period ASC";
@@ -89,6 +89,7 @@ try {
                     <th>No.</th>
                     <th>Employee ID</th>
                     <th>Employee Name</th>
+                    <th>Date</th>
                     <th>Requested Time</th>
                     <th>Office</th>
                     <th class="remove-dropdown">Action</th>
@@ -104,6 +105,7 @@ try {
                         <td><?php echo $index + 1; ?></td>
                         <td><?php echo htmlspecialchars($request['emp_idcode']); ?></td>
                         <td><?php echo htmlspecialchars($request['employee_name'] ?: '—'); ?></td>
+                        <td><?php echo htmlspecialchars($request['request_date'] ?: '—'); ?></td>
                         <td><strong><?php echo htmlspecialchars($request['requested_period']); ?>:</strong> <?php echo htmlspecialchars($requestedTime); ?></td>
                         <td><?php echo htmlspecialchars($request['officetitle'] ?: '—'); ?></td>
                         <td class="text-nowrap">
