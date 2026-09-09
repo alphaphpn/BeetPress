@@ -86,11 +86,11 @@ try {
         <table id="listRecView" class="table table-dark table-striped table-hover align-middle">
             <thead>
                 <tr>
-                    <th>No.</th>
-                    <th>Employee ID</th>
-                    <th>Employee Name</th>
-                    <th>Date</th>
-                    <th>Requested Time</th>
+                    <th class="remove-dropdown">No.</th>
+                    <th class="remove-dropdown">Employee ID</th>
+                    <th class="remove-dropdown">Employee Name</th>
+                    <th class="remove-dropdown">Date</th>
+                    <th class="remove-dropdown">Requested Time</th>
                     <th>Office</th>
                     <th class="remove-dropdown">Action</th>
                 </tr>
