@@ -67,7 +67,7 @@
 
 			$("#listRecView_info, #listRecView_paginate").detach().appendTo('#trnsfrPaginate');
 			if ($('#listRecView').data('attendance-print') === true) {
-				$('<button type="button" class="btn btn-outline-light btn-sm attendance-print-button" onclick="printFilteredOnDutyEmployees()"><i class="fas fa-print me-1"></i>Print</button>')
+				$('<button type="button" class="btn btn-primary btn-sm attendance-print-button" onclick="printFilteredOnDutyEmployees()"><i class="fas fa-print me-1"></i>Print</button>')
 					.prependTo('#trnsfrPaginate');
 			}
 

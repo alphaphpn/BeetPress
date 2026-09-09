@@ -11,18 +11,32 @@ try {
     $offCnn  = new PDO("mysql:host={$host};dbname={$db}", $uname, $pw);
     $offCnn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $offStmt = $offCnn->query(
-        "SELECT officetitle,
+        "SELECT officeid, officename, officetitle,
                 MAX(office_gps_location) AS office_gps_location,
                 MAX(meter) AS meter
          FROM office_signatory_tbl
          WHERE xdel=0
-         GROUP BY officetitle
+         GROUP BY officeid, officename, officetitle
          ORDER BY officetitle ASC"
     );
     $officesArr = $offStmt->fetchAll(PDO::FETCH_ASSOC);
     $offCnn = null;
 } catch (Exception $e) {
     $officesArr = [];
+}
+
+$currentUserOfficeLabel = trim((string) ($_SESSION['officetitle'] ?? ''));
+if ($currentUserOfficeLabel === '') {
+    $currentUserOfficeLabel = trim((string) ($_SESSION['officename'] ?? ''));
+}
+$currentUserOfficeId = trim((string) ($_SESSION['d2s8wu_officeid'] ?? ''));
+if ($currentUserOfficeLabel === '' && $currentUserOfficeId !== '') {
+    foreach ($officesArr as $office) {
+        if ((string) ($office['officeid'] ?? '') === $currentUserOfficeId) {
+            $currentUserOfficeLabel = trim((string) ($office['officetitle'] ?: $office['officename']));
+            break;
+        }
+    }
 }
 ?>
 
@@ -42,7 +56,7 @@ try {
     <div class="pt-3">
         <h5 class="mb-3 fw-bold text-light">Employee Tracker</h5>
         <div class="table-responsive">
-            <table id="listRecView" class="table table-dark table-striped table-hover" data-default-duty-status="On-Duty" data-attendance-print="true">
+            <table id="listRecView" class="table table-dark table-striped table-hover" data-default-duty-status="On-Duty" data-attendance-print="true" data-current-user-office="<?php echo htmlspecialchars($currentUserOfficeLabel, ENT_QUOTES); ?>">
                 <thead id="remSortH">
                     <tr>
                         <th class="remove-dropdown"></th>
@@ -176,7 +190,8 @@ try {
                                     . ' data-employee-name="' . $ename . '"'
                                     . ' data-office-title="' . htmlspecialchars($otitle, ENT_QUOTES) . '"'
                                     . ' data-duty-status="' . $dutyLabel . '"'
-                                    . ' data-on-duty-time="' . htmlspecialchars(trim((string) $onDutyTime), ENT_QUOTES) . '">';
+                                    . ' data-on-duty-time="' . htmlspecialchars(trim((string) $onDutyTime), ENT_QUOTES) . '"'
+                                    . ' data-on-duty-period="' . date('A') . '">';
                                     echo '<td>' . $xno_oo . '</td>';
                                     echo '<td class="sticky-col fw-bold">' . htmlspecialchars($empid, ENT_QUOTES) . '</td>';
                                     echo '<td>' . $ename . '</td>';
@@ -405,7 +420,8 @@ function printFilteredOnDutyEmployees() {
             employeeName: row.dataset.employeeName || '',
             officeTitle: row.dataset.officeTitle || '',
             dutyStatus: row.dataset.dutyStatus || '',
-            onDutyTime: row.dataset.onDutyTime || '—'
+            onDutyTime: row.dataset.onDutyTime || '—',
+            onDutyPeriod: row.dataset.onDutyPeriod || ''
         }))
         .filter(employee => employee.dutyStatus === 'On-Duty');
 
@@ -414,8 +430,11 @@ function printFilteredOnDutyEmployees() {
         return;
     }
 
+    const currentUserOffice = document.getElementById('listRecView').dataset.currentUserOffice || '';
     const officeTitles = [...new Set(employees.map(employee => employee.officeTitle).filter(Boolean))];
-    const officeTitle = officeTitles.length === 1 ? officeTitles[0] : 'Multiple Offices';
+    const officeTitle = currentUserOffice || (officeTitles.length === 1
+        ? officeTitles[0]
+        : 'Provincial Government of Zamboanga Sibugay');
     const asOf = new Intl.DateTimeFormat(undefined, {
         year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true
     }).format(new Date());
@@ -427,7 +446,8 @@ function printFilteredOnDutyEmployees() {
             <td>${index + 1}</td>
             <td>${escapeHtml(employee.employeeId)}</td>
             <td>${escapeHtml(employee.employeeName)}</td>
-            <td>${escapeHtml(employee.onDutyTime)}</td>
+            <td>${escapeHtml(employee.onDutyTime)}${employee.onDutyTime === '—' ? '' : ' ' + escapeHtml(employee.onDutyPeriod)}</td>
+            <td class="signature-cell"></td>
         </tr>`).join('');
 
     const preview = window.open('', '_blank');
@@ -448,13 +468,14 @@ function printFilteredOnDutyEmployees() {
             th, td { border: 1px solid #333; padding: 8px; text-align: left; }
             th { background: #eee; }
             th:first-child, td:first-child { width: 42px; text-align: center; }
+            .signature-cell { width: 180px; height: 48px; }
         </style></head><body>
         <header>
             <h1>Employee Attendance</h1>
             <p>As of ${escapeHtml(asOf)}</p>
             <p>${escapeHtml(officeTitle)}</p>
         </header>
-        <table><thead><tr><th>No.</th><th>Employee ID</th><th>Employee Name</th><th>Time of On-Duty Status</th></tr></thead>
+        <table><thead><tr><th>No.</th><th>Employee ID</th><th>Employee Name</th><th>Time of On-Duty Status</th><th>Signature</th></tr></thead>
         <tbody>${rows}</tbody></table>
         </body></html>`);
     preview.document.close();
