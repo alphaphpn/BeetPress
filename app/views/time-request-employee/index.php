@@ -2,7 +2,7 @@
 $timeRequestMessage = null;
 $timeRequestError = null;
 $timeRequests = array();
-$canReviewTimeRequests = in_array((int) ($_SESSION['d2s8wu_ulevel'] ?? 0), array(1, 2), true);
+$canReviewTimeRequests = in_array((int) ($_SESSION['d2s8wu_ulevel'] ?? 0), array(1, 2, 17), true);
 $timeRequestOfficeId = trim((string) ($_SESSION['d2s8wu_officeid'] ?? ''));
 
 if (empty($_SESSION['time_request_employee_csrf'])) {
@@ -54,19 +54,19 @@ try {
         $queryParams = array($timeRequestOfficeId, $timeRequestOfficeId, $timeRequestOfficeId, $timeRequestOfficeId);
     }
     $timeRequestSql = "
-        SELECT d.empdtr_sub_autoid AS record_id, d.emp_idcode, e.officetitle, 'AM-In' AS requested_period, d.amtimein AS requested_time
+        SELECT d.empdtr_sub_autoid AS record_id, d.emp_idcode, e.emp_name_forid AS employee_name, e.officetitle, 'AM-In' AS requested_period, d.amtimein AS requested_time
         FROM employee_dtr_sub_tbl d INNER JOIN employee_tbl e ON e.emp_idcode = d.emp_idcode
         WHERE d.amtimein LIKE '% - REQUEST%' AND e.xdel = 0{$officeWhere}
         UNION ALL
-        SELECT d.empdtr_sub_autoid AS record_id, d.emp_idcode, e.officetitle, 'AM-Out' AS requested_period, d.amtimeout AS requested_time
+        SELECT d.empdtr_sub_autoid AS record_id, d.emp_idcode, e.emp_name_forid AS employee_name, e.officetitle, 'AM-Out' AS requested_period, d.amtimeout AS requested_time
         FROM employee_dtr_sub_tbl d INNER JOIN employee_tbl e ON e.emp_idcode = d.emp_idcode
         WHERE d.amtimeout LIKE '% - REQUEST%' AND e.xdel = 0{$officeWhere}
         UNION ALL
-        SELECT d.empdtr_sub_autoid AS record_id, d.emp_idcode, e.officetitle, 'PM-In' AS requested_period, d.pmtimein AS requested_time
+        SELECT d.empdtr_sub_autoid AS record_id, d.emp_idcode, e.emp_name_forid AS employee_name, e.officetitle, 'PM-In' AS requested_period, d.pmtimein AS requested_time
         FROM employee_dtr_sub_tbl d INNER JOIN employee_tbl e ON e.emp_idcode = d.emp_idcode
         WHERE d.pmtimein LIKE '% - REQUEST%' AND e.xdel = 0{$officeWhere}
         UNION ALL
-        SELECT d.empdtr_sub_autoid AS record_id, d.emp_idcode, e.officetitle, 'PM-Out' AS requested_period, d.pmtimeout AS requested_time
+        SELECT d.empdtr_sub_autoid AS record_id, d.emp_idcode, e.emp_name_forid AS employee_name, e.officetitle, 'PM-Out' AS requested_period, d.pmtimeout AS requested_time
         FROM employee_dtr_sub_tbl d INNER JOIN employee_tbl e ON e.emp_idcode = d.emp_idcode
         WHERE d.pmtimeout LIKE '% - REQUEST%' AND e.xdel = 0{$officeWhere}
         ORDER BY record_id DESC, requested_period ASC";
@@ -88,6 +88,7 @@ try {
                 <tr>
                     <th>No.</th>
                     <th>Employee ID</th>
+                    <th>Employee Name</th>
                     <th>Requested Time</th>
                     <th>Office</th>
                     <th class="remove-dropdown">Action</th>
@@ -102,6 +103,7 @@ try {
                     <tr>
                         <td><?php echo $index + 1; ?></td>
                         <td><?php echo htmlspecialchars($request['emp_idcode']); ?></td>
+                        <td><?php echo htmlspecialchars($request['employee_name'] ?: '—'); ?></td>
                         <td><strong><?php echo htmlspecialchars($request['requested_period']); ?>:</strong> <?php echo htmlspecialchars($requestedTime); ?></td>
                         <td><?php echo htmlspecialchars($request['officetitle'] ?: '—'); ?></td>
                         <td class="text-nowrap">
