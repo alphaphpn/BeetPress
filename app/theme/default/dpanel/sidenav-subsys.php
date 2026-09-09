@@ -1,5 +1,5 @@
 						<?php
-							if ( $disp_ulevel == 1 || $disp_ulevel == 16 || $disp_ulevel == 16 || $disp_ulevel == 17 ) {
+							if ( $disp_ulevel == 1 || $disp_ulevel == 2 || $disp_ulevel == 16 || $disp_ulevel == 17 ) {
 						?>
 							<div class="nav-item">
 								<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseSocialWelfare" aria-expanded="false" aria-controls="collapseSocialWelfare">
@@ -49,6 +49,11 @@
 							<a class="nav-link" href="employee-tracker">
 								<div class="sb-nav-link-icon"><i class="fas fa-map-marker-alt"></i></div>
 								Employee Tracker
+							</a>
+
+							<a class="nav-link" href="time-request-employee">
+								<div class="sb-nav-link-icon"><i class="fas fa-clock"></i></div>
+								Time Request - Employee
 							</a>
 
 							<a class="nav-link" href="#">

@@ -51,6 +51,7 @@
 		'list-employee' => 'routes/list-employee.php', 
 		'employee-list' => 'routes/employee-list.php', 
 		'employee-tracker' => 'routes/employee-tracker.php', 
+		'time-request-employee' => 'routes/time-request-employee.php',
 		'employee-registration' => 'routes/employee-registration.php', 
 		'employee-registration-camera-stream' => 'routes/employee-registration-camera-stream.php', 
 		'office' => 'routes/office.php', 
