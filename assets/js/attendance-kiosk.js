@@ -1,5 +1,6 @@
 (() => {
     'use strict';
+    if (window.location.protocol !== 'https:') return;
     const root = document.getElementById('attendance-kiosk');
     const el = id => document.getElementById(id);
     const idInput = el('attendance-id'), pinInput = el('attendance-pin');

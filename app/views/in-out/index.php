@@ -1,6 +1,14 @@
 <?php
 if (empty($_SESSION['attendance_csrf'])) $_SESSION['attendance_csrf'] = bin2hex(random_bytes(32));
 ?>
+<script>
+if (window.location.protocol === 'http:') {
+    window.alert('This attendance page requires HTTPS for secure camera and location access. Press OK to continue using HTTPS.');
+    const secureUrl = new URL(window.location.href);
+    secureUrl.protocol = 'https:';
+    window.location.replace(secureUrl.href);
+}
+</script>
 <div class="d-flex justify-content-center align-items-center py-4">
     <div class="card text-center shadow-sm" style="width: 26rem; max-width: 100%;" id="attendance-kiosk"
          data-api="<?= htmlspecialchars($domainhome, ENT_QUOTES) ?>/api/employeesubdtr/"
