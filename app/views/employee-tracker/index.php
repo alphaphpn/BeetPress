@@ -40,6 +40,7 @@ if ($currentUserOfficeLabel === '' && $currentUserOfficeId !== '') {
 }
 ?>
 
+<script defer src="<?php echo htmlspecialchars(rtrim($domainhome, '/'), ENT_QUOTES); ?>/assets/js/employee-tracker-captures.js"></script>
 <style>
     .role-badge  { font-size: 0.75rem; padding: 3px 8px; border-radius: 12px; white-space: nowrap; }
     .online-dot  { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; }
@@ -196,13 +197,18 @@ if ($currentUserOfficeLabel === '' && $currentUserOfficeId !== '') {
                                     echo '<td class="sticky-col fw-bold">' . htmlspecialchars($empid, ENT_QUOTES) . '</td>';
                                     echo '<td>' . $ename . '</td>';
                                     echo '<td class="cell-duty" data-order="' . $dutyVal . '" data-search="' . $dutyLabel . '">' . $dutyBadge . '</td>';
-                                    foreach ($timeLogs as $timeLog) {
+                                    foreach ($timeLogs as $timeIndex => $timeLog) {
+                                        $capturePath = trim((string) ($tracker->list_captures[$i][$timeIndex] ?? ''));
+                                        $captureUrl = preg_match('#^public/employee_attendance_capture/[0-9]+/[0-9]{4}/[0-9]{2}/[0-9]{2}/[a-zA-Z0-9_.-]+\.jpg$#D', $capturePath)
+                                            ? rtrim($domainhome, '/') . '/' . $capturePath : '';
                                         $timeValue = trim((string) $timeLog['time']);
                                         $timeDestination = htmlspecialchars($timeLog['destination'], ENT_QUOTES);
                                         if ($timeValue === '') {
                                             echo '<td>—</td>';
                                         } else {
                                             echo '<td><button type="button" class="btn btn-link btn-sm p-0 text-info text-decoration-underline"'
+                                                . ' data-capture-url="' . htmlspecialchars($captureUrl, ENT_QUOTES) . '"'
+                                                . ' data-capture-label="' . $ename . ' — ' . ['AM-In', 'AM-Out', 'PM-In', 'PM-Out'][$timeIndex] . ' ' . htmlspecialchars($timeValue, ENT_QUOTES) . '"'
                                                 . ' data-map-origin="' . $timeLogOrigin . '" data-map-destination="' . $timeDestination . '"'
                                                 . ' onclick="openDutyMap(this)">' . htmlspecialchars($timeValue, ENT_QUOTES) . '</button></td>';
                                         }

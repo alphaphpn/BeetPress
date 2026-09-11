@@ -9,6 +9,7 @@
 		}
 
 		class employeeTracker extends myDatabase {
+            public $list_captures = [];
 
 			public $list_empidcode,
 				$list_employee_name,
@@ -38,6 +39,7 @@
 				$list_time_log_map_origin;
 
 			public function __construct() {
+                $this->list_captures = [];
 				$this->list_empidcode        = [];
 				$this->list_employee_name    = [];
 				$this->list_officetitle      = [];
@@ -99,6 +101,8 @@
 					END AS duty_status";
 				$dtrJoinSql = "LEFT JOIN (
 					SELECT emp_idcode,
+                        MAX(capture_am_in) AS capture_am_in, MAX(capture_am_out) AS capture_am_out,
+                        MAX(capture_pm_in) AS capture_pm_in, MAX(capture_pm_out) AS capture_pm_out,
 						MAX(amtimein) AS amtimein, MAX(amtimeout) AS amtimeout,
 						MAX(pmtimein) AS pmtimein, MAX(pmtimeout) AS pmtimeout,
 						MAX(attendance_gps_location_am_in) AS attendance_gps_location_am_in,
@@ -121,6 +125,7 @@
 					               d.attendance_gps_location_am_in, d.attendance_gps_location_am_out,
 					               d.attendance_gps_location_pm_in, d.attendance_gps_location_pm_out,
 					               {$dutyStatusSql}
+                                   , d.capture_am_in, d.capture_am_out, d.capture_pm_in, d.capture_pm_out
 					        FROM employee_tbl e {$dtrJoinSql}
 					        WHERE e.xdel=0 ORDER BY e.created_at DESC";
 					$stmt = $this->cnn->prepare($sql);
@@ -134,6 +139,7 @@
 					               d.attendance_gps_location_am_in, d.attendance_gps_location_am_out,
 					               d.attendance_gps_location_pm_in, d.attendance_gps_location_pm_out,
 					               {$dutyStatusSql}
+                                   , d.capture_am_in, d.capture_am_out, d.capture_pm_in, d.capture_pm_out
 					        FROM employee_tbl e {$dtrJoinSql}
 					        WHERE e.officeid=:officeid AND e.xdel=0 ORDER BY e.created_at DESC";
 					$stmt = $this->cnn->prepare($sql);
@@ -143,6 +149,7 @@
 
 				if ($stmt->rowCount() > 0) {
 					foreach ($stmt as $row) {
+                        $this->list_captures[] = [$row['capture_am_in'], $row['capture_am_out'], $row['capture_pm_in'], $row['capture_pm_out']];
 						$this->list_empidcode[]        = $row['emp_idcode'];
 						$this->list_employee_name[]    = $row['emp_name_forid'];
 						$this->list_officetitle[]      = $row['officetitle'];
