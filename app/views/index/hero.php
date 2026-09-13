@@ -11,7 +11,7 @@
 					<h3 class="txt-top-hero-title-site">Governor</h3> -->
 					<hr class="hr-ann-hofer p-0 m-0">
 					<label id="label-timereturn"></label><br>
-					<a class="btn third-bg-color text-white d-mobile" href="<?php echo trim($domainhome); ?>/attendance"><i class='fas fa-user-clock'></i> Work Attendance</a>
+					<a class="btn third-bg-color text-white d-mobile" href="<?php echo trim($domainhome); ?>/in-out"><i class='fas fa-user-clock'></i> Work Attendance</a>
 				</div>
 			</div>
 		</div>
