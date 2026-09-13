@@ -54,6 +54,7 @@ if (window.location.protocol === 'http:') {
                 <button type="button" id="btn-pm-out" data-action="pmtimeout" class="btn btn-outline-danger" disabled>PM-Out</button>
             </div>
             <div id="attendance-message" role="status" aria-live="polite"></div>
+            <button id="attendance-message-ok" type="button" class="btn btn-primary mb-3" hidden>OK</button>
             <video id="attendance-camera" autoplay muted playsinline aria-hidden="true" style="position:fixed;left:-10000px;width:640px;height:480px;"></video>
         </div>
     </div>

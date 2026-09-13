@@ -10,6 +10,12 @@
     let verified = false, busy = false, stream = null, modelPromise = null, expiry = 0;
     let capturePreview = null;
     let deleteToken = null;
+    let refreshTimer = null, attendanceMessageShown = false;
+    function scheduleRefresh() {
+        if (!attendanceMessageShown || busy || refreshTimer !== null) return;
+        // Fixed deadline after a result; user activity does not extend it.
+        refreshTimer = setTimeout(() => window.location.reload(), 15000);
+    }
     function renderTimes(attendance) {
         for (const [field, label] of Object.entries({amtimein: 'AM-In', amtimeout: 'AM-Out', pmtimein: 'PM-In', pmtimeout: 'PM-Out'})) {
             const cell = el('attendance-' + field);
@@ -35,7 +41,7 @@
                         renderTimes(result.attendance);
                         message(result.message);
                     } catch (error) { message(error.message, true); }
-                    finally { busy = false; updateClock(); }
+                    finally { busy = false; updateClock(); scheduleRefresh(); }
                 });
                 cell.append(remove);
             }
@@ -47,7 +53,14 @@
     function message(text, error = false) {
         el('attendance-message').className = `alert mt-3 alert-${error ? 'warning' : 'success'}`;
         el('attendance-message').textContent = text;
+        el('attendance-message-ok').hidden = false;
+        el('attendance-message-ok').disabled = busy;
+        attendanceMessageShown = true;
+        scheduleRefresh();
     }
+    el('attendance-message-ok').addEventListener('click', () => {
+        if (!busy) window.location.reload();
+    });
     function stopCamera() {
         if (stream) stream.getTracks().forEach(track => track.stop());
         stream = null;
@@ -76,6 +89,7 @@
         el('attendance-am').hidden = hour >= 12;
         el('attendance-pm').hidden = hour < 12;
         buttons.forEach(button => { button.disabled = busy; });
+        el('attendance-message-ok').disabled = busy;
         root.querySelectorAll('[data-delete-time]').forEach(button => { button.disabled = busy || !deleteToken; });
         idInput.disabled = pinInput.disabled = busy;
     }
@@ -240,7 +254,7 @@
             }
             const cameraErrors = {NotAllowedError: 'Allow camera access to record attendance.', NotFoundError: 'No camera found. Connect the unit’s primary camera.', NotReadableError: 'The camera is busy or unavailable. Close other apps using it.'};
             message(cameraErrors[error.name] || error.message || 'Camera detection failed. Please try again.', true);
-        } finally { verified = false; clearTimeout(expiry); stopCamera(); busy = false; updateClock(); }
+        } finally { verified = false; clearTimeout(expiry); stopCamera(); busy = false; updateClock(); scheduleRefresh(); }
     }));
     window.addEventListener('pagehide', reset);
     document.addEventListener('visibilitychange', () => { if (document.hidden) reset(); });
