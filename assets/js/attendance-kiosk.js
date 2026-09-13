@@ -9,6 +9,41 @@
     const started = performance.now(), serverTime = Number(root.dataset.now);
     let verified = false, busy = false, stream = null, modelPromise = null, expiry = 0;
     let capturePreview = null;
+    let deleteToken = null;
+    function renderTimes(attendance) {
+        for (const [field, label] of Object.entries({amtimein: 'AM-In', amtimeout: 'AM-Out', pmtimein: 'PM-In', pmtimeout: 'PM-Out'})) {
+            const cell = el('attendance-' + field);
+            cell.replaceChildren();
+            if (attendance[field]) {
+                const remove = document.createElement('button');
+                remove.type = 'button';
+                remove.className = 'btn btn-sm text-danger d-block ms-auto py-0 px-1';
+                remove.textContent = '×';
+                remove.setAttribute('aria-label', 'Delete ' + label + ' time');
+                remove.title = 'Delete ' + label + ' time';
+                remove.dataset.deleteTime = field;
+                remove.addEventListener('click', async () => {
+                    if (busy || !deleteToken) return;
+                    if (!window.confirm(`Warning: Delete ${label} (${attendance[field]}) for ${el('attendance-name').textContent}?\n\nThis will remove the recorded time. Press OK to delete or Cancel to keep it.`)) return;
+                    busy = true; updateClock();
+                    try {
+                        const data = new FormData();
+                        data.append('action', 'delete_time');
+                        data.append('field', field);
+                        data.append('delete_token', deleteToken);
+                        const result = await request(data);
+                        renderTimes(result.attendance);
+                        message(result.message);
+                    } catch (error) { message(error.message, true); }
+                    finally { busy = false; updateClock(); }
+                });
+                cell.append(remove);
+            }
+            const time = document.createElement('span');
+            time.textContent = attendance[field] || '—';
+            cell.append(time);
+        }
+    }
     function message(text, error = false) {
         el('attendance-message').className = `alert mt-3 alert-${error ? 'warning' : 'success'}`;
         el('attendance-message').textContent = text;
@@ -23,6 +58,7 @@
         clearTimeout(expiry);
         stopCamera();
         if (keepProfile !== true) {
+            deleteToken = null;
             if (capturePreview) URL.revokeObjectURL(capturePreview);
             capturePreview = null;
             el('attendance-profile').hidden = true;
@@ -40,6 +76,7 @@
         el('attendance-am').hidden = hour >= 12;
         el('attendance-pm').hidden = hour < 12;
         buttons.forEach(button => { button.disabled = busy; });
+        root.querySelectorAll('[data-delete-time]').forEach(button => { button.disabled = busy || !deleteToken; });
         idInput.disabled = pinInput.disabled = busy;
     }
     async function request(data) {
@@ -56,15 +93,17 @@
     for (const input of [idInput, pinInput]) {
         input.addEventListener('input', () => {
             input.value = input.value.replace(/[^0-9]/g, '');
+            deleteToken = null;
             el('attendance-profile').hidden = true;
             el('attendance-timetable').hidden = true;
             if (verified) reset();
         });
     }
     el('attendance-credentials').addEventListener('submit', event => event.preventDefault());
-    async function verifyEmployee() {
+    async function verifyEmployee(action) {
         const data = new FormData();
         data.append('action', 'verify'); data.append('id', idInput.value); data.append('pin', pinInput.value);
+        data.append('attendance_action', action);
         reset();
             message('Verifying employee…');
             const result = await request(data);
@@ -80,7 +119,15 @@
             if (result.employee.photo) photo.src = result.employee.photo;
             else photo.removeAttribute('src');
             el('attendance-profile').hidden = false;
+            deleteToken = result.delete_token;
+            renderTimes(result.attendance);
+            el('attendance-day').textContent = 'Attendance for ' + result.attendance.date;
+            el('attendance-timetable').hidden = false;
             expiry = setTimeout(() => { reset(); message('Verification expired. Enter your credentials again.', true); }, 120000);
+            if (result.duplicate_message) {
+                el('attendance-distance').textContent = '';
+                throw new Error(result.duplicate_message);
+            }
             return result.employee.geofence;
     }
     function displayDistance(location, geofence) {
@@ -157,7 +204,7 @@
         }
         busy = true; updateClock();
         try {
-            const geofence = await verifyEmployee();
+            const geofence = await verifyEmployee(button.dataset.action);
             message('Getting your location. Please allow location access…');
             const location = await captureLocation();
             if (!verified) throw new Error('Please verify your credentials again.');
@@ -181,9 +228,8 @@
             };
             photo.onerror = showCapture;
             if (photo.hidden) showCapture();
-            for (const action of ['amtimein', 'amtimeout', 'pmtimein', 'pmtimeout']) {
-                el('attendance-' + action).textContent = result.attendance[action] || '—';
-            }
+            deleteToken = result.delete_token;
+            renderTimes(result.attendance);
             el('attendance-day').textContent = 'Attendance for ' + result.attendance.date;
             el('attendance-timetable').hidden = false;
             el('attendance-profile').hidden = false;
