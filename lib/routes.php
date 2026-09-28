@@ -51,6 +51,7 @@
 		'signup-employee-print' => 'routes/signup-employee-print.php', 
 		'list-employee' => 'routes/list-employee.php', 
 		'employee-list' => 'routes/employee-list.php', 
+		'hr-employee-list' => 'routes/hr-employee-list.php', 
 		'employee-tracker' => 'routes/employee-tracker.php', 
 		'time-request-employee' => 'routes/time-request-employee.php',
 		'employee-registration' => 'routes/employee-registration.php', 

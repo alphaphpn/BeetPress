@@ -325,6 +325,7 @@
                         <option value="Voter's ID">Voter's ID</option>
                         <option value="Driver's License">Driver's License</option>
                         <option value="Passport">Passport</option>
+                        <option value="PRC">PRC</option>
                     </select>
                 </div>
                 <div class="mb-3">
