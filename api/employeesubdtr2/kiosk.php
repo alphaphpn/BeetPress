@@ -104,7 +104,14 @@ try {
         kioskReply(401, ['status' => 'error', 'message' => 'Please verify your Employee ID and PIN again.']);
     }
     $now = new DateTimeImmutable();
-    $allowed = (int)$now->format('H') < 12 ? ['amtimein', 'amtimeout'] : ['pmtimein', 'pmtimeout'];
+    $hour = (int)$now->format('H');
+    if ($hour < 12) {
+        $allowed = ['amtimein', 'amtimeout'];
+    } elseif ($hour < 13) {
+        $allowed = ['amtimeout', 'pmtimein', 'pmtimeout'];
+    } else {
+        $allowed = ['pmtimein', 'pmtimeout'];
+    }
     if (!in_array($action, $allowed, true)) {
         kioskReply(400, ['status' => 'error', 'message' => 'Choose the attendance button for the current AM/PM period.']);
     }
