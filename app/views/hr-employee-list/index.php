@@ -552,10 +552,22 @@
                 <div id="uploadArea" class="mb-3 d-none">
                     <div class="rounded p-4 text-center bg-white upload-drop"
                         onclick="document.getElementById('fileInput').click()">
-                        <input type="file" id="fileInput" accept="image/*" capture="environment" class="d-none" onchange="handleUpload(event)">
+                        <input type="file" id="fileInput" accept="image/*" class="d-none" onchange="handleUpload(event)">
                         <i class="bi bi-image fs-1 text-secondary d-block mb-2"></i>
-                        <p class="mb-0 text-secondary small">Tap to upload or take a photo</p>
-                        <p class="mb-0 text-muted" style="font-size:11px">PNG, JPG, GIF supported</p>
+                        <p class="mb-0 text-secondary small">Tap to upload signature image</p>
+                        <p class="mb-0 text-muted" style="font-size:11px">PNG, JPG, GIF supported — uploaded as-is, no edits</p>
+                    </div>
+                    <div id="uploadPreviewWrap" class="d-none mt-2 text-center border rounded p-2 bg-light">
+                        <p class="text-muted mb-2" style="font-size:11px">Uploaded Preview (original — no edits)</p>
+                        <img id="uploadPreviewImg" alt="Uploaded signature preview" style="max-width: 100%; max-height: 300px; object-fit: contain; background: #fff; border: 1px solid #ced4da; border-radius: 4px;">
+                        <div class="mt-2 d-flex gap-2 justify-content-center">
+                            <button class="btn btn-sm btn-outline-secondary" type="button" onclick="document.getElementById('fileInput').click()">
+                                <i class="bi bi-arrow-repeat me-1"></i>Change
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" type="button" onclick="removeUploadedSignature()">
+                                <i class="bi bi-trash me-1"></i>Remove
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -910,6 +922,8 @@
 
     let originalRawImg = null; 
     let currentRawImg = null; 
+    // Upload mode: store original file as-is (preview only, no edits).
+    let uploadedSignatureDataURL = null;
     let imgTransform = { scale: 1, x: 0, y: 0, rotate: 0 };
 
     let isTransforming = false;
@@ -1280,11 +1294,33 @@
         document.getElementById('btnUndoStroke').disabled  = (allStrokes.length === 0 && mode === 'draw');
     }
 
+    function clearUploadedSignature() {
+        uploadedSignatureDataURL = null;
+        const wrap = document.getElementById('uploadPreviewWrap');
+        if (wrap) wrap.classList.add('d-none');
+        const img = document.getElementById('uploadPreviewImg');
+        if (img) img.removeAttribute('src');
+    }
+
+    function removeUploadedSignature() {
+        clearUploadedSignature();
+        const fileInput = document.getElementById('fileInput');
+        if (fileInput) fileInput.value = '';
+        isEmpty = (allStrokes.length === 0 && !currentRawImg);
+        if (isEmpty) {
+            document.getElementById('placeholder').style.display = 'flex';
+            document.getElementById('signsaveempl').disabled = true;
+        }
+    }
+
     function clearCanvas() {
         sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
         allStrokes = [];
         currentRawImg = null;
         originalRawImg = null;
+        clearUploadedSignature();
+        const fileInput = document.getElementById('fileInput');
+        if (fileInput) fileInput.value = '';
         isCropMode = false;
         const cropBtn = document.getElementById('btnCropToggle');
         if(cropBtn) cropBtn.classList.remove('btn-crop-active');
@@ -1304,13 +1340,31 @@
                 stopCamera();
             }
             mode = m;
-            
-            if (m !== 'draw' && allStrokes.length > 0 && !currentRawImg) {
-                clearCanvas(); 
+
+            // Upload mode is preview-only: keep uploaded original as-is, no canvas editing.
+            // Draw/Camera modes keep existing canvas editing behavior.
+            if (m === 'upload') {
+                sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+                allStrokes = [];
+                currentRawImg = null;
+                originalRawImg = null;
+                isCropMode = false;
+                const cropBtn = document.getElementById('btnCropToggle');
+                if (cropBtn) cropBtn.classList.remove('btn-crop-active');
+                resetImgTransform();
+                isEmpty = (uploadedSignatureDataURL === null);
+                document.getElementById('placeholder').style.display = 'flex';
+                document.getElementById('signsaveempl').disabled = isEmpty;
+                document.getElementById('btnRemoveBg').disabled = true;
+                document.getElementById('btnUndoStroke').disabled = true;
+            } else if (m !== 'draw' && allStrokes.length > 0 && !currentRawImg) {
+                clearCanvas();
             } else if (m === 'draw') {
-                if (currentRawImg) renderImage(false); 
+                if (currentRawImg) renderImage(false);
                 else if (allStrokes.length > 0) redrawAllStrokes();
                 else clearCanvas();
+                // Leaving upload mode does not discard the uploaded preview,
+                // but draw/camera saves use canvas only.
             } else {
                 clearCanvas();
             }
@@ -1322,12 +1376,19 @@
             document.getElementById('drawControls').classList.toggle('d-none', m !== 'draw');
             document.getElementById('uploadArea').classList.toggle('d-none',   m !== 'upload');
             document.getElementById('cameraArea').classList.toggle('d-none',   m !== 'camera');
-            
-            const hasImg = currentRawImg !== null;
-            document.getElementById('imageControlsCard').classList.toggle('d-none', m === 'draw' || !hasImg);
-            document.getElementById('bgRemovalCard').classList.toggle('d-none', m === 'draw');
 
-            const hints = { draw: 'Sign here…', upload: 'Tap to upload or take a photo', camera: 'Capture from camera…' };
+            // Upload mode: hide canvas + all edit controls, show only image preview.
+            const canvasWrap = document.getElementById('canvasWrap');
+            if (canvasWrap) canvasWrap.classList.toggle('d-none', m === 'upload');
+            const sigLabel = document.querySelector('#myModalSign .sig-label');
+            if (sigLabel) sigLabel.classList.toggle('d-none', m === 'upload');
+
+            const hasImg = currentRawImg !== null;
+            // Never show transform/crop sliders or BG-removal tools for Upload (preview only).
+            document.getElementById('imageControlsCard').classList.toggle('d-none', m === 'draw' || m === 'upload' || !hasImg);
+            document.getElementById('bgRemovalCard').classList.toggle('d-none', m === 'draw' || m === 'upload');
+
+            const hints = { draw: 'Sign here…', upload: 'Uploaded preview only — no edits', camera: 'Capture from camera…' };
             if (isEmpty) document.getElementById('placeholderText').textContent = hints[m];
             sigCanvas.style.cursor = m === 'draw' ? 'crosshair' : 'default';
         } catch(err) {
@@ -1542,11 +1603,20 @@
     function handleUpload(e) {
         const file = e.target.files[0];
         if (!file) return;
+        if (!file.type || file.type.indexOf('image/') !== 0) {
+            alert('Please select a valid image file.');
+            e.target.value = '';
+            return;
+        }
         const reader = new FileReader();
         reader.onload = ev => {
-            const img = new Image();
-            img.onload = () => setImage(img);
-            img.src = ev.target.result;
+            // Save original as-is: preview only, no canvas edits, no crop/transform/BG removal.
+            uploadedSignatureDataURL = ev.target.result;
+            const previewImg = document.getElementById('uploadPreviewImg');
+            if (previewImg) previewImg.src = uploadedSignatureDataURL;
+            const previewWrap = document.getElementById('uploadPreviewWrap');
+            if (previewWrap) previewWrap.classList.remove('d-none');
+            markUsed();
         };
         reader.readAsDataURL(file);
         e.target.value = '';
@@ -1635,17 +1705,26 @@
     }
 
     function saveSignature() {
-        if (isEmpty && !currentRawImg && allStrokes.length === 0) {
-            alert("Please provide a signature first.");
-            return;
+        // Upload mode: save the original uploaded file as-is (no canvas edits).
+        let signatureData = null;
+        if (mode === 'upload') {
+            if (!uploadedSignatureDataURL) {
+                alert("Please upload a signature image first.");
+                return;
+            }
+            signatureData = uploadedSignatureDataURL;
+        } else {
+            if (isEmpty && !currentRawImg && allStrokes.length === 0) {
+                alert("Please provide a signature first.");
+                return;
+            }
+            signatureData = getFlattenedDataURL();
         }
 
         const btn = document.getElementById('signsaveempl');
         const originalText = btn.innerHTML;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
         btn.disabled = true;
-
-        const signatureData = getFlattenedDataURL();
 
         $.ajax({
             url: 'lib/employee-sign-saved.php',
