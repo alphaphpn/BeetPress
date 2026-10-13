@@ -59,14 +59,23 @@ $fieldLayouts = array(
         'Profession',
         array('Date of Birth', 'Place of Birth'),
     ),
-    'Contact Information' => array('Primary Phone', 'Secondary Phone', 'Email Address'),
+    'Contact Information' => array(
+        array('Primary Phone', 'Secondary Phone'),
+        'Email Address',
+    ),
+    'Address & Emergency Contact' => array(
+        'Home Address',
+        array('Emergency Contact Name', 'Emergency Relationship'),
+        'Emergency Contact Number',
+    ),
     'Account Information' => array(
         array('Username', 'Password'),
     ),
     'Employee Information' => array(
         array('Employee ID', 'Employee PIN'),
         array('Employee Status', 'Designation'),
-        array('values' => array('Office Title', 'Head Officer')),
+        array('Office Title', 'Head Officer'),
+        'Head Title',
     ),
 );
 ?>

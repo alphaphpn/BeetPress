@@ -14,6 +14,12 @@
 	$reg_birthmonth = null;
 	$reg_birthday = null;
 	$reg_plbirth = null;
+$reg_address = null;
+$reg_ice_name = null;
+$reg_ice_relationship = null;
+$reg_ice_number = null;
+$reg_idtypes = array();
+$reg_idnumbers = array();
 	$reg_phone = null;
 	$reg_phone2 = null;
 	$reg_email = null;
@@ -177,7 +183,11 @@
 						</li>
 
 						<li class="nav-item">
-							<a id="tab-contact" class="nav-link" data-bs-toggle="tab" href="#contact">Contact</a>
+							<a id="tab-address" class="nav-link" data-bs-toggle="tab" href="#address">Address</a>
+					</li>
+
+					<li class="nav-item">
+						<a id="tab-contact" class="nav-link" data-bs-toggle="tab" href="#contact">Contact</a>
 						</li>
 
 						<li class="nav-item">
@@ -490,6 +500,103 @@
 								</div>
 							</div>
 
+							<div class="tab-pane container fade" id="address">
+								<h6 class="text-center text-primary">Address & Emergency Contact</h6>
+								<div class="form-floating my-1">
+									<input type="text" class="form-control" id="homeaddress" value="<?php echo trim(htmlspecialchars($reg_address)); ?>" onfocus="this.select();" placeholder="Enter Home Address" name="address" required>
+									<label for="homeaddress"><b class="text-danger">*&nbsp;</b>Home Address</label>
+									<div class="valid-feedback">Valid.</div>
+									<div class="invalid-feedback">Please fill out this field.</div>
+								</div>
+
+								<hr>
+
+								<h6 class="text-center text-primary">In Case of Emergency</h6>
+								<div class="row g-2 mb-2">
+									<div class="col-md-4">
+										<div class="form-floating my-1">
+											<input type="text" class="form-control" id="icename" value="<?php echo trim(htmlspecialchars($reg_ice_name)); ?>" onfocus="this.select();" placeholder="Contact Name" name="ice_name" required>
+											<label for="icename"><b class="text-danger">*&nbsp;</b>Contact Name</label>
+											<div class="valid-feedback">Valid.</div>
+											<div class="invalid-feedback">Please fill out this field.</div>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-floating my-1">
+											<input type="text" class="form-control" id="icerelationship" value="<?php echo trim(htmlspecialchars($reg_ice_relationship)); ?>" onfocus="this.select();" placeholder="e.g. Parent, Spouse" name="ice_relationship" required>
+											<label for="icerelationship"><b class="text-danger">*&nbsp;</b>Relationship</label>
+											<div class="valid-feedback">Valid.</div>
+											<div class="invalid-feedback">Please fill out this field.</div>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-floating my-1">
+											<input type="tel" class="form-control" id="icenumber" value="<?php echo trim(htmlspecialchars($reg_ice_number)); ?>" onfocus="this.select();" placeholder="Contact Number" name="ice_number" required>
+											<label for="icenumber"><b class="text-danger">*&nbsp;</b>Contact Number</label>
+											<div class="valid-feedback">Valid.</div>
+											<div class="invalid-feedback">Please fill out this field.</div>
+										</div>
+									</div>
+								</div>
+
+								<hr>
+
+								<div class="d-flex justify-content-between align-items-center mb-2">
+									<h6 class="mb-0 text-primary">Identification Cards <span class="text-danger">*</span></h6>
+									<button type="button" class="btn btn-sm btn-success" onclick="regShowIdPopup();">Add New ID</button>
+								</div>
+
+								<div id="reg-id-popup" class="border rounded p-2 mb-2 d-none">
+									<div class="mb-2">
+										<label for="reg-id-type" class="form-label mb-1" style="font-size: 0.9rem;">ID Type</label>
+										<select class="form-select form-select-sm" id="reg-id-type">
+											<option value="" selected disabled>Select ID Type</option>
+											<option value="National ID">National ID</option><option value="PhilHealth">PhilHealth</option><option value="Pag-Ibig">Pag-Ibig</option><option value="SSS">SSS</option><option value="GSIS">GSIS</option><option value="UMID">UMID</option><option value="TIN">TIN</option><option value="Voter's ID">Voter's ID</option><option value="Driver's License">Driver's License</option><option value="Passport">Passport</option><option value="PRC">PRC</option>
+										</select>
+									</div>
+									<div class="mb-2">
+										<label for="reg-id-number" class="form-label mb-1" style="font-size: 0.9rem;">ID Number</label>
+										<input type="text" class="form-control form-control-sm" id="reg-id-number" placeholder="Enter ID number">
+									</div>
+									<div class="d-flex gap-2">
+										<button type="button" class="btn btn-success btn-sm" onclick="regAddId();">Add to Table</button>
+										<button type="button" class="btn btn-secondary btn-sm" onclick="regHideIdPopup();">Cancel</button>
+									</div>
+								</div>
+
+								<div class="border rounded p-2" style="max-height: 220px; overflow-y: auto;">
+									<table class="table table-bordered table-striped table-sm mb-0" id="reg-id-table">
+										<thead class="table-light sticky-top">
+											<tr>
+												<th>ID Type</th>
+												<th>ID Number</th>
+												<th style="width: 50px;" class="text-center">Action</th>
+											</tr>
+										</thead>
+										<tbody id="reg-id-table-body">
+										<?php
+											if (!empty($reg_idtypes)) {
+												foreach ($reg_idtypes as $repIdx => $repType) {
+													$repNum = isset($reg_idnumbers[$repIdx]) ? $reg_idnumbers[$repIdx] : '';
+													echo '<tr><td>'.htmlspecialchars($repType).'</td><td>'.htmlspecialchars($repNum).'<input type="hidden" name="idtype[]" value="'.htmlspecialchars($repType, ENT_QUOTES).'"><input type="hidden" name="idnumber[]" value="'.htmlspecialchars($repNum, ENT_QUOTES).'"></td><td class="text-center align-middle"><button type="button" class="btn btn-sm text-danger p-0 border-0" style="font-size: 1.2rem; line-height: 1;" onclick="regDelIdRow(this)">&times;</button></td></tr>';
+												}
+											}
+										?>
+										</tbody>
+									</table>
+								</div>
+								<div class="text-danger small mt-1">At least one Identification Card is required.</div>
+
+								<div class="w-100 d-flex flex-wrap justify-content-end mt-2">
+									<div class="btn-group">
+										<button type="button" id="clck-to-pinfob" class="btn btn-outline-primary">Back</button>
+										<a href="<?php echo trim($domainhome); ?>" class="btn btn-outline-primary"><i class='fas fa-home'></i></a>
+										<a href="" class="btn btn-outline-primary"><i class="fas fa-sync"></i></a>
+										<button type="button" id="clck-to-contact" class="btn btn-outline-primary">Next</button>
+									</div>
+								</div>
+							</div>
+
 							<div class="tab-pane container fade" id="contact">
 								<h6 class="text-center text-primary">Contact Info.</h6>
 
@@ -529,7 +636,7 @@
 
 								<div class="w-100 d-flex flex-wrap justify-content-end">
 									<div class="btn-group">
-										<button type="button" id="clck-to-pinfo" class="btn btn-outline-primary">Back</button>
+										<button type="button" id="clck-to-address" class="btn btn-outline-primary">Back</button>
 										<a href="<?php echo trim($domainhome); ?>" class="btn btn-outline-primary"><i class='fas fa-home'></i></a>
 										<a href="" class="btn btn-outline-primary"><i class="fas fa-sync"></i></a>
 										<button type="button" id="clck-to-user" class="btn btn-outline-primary">Next</button>
@@ -903,7 +1010,9 @@
 		const stopCameraBtn2 = document.getElementById("stop-camera");
 		const clcktopinfo2 = document.getElementById("clck-to-pinfo2");
 		const clcktoimgpic = document.getElementById("clck-to-imgpic");
-		const clcktopinfo = document.getElementById("clck-to-pinfo");
+		const clcktopinfo = document.getElementById("clck-to-address");
+		const clcktopinfob = document.getElementById("clck-to-pinfob");
+		const clcktocontact = document.getElementById("clck-to-contact");
 		const clcktocontak = document.getElementById("clck-to-contak");
 		const clcktocontakb = document.getElementById("clck-to-contakb");
 		const clcktouser = document.getElementById("clck-to-user");
@@ -912,6 +1021,7 @@
 		const clcktouserb = document.getElementById("clck-to-userb");
 		const tabimagepicture = document.getElementById("tab-imagepicture");
 		const tabpinfo = document.getElementById("tab-pinfo");
+		const tabaddress = document.getElementById("tab-address");
 		const tabcontact = document.getElementById("tab-contact");
 		const tabuser = document.getElementById("tab-user");
 		const tabemployee = document.getElementById("tab-employee");
@@ -926,6 +1036,10 @@
 		const kmonth = document.getElementById("month");
 		const kdays = document.getElementById("days");
 		const pbirth = document.getElementById("pbirth");
+		const kaddress = document.getElementById("homeaddress");
+		const kicename = document.getElementById("icename");
+		const kicerelationship = document.getElementById("icerelationship");
+		const kicenumber = document.getElementById("icenumber");
 
 		const knameuser = document.getElementById("nameuser");
 		const kpassword = document.getElementById("password");
@@ -990,6 +1104,57 @@
 			var biolocationval = biolocation.value;
 			bioloclabel.value = document.querySelector('option[id="bioloc-' + biolocationval + '"]').label;
 		});
+
+				function regIdCount() {
+			return document.getElementById("reg-id-table-body").getElementsByTagName("tr").length;
+		}
+		function regShowIdPopup() {
+			document.getElementById("reg-id-popup").classList.remove("d-none");
+			document.getElementById("reg-id-type").focus();
+		}
+		function regHideIdPopup() {
+			document.getElementById("reg-id-popup").classList.add("d-none");
+			document.getElementById("reg-id-type").value = "";
+			document.getElementById("reg-id-number").value = "";
+		}
+		function regAddId() {
+			const idType = document.getElementById("reg-id-type").value;
+			const idNumber = document.getElementById("reg-id-number").value.trim();
+			if (!idType || !idNumber) {
+				alert("Please select an ID type and enter an ID number.");
+				return;
+			}
+			const tbody = document.getElementById("reg-id-table-body");
+			const existingRows = tbody.getElementsByTagName("tr");
+			for (let i = 0; i < existingRows.length; i++) {
+				if (existingRows[i].cells && existingRows[i].cells[0].textContent === idType) {
+					alert('The ID type "' + idType + '" has already been added.');
+					return;
+				}
+			}
+			const row = tbody.insertRow();
+			row.insertCell(0).textContent = idType;
+			const numCell = row.insertCell(1);
+			numCell.appendChild(document.createTextNode(idNumber));
+			const hidType = document.createElement("input");
+			hidType.type = "hidden"; hidType.name = "idtype[]"; hidType.value = idType;
+			numCell.appendChild(hidType);
+			const hidNum = document.createElement("input");
+			hidNum.type = "hidden"; hidNum.name = "idnumber[]"; hidNum.value = idNumber;
+			numCell.appendChild(hidNum);
+			const actCell = row.insertCell(2);
+			actCell.className = "text-center align-middle";
+			const delBtn = document.createElement("button");
+			delBtn.type = "button"; delBtn.className = "btn btn-sm text-danger p-0 border-0";
+			delBtn.style.fontSize = "1.2rem"; delBtn.style.lineHeight = "1";
+			delBtn.innerHTML = "&times;";
+			delBtn.setAttribute("onclick", "regDelIdRow(this)");
+			actCell.appendChild(delBtn);
+			regHideIdPopup();
+		}
+		function regDelIdRow(buttonElement) {
+			buttonElement.closest("tr").remove();
+		}
 
 		function showUserExist(maoniuser) {
 			if (maoniuser.length == 0) {
@@ -1106,14 +1271,25 @@
 				stopCameraBtn2.click(); 
 			}
 		});
-		clcktopinfo.addEventListener('click', function(event) {
+				clcktopinfo.addEventListener('click', function(event) {
+			tabaddress.click();
+		});
+		clcktopinfob.addEventListener('click', function(event) {
 			tabpinfo.click();
+		});
+		clcktocontact.addEventListener('click', function(event) {
+			if (!kaddress.value.trim()) { alert("Please enter your Home Address."); kaddress.focus(); return; }
+			if (!kicename.value.trim()) { alert("Please enter Emergency Contact Name."); kicename.focus(); return; }
+			if (!kicerelationship.value.trim()) { alert("Please enter Emergency Contact Relationship."); kicerelationship.focus(); return; }
+			if (!kicenumber.value.trim()) { alert("Please enter Emergency Contact Number."); kicenumber.focus(); return; }
+			if (regIdCount() < 1) { alert("Please add at least one Identification Card."); regShowIdPopup(); return; }
+			tabcontact.click();
 		});
 		clcktoimgpic.addEventListener('click', function(event) {
 			tabimagepicture.click();
 		});
 		clcktocontak.addEventListener('click', function(event) {
-			if ( knickname.value && kfname.value && klname.value && kyear.value && kmonth.value && kdays.value && pbirth.value ) { tabcontact.click(); }
+			if ( knickname.value && kfname.value && klname.value && kyear.value && kmonth.value && kdays.value && pbirth.value ) { tabaddress.click(); }
 		});
 		clcktocontakb.addEventListener('click', function(event) {
 			tabcontact.click();

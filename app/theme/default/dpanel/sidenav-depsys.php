@@ -31,10 +31,32 @@
 								Legal
 							</a>
 
-							<a class="nav-link" href="#">
-								<div class="sb-nav-link-icon"><i class="fas fa-desktop"></i></div>
+							<div class="nav-item">
+								<!-- Sidebar Main Item -->
+								<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseHR" aria-expanded="false" aria-controls="collapseHR">
+									<div class="sb-nav-link-icon"><i class="fas fa-desktop"></i></div>
 								Human Resource
-							</a>
+									<div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+								</a>
+
+								<!-- Expanding Sub-menu -->
+								<div class="collapse" id="collapseHR">
+									<nav class="sb-sidenav-menu-nested nav">
+										<a class="nav-link" href="employee-registration">
+											<div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+										Employee Registration
+										</a>
+										<a class="nav-link" href="hr-employee-list">
+											<div class="sb-nav-link-icon"><i class="fas fa-user-tag"></i></div>
+										Employee List
+										</a>
+										<a class="nav-link" href="#">
+											<div class="sb-nav-link-icon"><i class="fas fa-user-clock"></i></div>
+										Attendance
+										</a>
+									</nav>
+								</div>
+							</div>
 
 							<a class="nav-link" href="#">
 								<div class="sb-nav-link-icon"><i class="fas fa-desktop"></i></div>

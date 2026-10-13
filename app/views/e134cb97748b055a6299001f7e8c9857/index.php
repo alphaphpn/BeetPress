@@ -21,6 +21,12 @@
 	$reg_birthmonth = null;
 	$reg_birthday = null;
 	$reg_plbirth = null;
+$reg_address = null;
+$reg_ice_name = null;
+$reg_ice_relationship = null;
+$reg_ice_number = null;
+$reg_idtypes = array();
+$reg_idnumbers = array();
 	$reg_phone = null;
 	$reg_phone2 = null;
 	$reg_email = null;
@@ -59,11 +65,24 @@
 	$reg_officegpslocation = null;
 
 	$reg_officenmbering = null;
+	$employeeRegistrationSucceeded = false;
+	$employeeRegistrationPrintUrl = null;
+	$employeeRegistrationGmailComposeUrl = null;
+	$ipCameraAddress = '';
+	$cameraConfigCnn = null;
+	try {
+		$cameraConfigCnn = new PDO("mysql:host={$host};dbname={$db}", $uname, $pw);
+		$cameraConfigCnn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$cameraConfigCnn->exec("CREATE TABLE IF NOT EXISTS employee_camera_config_tbl (config_key VARCHAR(50) NOT NULL PRIMARY KEY, ip_camera_address VARCHAR(255) NOT NULL, updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+		$cameraConfigQuery = $cameraConfigCnn->prepare("SELECT ip_camera_address FROM employee_camera_config_tbl WHERE config_key = 'employee_registration_ip_camera' LIMIT 1");
+		$cameraConfigQuery->execute();
+		$ipCameraAddress = (string) ($cameraConfigQuery->fetchColumn() ?: '');
+	} catch (PDOException $exception) { }
 
 ?>
 
 	<style>
-		#disp-vid { max-width: 290px; height: 356px!important; overflow: hidden; }
+		#disp-vid { max-width: 290px; height: 350px!important; overflow: hidden; padding: 0; }
 		#disp-vid video#video { 
 			max-height: 350px; 
 			object-fit: cover; 
@@ -82,6 +101,24 @@
 			-moz-transform: rotateY(180deg);
 			/* Firefox */
 		}
+
+		#disp-vid img#ip-camera-preview {
+			width: 100%;
+			height: auto;
+			max-height: none;
+			max-width: none;
+			transform: rotateY(180deg);
+		}
+
+		#disp-pix #canvas.uploaded-photo {
+			transform: none;
+			-webkit-transform: none;
+			-moz-transform: none;
+			cursor: grab;
+			touch-action: none;
+		}
+
+		#disp-pix #canvas.uploaded-photo:active { cursor: grabbing; }
 
 		.vidframez {
 			position: absolute;
@@ -135,8 +172,8 @@
 		}
 	</style>
 
-	<section id="signup" class="w-100 mh-100 pt-3" style="padding-bottom: 62px;">
-		<div class="container mh-100">
+	<div class="container-fluid">
+		<div class="pt-3">
 			<div class="card m-auto" style="max-width: 1024px;">
 				<div class="card-header"><h5 class="text-center text-primary">Sign-Up Account</h5></div>
 
@@ -153,15 +190,15 @@
 						</li>
 
 						<li class="nav-item">
-							<a id="tab-contact" class="nav-link" data-bs-toggle="tab" href="#contact">Contact</a>
+							<a id="tab-address" class="nav-link" data-bs-toggle="tab" href="#address">Address</a>
+					</li>
+
+					<li class="nav-item">
+						<a id="tab-contact" class="nav-link" data-bs-toggle="tab" href="#contact">Contact</a>
 						</li>
 
 						<li class="nav-item">
 							<a id="tab-user" class="nav-link" data-bs-toggle="tab" href="#user">User</a>
-						</li>
-
-						<li class="nav-item">
-							<a id="tab-employeeq" class="nav-link" data-bs-toggle="tab" href="#employeeq">Q. Employee</a>
 						</li>
 
 						<li class="nav-item">
@@ -180,14 +217,17 @@
 
 								include_once "addrecord.php"; 
 
-								if ( empty($reg_bionumber) || $reg_bionumber == null ) {
-
-								} else {
+								if ($employeeRegistrationSucceeded) {
 									echo '<div class="alert alert-success alert-dismissible fade show m-1">';
 										echo '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
 										echo '<p>You have successfully registered as an Employee. Do you want to print the Employee Information?</p>';
-										echo '<a class="btn btn-light m-2" href="">Yes</a>';
-										echo '<button class="btn btn-secondary m-2">No</button>';
+										echo '<a class="btn btn-light m-2" target="_blank" rel="noopener" href="'.htmlspecialchars($employeeRegistrationPrintUrl, ENT_QUOTES, 'UTF-8').'">Yes</a>';
+										echo '<a class="btn btn-secondary m-2" href="'.htmlspecialchars($domainhome, ENT_QUOTES, 'UTF-8').'/employee-registration">No</a>';
+										if ($employeeRegistrationGmailComposeUrl !== null) {
+											echo '<p class="mb-1 small">A Gmail compose window will open with the registration information filled in. Review it and click Send.</p>';
+											echo '<a class="btn btn-danger btn-sm" target="_blank" rel="noopener" href="'.htmlspecialchars($employeeRegistrationGmailComposeUrl, ENT_QUOTES, 'UTF-8').'">Open Gmail Compose</a>';
+											echo '<script>window.addEventListener("load", function () { window.open('.json_encode($employeeRegistrationGmailComposeUrl, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT).', "_blank", "noopener"); });</script>';
+										}
 									echo '</div>';
 								}
 							?>
@@ -199,6 +239,8 @@
 								<h6 class="text-center text-primary">Profile Picture</h6>
 								<div class="my-1 w-100 text-center">
 									<button id="bttn-sampix" class="text-center m-auto btn btn-info btn-sm" type="button">Sample Picture</button>
+									<button id="upload-photo" class="btn btn-primary btn-sm" type="button">Upload Photo</button>
+									<input id="photo-upload-input" type="file" accept="image/*" class="d-none">
 								</div>
 
 								<div id="samp-pix" class="row my-2 d-none">
@@ -217,7 +259,8 @@
 
 								<div class="row justify-content-center">
 									<div id="disp-vid" class="col-md-4 mb-2 text-center mx-auto w-100 h-auto position-relative">
-										<video id="video" title="Picture" class="w-auto h-auto" autoplay></video>
+										<video id="video" title="Picture" class="w-auto h-auto" autoplay playsinline></video>
+										<img id="ip-camera-preview" title="IP camera preview" class="d-none" alt="IP camera preview" crossorigin="anonymous">
 
 										<div id="zoom-container"class="d-none">
 											<label for="zoom-slider">Zoom:</label>
@@ -242,9 +285,20 @@
 									</div>
 								</div>
 
+								<div id="upload-editor-controls" class="text-center d-none mb-2">
+									<small class="d-block mb-1">Drag the photo to position it in the frame.</small>
+									<label for="upload-zoom-slider">Resize:</label>
+									<input type="range" id="upload-zoom-slider" min="1" max="3" value="1" step="0.01">
+								</div>
+
 								<div class="my-2 text-center">
-									<div id="select-container" class="d-none"> <label for="camera-select">Select Camera:</label>
-										<select id="camera-select"></select>
+									<div id="select-container" class="d-none"><label for="camera-select">Select Camera:</label>
+										<select id="camera-select" name="camera_source"></select>
+									</div>
+									<div id="ip-camera-address-container" class="d-none mt-2 mx-auto" style="max-width: 360px;">
+										<label for="ip-camera-address" class="form-label">IP Camera Address</label>
+										<input id="ip-camera-address" name="ip_camera_address" type="text" class="form-control" value="<?php echo htmlspecialchars($ipCameraAddress, ENT_QUOTES, 'UTF-8'); ?>" placeholder="192.168.1.100 or http://192.168.1.100/stream" autocomplete="off">
+										<small class="text-muted">Enter the camera's base address (for example, http://192.168.1.25:8080). Common /stream and /video feeds are detected automatically.</small>
 									</div>
 								</div>
 
@@ -453,6 +507,103 @@
 								</div>
 							</div>
 
+							<div class="tab-pane container fade" id="address">
+								<h6 class="text-center text-primary">Address & Emergency Contact</h6>
+								<div class="form-floating my-1">
+									<input type="text" class="form-control" id="homeaddress" value="<?php echo trim(htmlspecialchars($reg_address)); ?>" onfocus="this.select();" placeholder="Enter Home Address" name="address" required>
+									<label for="homeaddress"><b class="text-danger">*&nbsp;</b>Home Address</label>
+									<div class="valid-feedback">Valid.</div>
+									<div class="invalid-feedback">Please fill out this field.</div>
+								</div>
+
+								<hr>
+
+								<h6 class="text-center text-primary">In Case of Emergency</h6>
+								<div class="row g-2 mb-2">
+									<div class="col-md-4">
+										<div class="form-floating my-1">
+											<input type="text" class="form-control" id="icename" value="<?php echo trim(htmlspecialchars($reg_ice_name)); ?>" onfocus="this.select();" placeholder="Contact Name" name="ice_name" required>
+											<label for="icename"><b class="text-danger">*&nbsp;</b>Contact Name</label>
+											<div class="valid-feedback">Valid.</div>
+											<div class="invalid-feedback">Please fill out this field.</div>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-floating my-1">
+											<input type="text" class="form-control" id="icerelationship" value="<?php echo trim(htmlspecialchars($reg_ice_relationship)); ?>" onfocus="this.select();" placeholder="e.g. Parent, Spouse" name="ice_relationship" required>
+											<label for="icerelationship"><b class="text-danger">*&nbsp;</b>Relationship</label>
+											<div class="valid-feedback">Valid.</div>
+											<div class="invalid-feedback">Please fill out this field.</div>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-floating my-1">
+											<input type="tel" class="form-control" id="icenumber" value="<?php echo trim(htmlspecialchars($reg_ice_number)); ?>" onfocus="this.select();" placeholder="Contact Number" name="ice_number" required>
+											<label for="icenumber"><b class="text-danger">*&nbsp;</b>Contact Number</label>
+											<div class="valid-feedback">Valid.</div>
+											<div class="invalid-feedback">Please fill out this field.</div>
+										</div>
+									</div>
+								</div>
+
+								<hr>
+
+								<div class="d-flex justify-content-between align-items-center mb-2">
+									<h6 class="mb-0 text-primary">Identification Cards <span class="text-danger">*</span></h6>
+									<button type="button" class="btn btn-sm btn-success" onclick="regShowIdPopup();">Add New ID</button>
+								</div>
+
+								<div id="reg-id-popup" class="border rounded p-2 mb-2 d-none">
+									<div class="mb-2">
+										<label for="reg-id-type" class="form-label mb-1" style="font-size: 0.9rem;">ID Type</label>
+										<select class="form-select form-select-sm" id="reg-id-type">
+											<option value="" selected disabled>Select ID Type</option>
+											<option value="National ID">National ID</option><option value="PhilHealth">PhilHealth</option><option value="Pag-Ibig">Pag-Ibig</option><option value="SSS">SSS</option><option value="GSIS">GSIS</option><option value="UMID">UMID</option><option value="TIN">TIN</option><option value="Voter's ID">Voter's ID</option><option value="Driver's License">Driver's License</option><option value="Passport">Passport</option><option value="PRC">PRC</option>
+										</select>
+									</div>
+									<div class="mb-2">
+										<label for="reg-id-number" class="form-label mb-1" style="font-size: 0.9rem;">ID Number</label>
+										<input type="text" class="form-control form-control-sm" id="reg-id-number" placeholder="Enter ID number">
+									</div>
+									<div class="d-flex gap-2">
+										<button type="button" class="btn btn-success btn-sm" onclick="regAddId();">Add to Table</button>
+										<button type="button" class="btn btn-secondary btn-sm" onclick="regHideIdPopup();">Cancel</button>
+									</div>
+								</div>
+
+								<div class="border rounded p-2" style="max-height: 220px; overflow-y: auto;">
+									<table class="table table-bordered table-striped table-sm mb-0" id="reg-id-table">
+										<thead class="table-light sticky-top">
+											<tr>
+												<th>ID Type</th>
+												<th>ID Number</th>
+												<th style="width: 50px;" class="text-center">Action</th>
+											</tr>
+										</thead>
+										<tbody id="reg-id-table-body">
+										<?php
+											if (!empty($reg_idtypes)) {
+												foreach ($reg_idtypes as $repIdx => $repType) {
+													$repNum = isset($reg_idnumbers[$repIdx]) ? $reg_idnumbers[$repIdx] : '';
+													echo '<tr><td>'.htmlspecialchars($repType).'</td><td>'.htmlspecialchars($repNum).'<input type="hidden" name="idtype[]" value="'.htmlspecialchars($repType, ENT_QUOTES).'"><input type="hidden" name="idnumber[]" value="'.htmlspecialchars($repNum, ENT_QUOTES).'"></td><td class="text-center align-middle"><button type="button" class="btn btn-sm text-danger p-0 border-0" style="font-size: 1.2rem; line-height: 1;" onclick="regDelIdRow(this)">&times;</button></td></tr>';
+												}
+											}
+										?>
+										</tbody>
+									</table>
+								</div>
+								<div class="text-danger small mt-1">At least one Identification Card is required.</div>
+
+								<div class="w-100 d-flex flex-wrap justify-content-end mt-2">
+									<div class="btn-group">
+										<button type="button" id="clck-to-pinfob" class="btn btn-outline-primary">Back</button>
+										<a href="<?php echo trim($domainhome); ?>" class="btn btn-outline-primary"><i class='fas fa-home'></i></a>
+										<a href="" class="btn btn-outline-primary"><i class="fas fa-sync"></i></a>
+										<button type="button" id="clck-to-contact" class="btn btn-outline-primary">Next</button>
+									</div>
+								</div>
+							</div>
+
 							<div class="tab-pane container fade" id="contact">
 								<h6 class="text-center text-primary">Contact Info.</h6>
 
@@ -492,7 +643,7 @@
 
 								<div class="w-100 d-flex flex-wrap justify-content-end">
 									<div class="btn-group">
-										<button type="button" id="clck-to-pinfo" class="btn btn-outline-primary">Back</button>
+										<button type="button" id="clck-to-address" class="btn btn-outline-primary">Back</button>
 										<a href="<?php echo trim($domainhome); ?>" class="btn btn-outline-primary"><i class='fas fa-home'></i></a>
 										<a href="" class="btn btn-outline-primary"><i class="fas fa-sync"></i></a>
 										<button type="button" id="clck-to-user" class="btn btn-outline-primary">Next</button>
@@ -563,26 +714,6 @@
 								</div>
 							</div>
 
-							<div class="tab-pane container fade" id="employeeq">
-								<div class="position-relative">
-									<div class="row vh-58">
-										<h3 class="text-center mx-auto mt-auto">Are you an Employee?</h3>
-										<div class="d-flex w-100 mx-auto mb-auto justify-content-center">
-											<button type="button" id="empYes" name="empYes" class="btn btn-outline-primary m-1">Yes</button>
-											<button type="button" id="empNo" name="empNo" class="btn btn-outline-primary m-1">No</button>
-										</div>
-									</div>
-								</div>
-
-								<div class="w-100 d-flex flex-wrap justify-content-end">
-									<div class="btn-group">
-										<button type="button" id="clck-to-employeeq" class="btn btn-outline-primary">Back</button>
-										<a href="<?php echo trim($domainhome); ?>" class="btn btn-outline-primary"><i class='fas fa-home'></i></a>
-										<a href="" class="btn btn-outline-primary"><i class="fas fa-sync"></i></a>
-									</div>
-								</div>
-							</div>
-
 							<div class="tab-pane container fade" id="employee">
 								<h6 class="text-center text-primary">Employee Info.</h6>
 
@@ -640,6 +771,7 @@
 											$modifiedatjj = $officeSignatoryLst->list_modifiedatjj[$i];
 											$createdatjj = $officeSignatoryLst->list_createdatjj[$i];
 
+											$chelected_office = "";
 											if ( trim($reg_officenmbering) == trim($officesignatoryautoidjj) ) {
 												$chelected_office = "selected";
 											}
@@ -682,6 +814,7 @@
 											$biolocationmm = $biolocationLst->list_biolocation[$i];
 											$timelogstypemm = $biolocationLst->list_timelogstype[$i];
 
+											$chelected_biolocation = "";
 											if ( trim($reg_biolocation) == trim($biolocationidmm) ) {
 												$chelected_biolocation = "selected";
 											}
@@ -792,7 +925,7 @@
 				</div>
 			</div>
 		</div>
-	</section>
+	</div>
 
 	<script>
 		var myInput = document.getElementById("password");
@@ -886,22 +1019,21 @@
 		const stopCameraBtn2 = document.getElementById("stop-camera");
 		const clcktopinfo2 = document.getElementById("clck-to-pinfo2");
 		const clcktoimgpic = document.getElementById("clck-to-imgpic");
-		const clcktopinfo = document.getElementById("clck-to-pinfo");
+		const clcktopinfo = document.getElementById("clck-to-address");
+		const clcktopinfob = document.getElementById("clck-to-pinfob");
+		const clcktocontact = document.getElementById("clck-to-contact");
 		const clcktocontak = document.getElementById("clck-to-contak");
 		const clcktocontakb = document.getElementById("clck-to-contakb");
 		const clcktouser = document.getElementById("clck-to-user");
 		const clcktoemployee = document.getElementById("clck-to-employee");
 		const clcktoemployeeb = document.getElementById("clck-to-employeeb");
-		const clcktoemployeeq = document.getElementById("clck-to-employeeq");
 		const clcktouserb = document.getElementById("clck-to-userb");
-		const empYesz = document.getElementById("empYes");
-		const empNo = document.getElementById("empNo");
 		const tabimagepicture = document.getElementById("tab-imagepicture");
 		const tabpinfo = document.getElementById("tab-pinfo");
+		const tabaddress = document.getElementById("tab-address");
 		const tabcontact = document.getElementById("tab-contact");
 		const tabuser = document.getElementById("tab-user");
 		const tabemployee = document.getElementById("tab-employee");
-		const tabemployeeq = document.getElementById("tab-employeeq");
 		const tabsubmit = document.getElementById("tab-submit");
 		const imgdata2 = document.getElementById("imgdata");
 		const zipcode = document.getElementById("zipcode");
@@ -913,6 +1045,10 @@
 		const kmonth = document.getElementById("month");
 		const kdays = document.getElementById("days");
 		const pbirth = document.getElementById("pbirth");
+		const kaddress = document.getElementById("homeaddress");
+		const kicename = document.getElementById("icename");
+		const kicerelationship = document.getElementById("icerelationship");
+		const kicenumber = document.getElementById("icenumber");
 
 		const knameuser = document.getElementById("nameuser");
 		const kpassword = document.getElementById("password");
@@ -977,6 +1113,57 @@
 			var biolocationval = biolocation.value;
 			bioloclabel.value = document.querySelector('option[id="bioloc-' + biolocationval + '"]').label;
 		});
+
+				function regIdCount() {
+			return document.getElementById("reg-id-table-body").getElementsByTagName("tr").length;
+		}
+		function regShowIdPopup() {
+			document.getElementById("reg-id-popup").classList.remove("d-none");
+			document.getElementById("reg-id-type").focus();
+		}
+		function regHideIdPopup() {
+			document.getElementById("reg-id-popup").classList.add("d-none");
+			document.getElementById("reg-id-type").value = "";
+			document.getElementById("reg-id-number").value = "";
+		}
+		function regAddId() {
+			const idType = document.getElementById("reg-id-type").value;
+			const idNumber = document.getElementById("reg-id-number").value.trim();
+			if (!idType || !idNumber) {
+				alert("Please select an ID type and enter an ID number.");
+				return;
+			}
+			const tbody = document.getElementById("reg-id-table-body");
+			const existingRows = tbody.getElementsByTagName("tr");
+			for (let i = 0; i < existingRows.length; i++) {
+				if (existingRows[i].cells && existingRows[i].cells[0].textContent === idType) {
+					alert('The ID type "' + idType + '" has already been added.');
+					return;
+				}
+			}
+			const row = tbody.insertRow();
+			row.insertCell(0).textContent = idType;
+			const numCell = row.insertCell(1);
+			numCell.appendChild(document.createTextNode(idNumber));
+			const hidType = document.createElement("input");
+			hidType.type = "hidden"; hidType.name = "idtype[]"; hidType.value = idType;
+			numCell.appendChild(hidType);
+			const hidNum = document.createElement("input");
+			hidNum.type = "hidden"; hidNum.name = "idnumber[]"; hidNum.value = idNumber;
+			numCell.appendChild(hidNum);
+			const actCell = row.insertCell(2);
+			actCell.className = "text-center align-middle";
+			const delBtn = document.createElement("button");
+			delBtn.type = "button"; delBtn.className = "btn btn-sm text-danger p-0 border-0";
+			delBtn.style.fontSize = "1.2rem"; delBtn.style.lineHeight = "1";
+			delBtn.innerHTML = "&times;";
+			delBtn.setAttribute("onclick", "regDelIdRow(this)");
+			actCell.appendChild(delBtn);
+			regHideIdPopup();
+		}
+		function regDelIdRow(buttonElement) {
+			buttonElement.closest("tr").remove();
+		}
 
 		function showUserExist(maoniuser) {
 			if (maoniuser.length == 0) {
@@ -1093,14 +1280,25 @@
 				stopCameraBtn2.click(); 
 			}
 		});
-		clcktopinfo.addEventListener('click', function(event) {
+				clcktopinfo.addEventListener('click', function(event) {
+			tabaddress.click();
+		});
+		clcktopinfob.addEventListener('click', function(event) {
 			tabpinfo.click();
+		});
+		clcktocontact.addEventListener('click', function(event) {
+			if (!kaddress.value.trim()) { alert("Please enter your Home Address."); kaddress.focus(); return; }
+			if (!kicename.value.trim()) { alert("Please enter Emergency Contact Name."); kicename.focus(); return; }
+			if (!kicerelationship.value.trim()) { alert("Please enter Emergency Contact Relationship."); kicerelationship.focus(); return; }
+			if (!kicenumber.value.trim()) { alert("Please enter Emergency Contact Number."); kicenumber.focus(); return; }
+			if (regIdCount() < 1) { alert("Please add at least one Identification Card."); regShowIdPopup(); return; }
+			tabcontact.click();
 		});
 		clcktoimgpic.addEventListener('click', function(event) {
 			tabimagepicture.click();
 		});
 		clcktocontak.addEventListener('click', function(event) {
-			if ( knickname.value && kfname.value && klname.value && kyear.value && kmonth.value && kdays.value && pbirth.value ) { tabcontact.click(); }
+			if ( knickname.value && kfname.value && klname.value && kyear.value && kmonth.value && kdays.value && pbirth.value ) { tabaddress.click(); }
 		});
 		clcktocontakb.addEventListener('click', function(event) {
 			tabcontact.click();
@@ -1119,7 +1317,7 @@
 							echo "tabsubmit.click();"; 
 						} else {
 							if ( $settedsec !== false ) {
-								echo "tabemployeeq.click();"; 
+								echo "$('#type-employee').prop('required',true); $('#office').prop('required',true); $('#biolocation').prop('required',true); $('#bionumber').prop('required',true); $('#employeeid').prop('required',true); $('#pincode').prop('required',true); $('#pincode2').prop('required',true); $('#designation').prop('required',true); tabemployee.click();"; 
 							}
 						} 
 					?>
@@ -1129,41 +1327,6 @@
 
 		clcktoemployeeb.addEventListener('click', function(event) {
 			tabuser.click();
-		});
-		clcktoemployeeq.addEventListener('click', function(event) {
-			tabuser.click();
-		});
-		
-		empYesz.addEventListener('click', function(event) {
-			$("#type-employee").prop("required",true);
-			$("#office").prop("required",true);
-			$("#biolocation").prop("required",true);
-			$("#bionumber").prop("required",true);
-			$("#employeeid").prop("required",true);
-			$("#pincode").prop("required",true);
-			$("#pincode2").prop("required",true);
-			$("#designation").prop("required",true);
-			tabemployee.click();
-		});
-		empNo.addEventListener('click', function(event) {
-			$("#type-employee").prop("required",false);
-			$("#office").prop("required",false);
-			$("#biolocation").prop("required",false);
-			$("#bionumber").prop("required",false);
-			$("#employeeid").prop("required",false);
-			$("#pincode").prop("required",false);
-			$("#pincode2").prop("required",false);
-			$("#designation").prop("required",false);
-
-			$("#type-employee").removeProp("required");
-			$("#office").removeProp("required");
-			$("#biolocation").removeProp("required");
-			$("#bionumber").removeProp("required");
-			$("#employeeid").removeProp("required");
-			$("#pincode").removeProp("required");
-			$("#pincode2").removeProp("required");
-			$("#designation").removeProp("required");
-			tabsubmit.click();
 		});
 		clcktouserb.addEventListener('click', function(event) {
 			tabuser.click();
@@ -1176,15 +1339,136 @@
 		let stopCameraBtn = document.querySelector("#stop-camera");
 		let dispvid = document.querySelector("#disp-vid");
 		let video = document.querySelector("#video");
+		let ipCameraPreview = document.querySelector("#ip-camera-preview");
 		let retakephoto = document.querySelector("#retake-photo");
 		let click_button = document.querySelector("#click-photo");
 		let disppix = document.querySelector("#disp-pix");
 		let canvas = document.querySelector("#canvas");
 		let imgdata = document.querySelector("#imgdata");
+		let uploadPhotoButton = document.querySelector("#upload-photo");
+		let photoUploadInput = document.querySelector("#photo-upload-input");
+		let uploadEditorControls = document.querySelector("#upload-editor-controls");
+		let uploadZoomSlider = document.querySelector("#upload-zoom-slider");
+		let uploadedImage = null;
+		let uploadedImageState = { baseScale: 1, zoom: 1, x: 0, y: 0 };
+		let uploadDragState = null;
+
+		const passportWidth = 413;
+		const passportHeight = 531;
+
+		function renderUploadedPhoto() {
+			if (!uploadedImage) return;
+
+			const context = canvas.getContext('2d');
+			const scale = uploadedImageState.baseScale * uploadedImageState.zoom;
+			const imageWidth = uploadedImage.naturalWidth * scale;
+			const imageHeight = uploadedImage.naturalHeight * scale;
+			uploadedImageState.x = Math.min(0, Math.max(passportWidth - imageWidth, uploadedImageState.x));
+			uploadedImageState.y = Math.min(0, Math.max(passportHeight - imageHeight, uploadedImageState.y));
+			canvas.width = passportWidth;
+			canvas.height = passportHeight;
+			context.clearRect(0, 0, passportWidth, passportHeight);
+			context.drawImage(
+				uploadedImage,
+				uploadedImageState.x,
+				uploadedImageState.y,
+				imageWidth,
+				imageHeight
+			);
+			imgdata.value = canvas.toDataURL('image/jpeg', 0.92);
+		}
+
+		function stopActiveCamera() {
+			if (videoStream) {
+				videoStream.getTracks().forEach(track => track.stop());
+				video.srcObject = null;
+				videoStream = null;
+				videoTrack = null;
+			}
+			video.removeAttribute('src');
+			video.load();
+			ipCameraPreview.removeAttribute('src');
+			ipCameraPreview.classList.add('d-none');
+			video.classList.remove('d-none');
+			zoomContainer.classList.add('d-none');
+		}
+
+		uploadPhotoButton.addEventListener('click', function() {
+			photoUploadInput.click();
+		});
+
+		photoUploadInput.addEventListener('change', function() {
+			const file = this.files && this.files[0];
+			if (!file) return;
+
+			const reader = new FileReader();
+			reader.onload = function(event) {
+				uploadedImage = new Image();
+				uploadedImage.onload = function() {
+					stopActiveCamera();
+					const coverScale = Math.max(passportWidth / uploadedImage.naturalWidth, passportHeight / uploadedImage.naturalHeight);
+					uploadedImageState.baseScale = coverScale;
+					uploadedImageState.zoom = 1;
+					uploadedImageState.x = (passportWidth - uploadedImage.naturalWidth * coverScale) / 2;
+					uploadedImageState.y = (passportHeight - uploadedImage.naturalHeight * coverScale) / 2;
+					uploadZoomSlider.value = 1;
+					canvas.classList.add('uploaded-photo');
+					disppix.classList.remove('d-none');
+					dispvid.classList.add('d-none');
+					uploadEditorControls.classList.remove('d-none');
+					camera_button.classList.remove('d-none');
+					click_button.classList.add('d-none');
+					stopCameraBtn.classList.add('d-none');
+					retakephoto.classList.add('d-none');
+					renderUploadedPhoto();
+				};
+				uploadedImage.src = event.target.result;
+			};
+			reader.readAsDataURL(file);
+			this.value = '';
+		});
+
+		uploadZoomSlider.addEventListener('input', function() {
+			if (!uploadedImage) return;
+			const previousScale = uploadedImageState.baseScale * uploadedImageState.zoom;
+			const centerX = passportWidth / 2;
+			const centerY = passportHeight / 2;
+			const imagePointX = (centerX - uploadedImageState.x) / previousScale;
+			const imagePointY = (centerY - uploadedImageState.y) / previousScale;
+			uploadedImageState.zoom = parseFloat(this.value);
+			const newScale = uploadedImageState.baseScale * uploadedImageState.zoom;
+			uploadedImageState.x = centerX - imagePointX * newScale;
+			uploadedImageState.y = centerY - imagePointY * newScale;
+			renderUploadedPhoto();
+		});
+
+		canvas.addEventListener('pointerdown', function(event) {
+			if (!uploadedImage) return;
+			canvas.setPointerCapture(event.pointerId);
+			uploadDragState = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
+		});
+
+		canvas.addEventListener('pointermove', function(event) {
+			if (!uploadDragState || event.pointerId !== uploadDragState.pointerId) return;
+			const rect = canvas.getBoundingClientRect();
+			uploadedImageState.x += (event.clientX - uploadDragState.x) * (passportWidth / rect.width);
+			uploadedImageState.y += (event.clientY - uploadDragState.y) * (passportHeight / rect.height);
+			uploadDragState.x = event.clientX;
+			uploadDragState.y = event.clientY;
+			renderUploadedPhoto();
+		});
+
+		function endUploadDrag(event) {
+			if (uploadDragState && event.pointerId === uploadDragState.pointerId) uploadDragState = null;
+		}
+		canvas.addEventListener('pointerup', endUploadDrag);
+		canvas.addEventListener('pointercancel', endUploadDrag);
 
 		// New elements for camera selection
 		let cameraSelect = document.querySelector("#camera-select"); // Assuming a <select> element with id="camera-select"
 		let selectContainer = document.querySelector("#select-container"); // Assuming a container for the select element
+		let ipCameraAddress = document.querySelector("#ip-camera-address");
+		let ipCameraAddressContainer = document.querySelector("#ip-camera-address-container");
 
 		let videowidth = video.offsetWidth;
 		let videoheight = video.offsetHeight;
@@ -1201,7 +1485,8 @@
 		async function populateCameraSelect() {
 			try {
 				// Request permission first, otherwise device labels might be empty
-				await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+				const permissionStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+				permissionStream.getTracks().forEach(track => track.stop());
 				// Stop the temporary stream immediately
 				if (videoStream) {
 					videoStream.getTracks().forEach(track => track.stop());
@@ -1212,7 +1497,7 @@
 				const videoDevices = devices.filter(device => device.kind === 'videoinput');
 
 				// Clear existing options
-				cameraSelect.innerHTML = '';
+				cameraSelect.innerHTML = '<option value="">Select Camera</option>';
 
 				if (videoDevices.length > 0) {
 					videoDevices.forEach(device => {
@@ -1230,22 +1515,25 @@
 
 						cameraSelect.appendChild(option);
 					});
-					// Show the selector if there's more than one device to choose from
-					if (videoDevices.length > 1) {
-						selectContainer.classList.remove('d-none');
-					} else {
-						selectContainer.classList.add('d-none'); // Hide if only one camera is found
-					}
-				} else {
-					// No video devices found
-					console.warn("No video input devices found.");
-					selectContainer.classList.add('d-none');
 				}
+				const ipCameraOption = document.createElement('option');
+				ipCameraOption.value = 'ip-camera';
+				ipCameraOption.text = 'IP Camera';
+				cameraSelect.appendChild(ipCameraOption);
+				if (videoDevices.length > 0) cameraSelect.selectedIndex = 1;
+				selectContainer.classList.remove('d-none');
 			} catch (err) {
 				console.error("Error enumerating devices: ", err);
-				selectContainer.classList.add('d-none');
+				cameraSelect.innerHTML = '<option value="">Select Camera</option><option value="ip-camera">IP Camera</option>';
+				selectContainer.classList.remove('d-none');
 			}
 		}
+
+		cameraSelect.addEventListener('change', function() {
+			const isIpCamera = this.value === 'ip-camera';
+			ipCameraAddressContainer.classList.toggle('d-none', !isIpCamera);
+			if (isIpCamera) ipCameraAddress.focus();
+		});
 
 		// Initial population of the camera select dropdown
 		populateCameraSelect();
@@ -1255,14 +1543,15 @@
 		 * @param {string} deviceId - The device ID of the camera to use.
 		 */
 		async function startCamera(deviceId) {
-			// Stop any existing stream first
-			if (videoStream) {
-				videoStream.getTracks().forEach(track => track.stop());
-				video.srcObject = null;
-				videoStream = null;
-				videoTrack = null; // Clear track reference
-				zoomContainer.classList.add('d-none'); // Hide zoom controls on stop
+			if (deviceId === 'ip-camera') {
+				startIpCamera();
+				return;
 			}
+			uploadedImage = null;
+			canvas.classList.remove('uploaded-photo');
+			uploadEditorControls.classList.add('d-none');
+			// Stop either a local camera or an IP-camera preview before switching.
+			stopActiveCamera();
 
 			try {
 				// Constraints object using the selected deviceId
@@ -1302,6 +1591,79 @@
 				// Ensure zoom controls are hidden on failure
 				zoomContainer.classList.add('d-none');
 			}
+		}
+
+		async function startIpCamera() {
+			const address = ipCameraAddress.value.trim();
+			if (!address) {
+				alert('Enter the IP camera address first.');
+				ipCameraAddress.focus();
+				return;
+			}
+			let cameraUrl;
+			try {
+				cameraUrl = new URL(/^https?:\/\//i.test(address) ? address : `http://${address}`);
+				if (!['http:', 'https:'].includes(cameraUrl.protocol)) throw new Error('Unsupported protocol');
+			} catch (err) {
+				alert('Enter a valid HTTP or HTTPS IP camera address.');
+				ipCameraAddress.focus();
+				return;
+			}
+
+			// A bare address is normally the camera's HTML control page, not its
+			// MJPEG feed. IP Phone Camera uses /stream; Android IP Webcam uses /video.
+			const streamUrls = [];
+			if (cameraUrl.pathname === '/' || cameraUrl.pathname === '') {
+				['/stream', '/video'].forEach(pathname => {
+					const streamUrl = new URL(cameraUrl.href);
+					streamUrl.pathname = pathname;
+					streamUrls.push(streamUrl.href);
+				});
+			}
+			streamUrls.push(cameraUrl.href);
+
+			try {
+				stopActiveCamera();
+				await loadIpCameraPreview([...new Set(streamUrls)]);
+				video.classList.add('d-none');
+				ipCameraPreview.classList.remove('d-none');
+				dispvid.classList.remove('d-none');
+				disppix.classList.add('d-none');
+				camera_button.classList.add('d-none');
+				click_button.classList.remove('d-none');
+				stopCameraBtn.classList.remove('d-none');
+				retakephoto.classList.add('d-none');
+			} catch (err) {
+				console.error('Error accessing IP camera: ', err);
+				alert('Could not open the IP camera stream. Check the address, network connection, and the camera\'s browser/CORS access settings.');
+				stopActiveCamera();
+			}
+		}
+
+		function loadIpCameraPreview(streamUrls) {
+			return new Promise((resolve, reject) => {
+				let index = 0;
+				const tryNextUrl = () => {
+					if (index >= streamUrls.length) {
+						reject(new Error('No browser-compatible IP camera stream found.'));
+						return;
+					}
+					const streamUrl = streamUrls[index++];
+					// The browser loads this same-origin URL. The PHP endpoint then reaches
+					// the private LAN camera, so remote users never need access to its IP.
+					const proxyUrl = new URL('<?php echo trim($domainhome); ?>/employee-registration-camera-stream', window.location.origin);
+					proxyUrl.searchParams.set('url', streamUrl);
+					ipCameraPreview.crossOrigin = 'anonymous';
+					ipCameraPreview.onload = () => {
+						ipCameraPreview.onload = null;
+						ipCameraPreview.onerror = null;
+						resolve();
+					};
+					ipCameraPreview.onerror = tryNextUrl;
+					ipCameraPreview.src = proxyUrl.href;
+				};
+				tryNextUrl();
+			});
 		}
 
 		/**
@@ -1358,34 +1720,21 @@
 		camera_button.addEventListener('click', async function() {
 			// Get the selected camera ID from the dropdown
 			const selectedDeviceId = cameraSelect.value;
+			if (!selectedDeviceId) {
+				alert('Select a camera first.');
+				return;
+			}
 			startCamera(selectedDeviceId);
 		});
 
 		stopCameraBtn.addEventListener('click', async function() {
-			// Check if a stream exists
-			if (videoStream) {
-				// Get all video tracks from the stream
-				const tracks = videoStream.getTracks();
-
-				// Loop through each track and stop it
-				tracks.forEach(track => track.stop());
-
-				// Clear the video source
-				video.srcObject = null;
-				videoStream = null;
-				videoTrack = null; // Clear the track reference
-
-				// FIX: Hide Zoom controls when the camera is stopped
-				zoomContainer.classList.add('d-none');
-
-				// Update button visibility
-				camera_button.classList.remove("d-none");
-				click_button.classList.add('d-none');
-				stopCameraBtn.classList.add('d-none');
-				retakephoto.classList.add('d-none');
-				dispvid.classList.add('d-none');
-				disppix.classList.add('d-none');
-			}
+			stopActiveCamera();
+			camera_button.classList.remove("d-none");
+			click_button.classList.add('d-none');
+			stopCameraBtn.classList.add('d-none');
+			retakephoto.classList.add('d-none');
+			dispvid.classList.add('d-none');
+			disppix.classList.add('d-none');
 		});
 
 		// Zoom Slider Event Listener
@@ -1395,18 +1744,26 @@
 		});
 
 		click_button.addEventListener('click', async function() {
+			uploadedImage = null;
+			canvas.classList.remove('uploaded-photo');
+			uploadEditorControls.classList.add('d-none');
 			disppix.classList.remove('d-none');
 
 			// Define standard passport photo dimensions in pixels (35mm x 45mm @ 300 DPI)
-			const passportWidth = 413;
-			const passportHeight = 531;
-
 			// Set the canvas dimensions to the passport size
 			canvas.width = passportWidth;
 			canvas.height = passportHeight;
 
-			// Calculate the aspect ratio of the video feed
-			const videoAspectRatio = video.videoWidth / video.videoHeight;
+			const frameSource = !ipCameraPreview.classList.contains('d-none') ? ipCameraPreview : video;
+			const sourceWidth = frameSource === video ? video.videoWidth : ipCameraPreview.naturalWidth;
+			const sourceHeight = frameSource === video ? video.videoHeight : ipCameraPreview.naturalHeight;
+			if (!sourceWidth || !sourceHeight) {
+				alert('Wait for the camera preview to load before taking a photo.');
+				return;
+			}
+
+			// Calculate the aspect ratio of the camera feed
+			const videoAspectRatio = sourceWidth / sourceHeight;
 
 			// Calculate the aspect ratio of the passport photo
 			const passportAspectRatio = passportWidth / passportHeight;
@@ -1416,24 +1773,35 @@
 			// Determine how to crop the video to fit the passport aspect ratio
 			if (videoAspectRatio > passportAspectRatio) {
 				// Video is wider than the passport aspect ratio, so we need to crop the sides
-				sHeight = video.videoHeight;
-				sWidth = video.videoHeight * passportAspectRatio;
-				sx = (video.videoWidth - sWidth) / 2; // Center the crop horizontally
+				sHeight = sourceHeight;
+				sWidth = sourceHeight * passportAspectRatio;
+				sx = (sourceWidth - sWidth) / 2; // Center the crop horizontally
 				sy = 0;
 			} else {
 				// Video is taller than the passport aspect ratio, so we need to crop the top and bottom
-				sWidth = video.videoWidth;
-				sHeight = video.videoWidth / passportAspectRatio;
+				sWidth = sourceWidth;
+				sHeight = sourceWidth / passportAspectRatio;
 				sx = 0;
-				sy = (video.videoHeight - sHeight) / 2; // Center the crop vertically
+				sy = (sourceHeight - sHeight) / 2; // Center the crop vertically
 			}
 
 			// Draw the cropped video frame onto the canvas
-			canvas.getContext('2d').drawImage(video, sx, sy, sWidth, sHeight, 0, 0, passportWidth, passportHeight);
+			try {
+				canvas.getContext('2d').drawImage(frameSource, sx, sy, sWidth, sHeight, 0, 0, passportWidth, passportHeight);
+			} catch (err) {
+				alert('The IP camera preview cannot be captured. Enable CORS access on the camera, or use Upload Photo.');
+				return;
+			}
 
 			// canvas.style.width = videowidth+'px';
 			// canvas.style.height = video.offsetHeight+'px';
-			let image_data_url = canvas.toDataURL('image/jpeg');
+			let image_data_url;
+			try {
+				image_data_url = canvas.toDataURL('image/jpeg');
+			} catch (err) {
+				alert('The IP camera allows previewing but blocks photo capture. Enable CORS access on the camera, or use Upload Photo.');
+				return;
+			}
 
 			// data url of the image
 			// console.log(image_data_url);
@@ -1460,4 +1828,32 @@
 				zoomContainer.classList.remove('d-none');
 			}
 		});
+
+		function PwHideShow() {
+			var x = document.getElementById("password");
+			if (x.type === "password") {
+				x.type = "text";
+				$('#show_hide_password i').removeClass( "fa-eye-slash" );
+				$('#show_hide_password i').addClass( "fa-eye" );
+				x.onpaste = true;
+			} else {
+				x.type = "password";
+				$('#show_hide_password i').addClass( "fa-eye-slash" );
+				$('#show_hide_password i').removeClass( "fa-eye" );
+				x.onpaste = false;
+			}
+		}
+
+		function PwHideShow2() {
+			var x = document.getElementById("password2");
+			if (x.type === "password") {
+				x.type = "text";
+				$('#show_hide_password2 i').removeClass( "fa-eye-slash" );
+				$('#show_hide_password2 i').addClass( "fa-eye" );
+			} else {
+				x.type = "password";
+				$('#show_hide_password2 i').addClass( "fa-eye-slash" );
+				$('#show_hide_password2 i').removeClass( "fa-eye" );
+			}
+		}
 	</script>
