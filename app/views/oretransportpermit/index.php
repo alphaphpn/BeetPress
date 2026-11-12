@@ -72,8 +72,8 @@
 				<table id="orePermitTable" class="table table-dark table-striped table-hover align-middle" style="width:100%">
 					<thead>
 						<tr>
-							<th>Permit No.</th>
 							<th>OTP No.</th>
+							<th>Permit No.</th>
 							<th>Name of Permittee</th>
 							<th>Date Approved</th>
 							<th>Date Issuance</th>
@@ -104,8 +104,8 @@
 								$json = htmlspecialchars(json_encode($permit, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT), ENT_QUOTES, 'UTF-8');
 							?>
 							<tr data-permit='<?php echo $json; ?>'>
-								<td><?php echo htmlspecialchars($permitNo); ?></td>
 								<td><?php echo htmlspecialchars((string) ($permit['otp_no'] ?? '')); ?></td>
+								<td><?php echo htmlspecialchars($permitNo); ?></td>
 								<td><?php echo htmlspecialchars((string) ($permit['permittee_name'] ?? '')); ?></td>
 								<td><?php echo htmlspecialchars((string) ($permit['date_approved'] ?? '')); ?></td>
 								<td><?php echo htmlspecialchars((string) ($permit['date_issuance'] ?? '')); ?></td>
@@ -175,13 +175,13 @@
 				<div id="permitFormAlert"></div>
 				<div class="row g-3">
 					<div class="col-md-4">
+						<label class="form-label" for="otp_no">OTP No. <span class="text-danger">*</span></label>
+						<input type="text" class="form-control" id="otp_no" name="otp_no" required>
+					</div>
+					<div class="col-md-4">
 						<label class="form-label" for="permit_no">Permit No. <span class="text-danger">*</span></label>
 						<input type="text" class="form-control" id="permit_no" name="permit_no" required>
 						<div class="form-text" id="permitNoStatus"></div>
-					</div>
-					<div class="col-md-4">
-						<label class="form-label" for="otp_no">OTP No. <span class="text-danger">*</span></label>
-						<input type="text" class="form-control" id="otp_no" name="otp_no" required>
 					</div>
 					<div class="col-md-4">
 						<label class="form-label" for="permittee_name">Name of Permittee <span class="text-danger">*</span></label>
