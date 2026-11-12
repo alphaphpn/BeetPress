@@ -33,6 +33,7 @@ function otp_sanitize_filename_base($permitNo) {
 
 $permitId = isset($_POST['permit_autoid']) ? (int) $_POST['permit_autoid'] : 0;
 $permitNo = trim((string) ($_POST['permit_no'] ?? ''));
+$otpNo = trim((string) ($_POST['otp_no'] ?? ''));
 $permitteeName = trim((string) ($_POST['permittee_name'] ?? ''));
 $dateApproved = otp_null_date($_POST['date_approved'] ?? '');
 $dateIssuance = otp_null_date($_POST['date_issuance'] ?? '');
@@ -50,6 +51,10 @@ $destinationLocation = trim((string) ($_POST['destination_location'] ?? ''));
 
 if ($permitNo === '') {
 	echo json_encode(array('status' => 'error', 'message' => 'Permit No. is required.'));
+	exit;
+}
+if ($otpNo === '') {
+	echo json_encode(array('status' => 'error', 'message' => 'OTP No. is required.'));
 	exit;
 }
 if ($permitteeName === '') {
@@ -79,6 +84,7 @@ try {
 	$conn->exec("CREATE TABLE IF NOT EXISTS ore_transport_permit_tbl (
 		permit_autoid INT AUTO_INCREMENT PRIMARY KEY,
 		permit_no VARCHAR(191) NOT NULL,
+		otp_no VARCHAR(191) NOT NULL DEFAULT '',
 		permittee_name TEXT NOT NULL,
 		date_approved DATE NULL,
 		date_issuance DATE NULL,
@@ -101,6 +107,10 @@ try {
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		UNIQUE KEY uniq_permit_no (permit_no)
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+	$col = $conn->query("SHOW COLUMNS FROM ore_transport_permit_tbl LIKE 'otp_no'");
+	if ($col && $col->rowCount() == 0) {
+		$conn->exec("ALTER TABLE ore_transport_permit_tbl ADD COLUMN otp_no VARCHAR(191) NOT NULL DEFAULT '' AFTER permit_no");
+	}
 
 	// duplicate check
 	$dupSql = "SELECT permit_autoid FROM ore_transport_permit_tbl WHERE permit_no = :permit_no AND xdel = 0";
@@ -166,6 +176,7 @@ try {
 	if ($permitId > 0) {
 		$sql = "UPDATE ore_transport_permit_tbl SET
 			permit_no = :permit_no,
+			otp_no = :otp_no,
 			permittee_name = :permittee_name,
 			date_approved = :date_approved,
 			date_issuance = :date_issuance,
@@ -187,12 +198,12 @@ try {
 		$stmt->bindParam(':id', $permitId, PDO::PARAM_INT);
 	} else {
 		$sql = "INSERT INTO ore_transport_permit_tbl (
-			permit_no, permittee_name, date_approved, date_issuance, date_expiry,
+			permit_no, otp_no, permittee_name, date_approved, date_issuance, date_expiry,
 			operator_name, transporter_name, truck_registry_no, ship_registry_no,
 			buyer_name, commodity, tonnage_volume, permit_value, source_location,
 			destination_location, permit_file, xdel, createdby, modifiedby
 		) VALUES (
-			:permit_no, :permittee_name, :date_approved, :date_issuance, :date_expiry,
+			:permit_no, :otp_no, :permittee_name, :date_approved, :date_issuance, :date_expiry,
 			:operator_name, :transporter_name, :truck_registry_no, :ship_registry_no,
 			:buyer_name, :commodity, :tonnage_volume, :permit_value, :source_location,
 			:destination_location, :permit_file, 0, :createdby, :modifiedby
@@ -202,6 +213,7 @@ try {
 	}
 
 	$stmt->bindParam(':permit_no', $permitNo);
+	$stmt->bindParam(':otp_no', $otpNo);
 	$stmt->bindParam(':permittee_name', $permitteeName);
 	$stmt->bindParam(':date_approved', $dateApproved);
 	$stmt->bindParam(':date_issuance', $dateIssuance);

@@ -11,6 +11,7 @@
 		$conn->exec("CREATE TABLE IF NOT EXISTS ore_transport_permit_tbl (
 			permit_autoid INT AUTO_INCREMENT PRIMARY KEY,
 			permit_no VARCHAR(191) NOT NULL,
+			otp_no VARCHAR(191) NOT NULL DEFAULT '',
 			permittee_name TEXT NOT NULL,
 			date_approved DATE NULL,
 			date_issuance DATE NULL,
@@ -33,6 +34,10 @@
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			UNIQUE KEY uniq_permit_no (permit_no)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+		$col = $conn->query("SHOW COLUMNS FROM ore_transport_permit_tbl LIKE 'otp_no'");
+		if ($col && $col->rowCount() == 0) {
+			$conn->exec("ALTER TABLE ore_transport_permit_tbl ADD COLUMN otp_no VARCHAR(191) NOT NULL DEFAULT '' AFTER permit_no");
+		}
 
 		$stmt = $conn->prepare("SELECT * FROM ore_transport_permit_tbl WHERE xdel = 0 ORDER BY permit_autoid DESC");
 		$stmt->execute();
@@ -68,6 +73,7 @@
 					<thead>
 						<tr>
 							<th>Permit No.</th>
+							<th>OTP No.</th>
 							<th>Name of Permittee</th>
 							<th>Date Approved</th>
 							<th>Date Issuance</th>
@@ -99,6 +105,7 @@
 							?>
 							<tr data-permit='<?php echo $json; ?>'>
 								<td><?php echo htmlspecialchars($permitNo); ?></td>
+								<td><?php echo htmlspecialchars((string) ($permit['otp_no'] ?? '')); ?></td>
 								<td><?php echo htmlspecialchars((string) ($permit['permittee_name'] ?? '')); ?></td>
 								<td><?php echo htmlspecialchars((string) ($permit['date_approved'] ?? '')); ?></td>
 								<td><?php echo htmlspecialchars((string) ($permit['date_issuance'] ?? '')); ?></td>
@@ -172,7 +179,11 @@
 						<input type="text" class="form-control" id="permit_no" name="permit_no" required>
 						<div class="form-text" id="permitNoStatus"></div>
 					</div>
-					<div class="col-md-8">
+					<div class="col-md-4">
+						<label class="form-label" for="otp_no">OTP No. <span class="text-danger">*</span></label>
+						<input type="text" class="form-control" id="otp_no" name="otp_no" required>
+					</div>
+					<div class="col-md-4">
 						<label class="form-label" for="permittee_name">Name of Permittee <span class="text-danger">*</span></label>
 						<input type="text" class="form-control" id="permittee_name" name="permittee_name" required>
 					</div>
@@ -280,6 +291,7 @@
 		document.getElementById('permit_autoid').value = data.permit_autoid || '';
 		document.getElementById('permit_no').value = data.permit_no || '';
 		document.getElementById('permit_no').readOnly = false;
+		document.getElementById('otp_no').value = data.otp_no || '';
 		document.getElementById('permittee_name').value = data.permittee_name || '';
 		document.getElementById('date_approved').value = formatDate(data.date_approved);
 		document.getElementById('date_issuance').value = formatDate(data.date_issuance);
@@ -447,6 +459,10 @@
 		var permitNo = document.getElementById('permit_no').value.trim();
 		if (!permitNo) {
 			showAlert('permitFormAlert', 'danger', 'Permit No. is required.');
+			return;
+		}
+		if (!document.getElementById('otp_no').value.trim()) {
+			showAlert('permitFormAlert', 'danger', 'OTP No. is required.');
 			return;
 		}
 		if (!document.getElementById('permittee_name').value.trim()) {
