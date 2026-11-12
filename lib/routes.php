@@ -44,6 +44,9 @@
 
 		'post' => 'routes/post.php', 
 
+		'ore-transport-permit' => 'routes/ore-transport-permit.php', 
+		'oretransportpermit' => 'routes/oretransportpermit.php',
+
 		'bp-mngr' => 'routes/bp-mngr.php', 
 		'dmessages' => 'routes/dmessages.php', 
 		'timelogs-upload' => 'routes/timelogs-upload.php', 

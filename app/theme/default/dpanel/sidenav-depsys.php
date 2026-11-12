@@ -187,6 +187,22 @@
 								</div>
 							</div>
 						<?php
+							} elseif ( $disp_officecode == 8731 ) {
+								// PENRO
+						?>
+							<div class="nav-item">
+								<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePENRO" aria-expanded="false" aria-controls="collapsePENRO">
+									<div class="sb-nav-link-icon"><i class="fas fa-hands-helping"></i></div>
+									Environment and Natural Resources
+									<div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+								</a>
+								<div class="collapse" id="collapsePENRO">
+									<nav class="sb-sidenav-menu-nested nav">
+										<a class="nav-link" href="oretransportpermit"><div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>ORE Transport Permit</a>
+									</nav>
+								</div>
+							</div>
+						<?php
 							} elseif ( $disp_officecode == 1031 ) {
 								// OPAd
 						?>
